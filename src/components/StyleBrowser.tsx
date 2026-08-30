@@ -1,20 +1,16 @@
 import React, { useState, useMemo } from 'react';
-import { RhythmStyle, RhythmCategory, CATEGORY_NAMES } from '../types/rhythm';
+import { RhythmStyle, RhythmCategory } from '../types/rhythm';
 import { ALL_STYLES, searchStyles } from '../data';
-import { Search, Star, Music, Filter, Play, CheckCircle2, ChevronRight, BookOpen } from 'lucide-react';
+import { Search, Star, Music, CheckCircle2, ChevronRight } from 'lucide-react';
 
 interface StyleBrowserProps {
   currentStyle: RhythmStyle;
-  isPlaying: boolean;
   onSelectStyle: (style: RhythmStyle) => void;
-  onTogglePlay: () => void;
 }
 
 export const StyleBrowser: React.FC<StyleBrowserProps> = ({
   currentStyle,
-  isPlaying,
-  onSelectStyle,
-  onTogglePlay
+  onSelectStyle
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<RhythmCategory | 'ALL' | 'FAVORITES'>('ALL');

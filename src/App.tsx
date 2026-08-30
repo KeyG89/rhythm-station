@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDrumEngine } from './hooks/useDrumEngine';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { RetroDisplay } from './components/RetroDisplay';
@@ -10,7 +10,7 @@ import { StyleBrowser } from './components/StyleBrowser';
 import { PracticeCoach } from './components/PracticeCoach';
 import { AudioExporter } from './components/AudioExporter';
 import { KeyboardHelpModal } from './components/KeyboardHelpModal';
-import { Sliders, Music, Zap, GraduationCap, Keyboard, Disc, HelpCircle } from 'lucide-react';
+import { Sliders, Music, Zap, GraduationCap, Keyboard, Disc } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'matrix' | 'styles' | 'mixer' | 'trainer' | 'coach' | 'export'>('styles');
@@ -182,9 +182,7 @@ export default function App() {
           <div className="space-y-6">
             <StyleBrowser
               currentStyle={engine.currentStyle}
-              isPlaying={engine.isPlaying}
               onSelectStyle={engine.selectStyle}
-              onTogglePlay={engine.togglePlay}
             />
             <PracticeCoach
               currentStyle={engine.currentStyle}

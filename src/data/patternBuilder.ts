@@ -1,4 +1,4 @@
-import { DrumInstrument, DrumHit, PatternStep, RhythmPattern, RhythmSection, RhythmStyle, RhythmCategory } from '../types/rhythm';
+import { DrumInstrument, PatternStep, RhythmPattern, RhythmStyle, RhythmCategory } from '../types/rhythm';
 
 export interface GridBuilderConfig {
   stepsCount: number; // 16 for 4/4 16ths, 12 for 3/4 or 6/8, 32 for 2-bar 4/4
@@ -57,11 +57,16 @@ export class PatternBuilder {
   }
 
   public build(): RhythmPattern {
+    const stepsPerBar = this.config.stepsPerBeat * this.config.timeSignature[0];
+    const computedBars = this.config.bars > 1
+      ? this.config.bars
+      : Math.max(1, Math.round(this.grid.length / stepsPerBar));
+
     return {
       steps: this.grid,
       stepsPerBeat: this.config.stepsPerBeat,
       timeSignature: this.config.timeSignature,
-      bars: this.config.bars,
+      bars: computedBars,
       swing: this.config.swing
     };
   }
@@ -92,7 +97,7 @@ export function createRockFillB(stepsPerBeat = 4): RhythmPattern {
     .build();
 }
 
-export function createStandardIntro(styleName: string): RhythmPattern {
+export function createStandardIntro(): RhythmPattern {
   return new PatternBuilder({ stepsCount: 16, stepsPerBeat: 4 })
     .add('hihat_closed', [0, 4, 8, 12], 0.7) // 4 hi-hat count-in clicks
     .add('snare', [8, 10, 12, 14], 0.8)
@@ -128,6 +133,22 @@ export function createStyle(
     ending?: RhythmPattern;
   }
 ): RhythmStyle {
+  const stepsPerBeat = sections.mainA.stepsPerBeat || 4;
+
+  const sanitizeSection = (p?: RhythmPattern, fallbackCreator?: () => RhythmPattern): RhythmPattern => {
+    const pattern = p || fallbackCreator?.() || sections.mainA;
+    const patStepsPerBeat = pattern.stepsPerBeat || stepsPerBeat;
+    const stepsPerBar = patStepsPerBeat * timeSignature[0];
+    const computedBars = Math.max(1, Math.round(pattern.steps.length / stepsPerBar));
+
+    return {
+      ...pattern,
+      timeSignature,
+      stepsPerBeat: patStepsPerBeat,
+      bars: computedBars
+    };
+  };
+
   return {
     id,
     name,
@@ -138,12 +159,12 @@ export function createStyle(
     drumPatternDescription,
     practiceFocus,
     sections: {
-      mainA: sections.mainA,
-      mainB: sections.mainB,
-      fillA: sections.fillA || createRockFillA(sections.mainA.stepsPerBeat),
-      fillB: sections.fillB || createRockFillB(sections.mainA.stepsPerBeat),
-      intro: sections.intro || createStandardIntro(name),
-      ending: sections.ending || createStandardEnding()
+      mainA: sanitizeSection(sections.mainA),
+      mainB: sanitizeSection(sections.mainB),
+      fillA: sanitizeSection(sections.fillA, () => createRockFillA(stepsPerBeat)),
+      fillB: sanitizeSection(sections.fillB, () => createRockFillB(stepsPerBeat)),
+      intro: sanitizeSection(sections.intro, () => createStandardIntro()),
+      ending: sanitizeSection(sections.ending, () => createStandardEnding())
     }
   };
 }

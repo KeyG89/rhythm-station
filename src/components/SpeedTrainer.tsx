@@ -1,6 +1,6 @@
 import React from 'react';
 import { SpeedTrainerConfig } from '../types/audio';
-import { FastForward, Zap, Target, BarChart2 } from 'lucide-react';
+import { FastForward, Zap } from 'lucide-react';
 
 interface SpeedTrainerProps {
   config: SpeedTrainerConfig;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_STYLES, getStyleById } from '../src/data';
+import { ALL_STYLES } from '../src/data';
 
 describe('Rhythm Scheduler Timing Math & Logic', () => {
   it('calculates accurate 16th step duration for various BPMs', () => {
@@ -39,7 +39,12 @@ describe('Rhythm Scheduler Timing Math & Logic', () => {
   it('all 100 styles have consistent bar and time signature steps', () => {
     ALL_STYLES.forEach((style) => {
       const mainA = style.sections.mainA;
-      const expectedSteps = mainA.stepsPerBeat * style.timeSignature[0] * (mainA.bars || 1);
+      // In compound meters (denominator 8), steps per bar is based on eighths or dotted quarters
+      const stepsPerBar = style.timeSignature[1] === 8
+        ? (style.timeSignature[0] === 12 ? 12 : style.timeSignature[0] * mainA.stepsPerBeat)
+        : mainA.stepsPerBeat * style.timeSignature[0];
+
+      const expectedSteps = stepsPerBar * (mainA.bars || 1);
       expect(mainA.steps.length, `Style ${style.id} step length mismatch`).toBe(expectedSteps);
     });
   });

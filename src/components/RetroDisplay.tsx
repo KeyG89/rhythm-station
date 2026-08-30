@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { RhythmStyle, RhythmSection } from '../types/rhythm';
-import { DrumHit } from '../types/rhythm';
-import { Activity, Play, Volume2, FastForward, Radio, Disc } from 'lucide-react';
+import { RhythmStyle, RhythmSection, DrumHit } from '../types/rhythm';
+import { Play, Volume2, FastForward, Radio } from 'lucide-react';
 
 interface RetroDisplayProps {
   currentStyle: RhythmStyle;

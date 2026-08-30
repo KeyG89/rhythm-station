@@ -117,7 +117,6 @@ export const STYLES_TRADITIONAL: RhythmStyle[] = [
         .add('kick', [0], 0.95)
         .add('snare', [4, 8], 0.85)
         .add('hihat_closed', [4, 8], 0.7)
-        .add('triangle', [] as any, 0)
         .add('tom_low', [0], 0.6)
         .build()
     }

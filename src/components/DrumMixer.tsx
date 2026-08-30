@@ -1,7 +1,7 @@
 import React from 'react';
 import { DrumInstrument, DRUM_INSTRUMENTS_META } from '../types/rhythm';
 import { DrumMixerState } from '../types/audio';
-import { Sliders, Volume2, VolumeX, RotateCcw, Sparkles } from 'lucide-react';
+import { Sliders, Volume2, Sparkles } from 'lucide-react';
 
 interface DrumMixerProps {
   mixerState: DrumMixerState;

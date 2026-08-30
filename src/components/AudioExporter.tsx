@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, Download, Disc, Check } from 'lucide-react';
+import { Radio, Download, Disc } from 'lucide-react';
 
 interface AudioExporterProps {
   isRecording: boolean;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { RhythmStyle } from '../types/rhythm';
-import { GraduationCap, Footprints, Hand, Sparkles, CheckSquare, Target, Lightbulb } from 'lucide-react';
+import { GraduationCap, Footprints, Hand, CheckSquare, Target, Lightbulb } from 'lucide-react';
 
 interface PracticeCoachProps {
   currentStyle: RhythmStyle;

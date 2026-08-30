@@ -1,7 +1,6 @@
 import React from 'react';
 import { DrumInstrument, DRUM_INSTRUMENTS_META, RhythmPattern, RhythmSection, RhythmStyle } from '../types/rhythm';
 import { DrumMixerState } from '../types/audio';
-import { VolumeX, Volume2, Mic } from 'lucide-react';
 
 interface DrumMatrixProps {
   currentStyle: RhythmStyle;

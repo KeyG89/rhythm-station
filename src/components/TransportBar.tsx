@@ -1,6 +1,6 @@
 import React from 'react';
 import { RhythmSection, RhythmStyle } from '../types/rhythm';
-import { Play, Square, FastForward, RotateCcw, Volume2, Music, Sparkles, Timer } from 'lucide-react';
+import { Play, Square, RotateCcw, Volume2, Sparkles, Timer } from 'lucide-react';
 
 interface TransportBarProps {
   isPlaying: boolean;
