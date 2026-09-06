@@ -114,6 +114,28 @@ export const PracticeCoach: React.FC<PracticeCoachProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Similar Vibe Songs Banner */}
+      {currentStyle.similarSongs && currentStyle.similarSongs.length > 0 && (
+        <div className="mt-4 pt-3 border-t border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center space-x-2 text-xs font-bold text-amber-400">
+            <span>🎵</span>
+            <span>UTWORY REFERENCYJNE O PODOBNYM VIBE:</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {currentStyle.similarSongs.map((song, idx) => (
+              <div
+                key={idx}
+                className="px-2.5 py-1 bg-[#13151a] border border-gray-700/70 rounded-lg text-xs flex items-center space-x-1.5"
+                title={song.vibeDescription}
+              >
+                <span className="font-bold text-gray-200">{song.title}</span>
+                <span className="text-gray-400">({song.artist}{song.year ? `, ${song.year}` : ''})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

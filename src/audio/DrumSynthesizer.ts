@@ -1,5 +1,26 @@
 import { DrumInstrument } from '../types/rhythm';
-import { DrumMixerState } from '../types/audio';
+import { DrumMixerState, DrumSoundParams, DrumKitPreset, DrumSoundModel } from '../types/audio';
+
+export const DEFAULT_SOUND_PARAMS: Record<DrumInstrument, DrumSoundParams> = {
+  kick: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 100, snappy: 0.5, drive: 0.4 },
+  snare: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 1000, snappy: 0.8, drive: 0.3 },
+  rimshot: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 2200, snappy: 0.5, drive: 0.2 },
+  clap: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 1200, snappy: 0.7, drive: 0.3 },
+  hihat_closed: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 7500, snappy: 0.6, drive: 0.1 },
+  hihat_open: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 6500, snappy: 0.7, drive: 0.2 },
+  hihat_pedal: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 5000, snappy: 0.5, drive: 0.1 },
+  tom_high: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 300, snappy: 0.4, drive: 0.2 },
+  tom_mid: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 220, snappy: 0.4, drive: 0.2 },
+  tom_low: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 150, snappy: 0.4, drive: 0.3 },
+  crash: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 4500, snappy: 0.7, drive: 0.3 },
+  ride: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 7000, snappy: 0.6, drive: 0.2 },
+  ride_bell: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 840, snappy: 0.8, drive: 0.2 },
+  tambourine: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 8500, snappy: 0.7, drive: 0.2 },
+  cowbell: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 800, snappy: 0.5, drive: 0.3 },
+  conga_high: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 500, snappy: 0.5, drive: 0.2 },
+  conga_low: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 350, snappy: 0.5, drive: 0.2 },
+  shaker: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 6000, snappy: 0.5, drive: 0.1 }
+};
 
 export class DrumSynthesizer {
   private ctx: AudioContext;
@@ -7,6 +28,8 @@ export class DrumSynthesizer {
   private channelGains: Map<DrumInstrument, GainNode> = new Map();
   private channelPanners: Map<DrumInstrument, StereoPannerNode> = new Map();
   private isInitialized = false;
+  private soundParams: Record<DrumInstrument, DrumSoundParams> = { ...DEFAULT_SOUND_PARAMS };
+  private currentModel: DrumSoundModel = 'acoustic_custom';
 
   constructor(audioContext: AudioContext) {
     this.ctx = audioContext;
@@ -14,6 +37,40 @@ export class DrumSynthesizer {
     this.masterGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
     this.masterGain.connect(this.ctx.destination);
     this.setupChannels();
+  }
+
+  public setSoundParam<K extends keyof DrumSoundParams>(instrument: DrumInstrument, key: K, value: DrumSoundParams[K]) {
+    if (this.soundParams[instrument]) {
+      this.soundParams[instrument] = {
+        ...this.soundParams[instrument],
+        [key]: value
+      };
+    }
+  }
+
+  public getSoundParams(): Record<DrumInstrument, DrumSoundParams> {
+    return this.soundParams;
+  }
+
+  public setAllSoundParams(params: Record<DrumInstrument, DrumSoundParams>) {
+    this.soundParams = { ...params };
+  }
+
+  public applyKitPreset(preset: DrumKitPreset) {
+    this.currentModel = preset.model;
+    const baseParams: Record<DrumInstrument, DrumSoundParams> = { ...DEFAULT_SOUND_PARAMS };
+
+    // Apply preset overrides
+    (Object.keys(preset.params) as DrumInstrument[]).forEach((inst) => {
+      if (preset.params[inst]) {
+        baseParams[inst] = {
+          ...baseParams[inst],
+          ...preset.params[inst]
+        };
+      }
+    });
+
+    this.soundParams = baseParams;
   }
 
   public getContext(): AudioContext {
@@ -186,26 +243,31 @@ export class DrumSynthesizer {
   // --- Individual Synth Implementations ---
 
   private playKick(time: number, vel: number, dest: AudioNode) {
+    const params = this.soundParams.kick;
+    const pitch = params.pitchMultiplier || 1.0;
+    const decay = params.decayMultiplier || 1.0;
+    const drive = params.drive || 0.4;
+
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
 
-    osc.type = 'sine';
+    osc.type = this.currentModel === 'electronic_808' ? 'sine' : 'sine';
     // Punchy pitch drop envelope
-    osc.frequency.setValueAtTime(140, time);
-    osc.frequency.exponentialRampToValueAtTime(52, time + 0.045);
-    osc.frequency.exponentialRampToValueAtTime(32, time + 0.28);
+    osc.frequency.setValueAtTime(140 * pitch, time);
+    osc.frequency.exponentialRampToValueAtTime(52 * pitch, time + 0.045 * decay);
+    osc.frequency.exponentialRampToValueAtTime(32 * pitch, time + 0.28 * decay);
 
     // Amplitude envelope
-    gain.gain.setValueAtTime(vel * 1.1, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.32);
+    gain.gain.setValueAtTime(vel * (1.0 + drive * 0.4), time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.32 * decay);
 
     // Click transient for punch
     const clickOsc = this.ctx.createOscillator();
     const clickGain = this.ctx.createGain();
     clickOsc.type = 'triangle';
-    clickOsc.frequency.setValueAtTime(320, time);
-    clickOsc.frequency.exponentialRampToValueAtTime(60, time + 0.015);
-    clickGain.gain.setValueAtTime(vel * 0.45, time);
+    clickOsc.frequency.setValueAtTime(320 * pitch, time);
+    clickOsc.frequency.exponentialRampToValueAtTime(60 * pitch, time + 0.015);
+    clickGain.gain.setValueAtTime(vel * (0.4 + drive * 0.3), time);
     clickGain.gain.exponentialRampToValueAtTime(0.001, time + 0.02);
 
     osc.connect(gain);
@@ -215,33 +277,39 @@ export class DrumSynthesizer {
 
     osc.start(time);
     clickOsc.start(time);
-    osc.stop(time + 0.33);
+    osc.stop(time + 0.35 * decay);
     clickOsc.stop(time + 0.03);
   }
 
   private playSnare(time: number, vel: number, dest: AudioNode) {
+    const params = this.soundParams.snare;
+    const pitch = params.pitchMultiplier || 1.0;
+    const decay = params.decayMultiplier || 1.0;
+    const snappy = params.snappy !== undefined ? params.snappy : 0.8;
+    const toneFreq = params.toneFrequency || 1000;
+
     // Body oscillator
     const osc = this.ctx.createOscillator();
     const oscGain = this.ctx.createGain();
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(240, time);
-    osc.frequency.exponentialRampToValueAtTime(160, time + 0.06);
+    osc.frequency.setValueAtTime(240 * pitch, time);
+    osc.frequency.exponentialRampToValueAtTime(160 * pitch, time + 0.06 * decay);
 
-    oscGain.gain.setValueAtTime(vel * 0.7, time);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+    oscGain.gain.setValueAtTime(vel * (0.7 * (1.2 - snappy * 0.4)), time);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.12 * decay);
 
     // Snare wires noise
-    const noiseBuffer = this.createNoiseBuffer(0.25);
+    const noiseBuffer = this.createNoiseBuffer(0.25 * decay);
     const noise = this.ctx.createBufferSource();
     noise.buffer = noiseBuffer;
 
     const noiseFilter = this.ctx.createBiquadFilter();
     noiseFilter.type = 'highpass';
-    noiseFilter.frequency.setValueAtTime(1000, time);
+    noiseFilter.frequency.setValueAtTime(toneFreq, time);
 
     const noiseGain = this.ctx.createGain();
-    noiseGain.gain.setValueAtTime(vel * 0.85, time);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.22);
+    noiseGain.gain.setValueAtTime(vel * (0.85 * snappy), time);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.22 * decay);
 
     osc.connect(oscGain);
     oscGain.connect(dest);
@@ -252,30 +320,34 @@ export class DrumSynthesizer {
 
     osc.start(time);
     noise.start(time);
-    osc.stop(time + 0.15);
-    noise.stop(time + 0.24);
+    osc.stop(time + 0.16 * decay);
+    noise.stop(time + 0.25 * decay);
   }
 
   private playRimshot(time: number, vel: number, dest: AudioNode) {
+    const params = this.soundParams.rimshot;
+    const pitch = params.pitchMultiplier || 1.0;
+    const decay = params.decayMultiplier || 1.0;
+
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(650, time);
-    osc.frequency.exponentialRampToValueAtTime(420, time + 0.02);
+    osc.frequency.setValueAtTime(650 * pitch, time);
+    osc.frequency.exponentialRampToValueAtTime(420 * pitch, time + 0.02 * decay);
 
     gain.gain.setValueAtTime(vel * 0.75, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05 * decay);
 
     const noise = this.ctx.createBufferSource();
-    noise.buffer = this.createNoiseBuffer(0.04);
+    noise.buffer = this.createNoiseBuffer(0.04 * decay);
     const filter = this.ctx.createBiquadFilter();
     filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(2200, time);
+    filter.frequency.setValueAtTime(params.toneFrequency || 2200, time);
     filter.Q.setValueAtTime(4.0, time);
 
     const noiseGain = this.ctx.createGain();
     noiseGain.gain.setValueAtTime(vel * 0.6, time);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.035);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.035 * decay);
 
     osc.connect(gain);
     gain.connect(dest);
@@ -285,8 +357,8 @@ export class DrumSynthesizer {
 
     osc.start(time);
     noise.start(time);
-    osc.stop(time + 0.06);
-    noise.stop(time + 0.04);
+    osc.stop(time + 0.06 * decay);
+    noise.stop(time + 0.04 * decay);
   }
 
   private playClap(time: number, vel: number, dest: AudioNode) {

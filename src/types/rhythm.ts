@@ -91,6 +91,13 @@ export interface RhythmPattern {
   swing?: number; // 0.0 to 1.0 (triplet feel delay on even 16ths/8ths)
 }
 
+export interface SimilarSong {
+  title: string;
+  artist: string;
+  year?: string;
+  vibeDescription?: string;
+}
+
 export interface RhythmStyle {
   id: string; // e.g. "00", "01" ... "99"
   name: string;
@@ -100,5 +107,6 @@ export interface RhythmStyle {
   description: string;
   drumPatternDescription: string; // e.g. "Hi-hat 8ths, Kick on 1 & 3, Snare on 2 & 4"
   practiceFocus: string; // Co ćwiczyć na perkusji przy tym rytmie
+  similarSongs?: SimilarSong[]; // Piosenki o podobnym klimacie i rytmie
   sections: Record<RhythmSection, RhythmPattern>;
 }

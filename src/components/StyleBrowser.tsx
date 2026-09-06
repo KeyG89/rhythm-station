@@ -170,6 +170,14 @@ export const StyleBrowser: React.FC<StyleBrowserProps> = ({
                 <p className="text-[11px] text-gray-400 line-clamp-2 mb-2 leading-relaxed">
                   {style.description}
                 </p>
+
+                {/* Similar Song Vibe Badge */}
+                {style.similarSongs && style.similarSongs.length > 0 && (
+                  <div className="mb-2 text-[10px] text-amber-300/90 truncate flex items-center space-x-1">
+                    <span className="text-amber-400">🎵</span>
+                    <span className="font-semibold truncate">{style.similarSongs[0].title} ({style.similarSongs[0].artist})</span>
+                  </div>
+                )}
               </div>
 
               {/* Bottom Badges: BPM, Time Sig, Practice advice tag */}

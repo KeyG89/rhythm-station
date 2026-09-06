@@ -1,9 +1,11 @@
-import { RhythmStyle, RhythmSection, DrumHit } from '../types/rhythm';
+import { RhythmStyle, RhythmSection, DrumHit, RhythmPattern } from '../types/rhythm';
+import { FillType } from '../types/audio';
 import { DrumSynthesizer } from './DrumSynthesizer';
 
 export interface SchedulerCallbacks {
   onStepChange?: (stepIndex: number, barNumber: number, section: RhythmSection, hits: DrumHit[]) => void;
   onSectionChange?: (section: RhythmSection) => void;
+  onFillTriggered?: (fillType: FillType | null, targetSection: RhythmSection) => void;
   onBarComplete?: (totalBars: number) => void;
   onPlaybackEnd?: () => void;
   onCountInBeat?: (beatNumber: number, totalBeats: number) => void;
@@ -16,7 +18,7 @@ export class AudioScheduler {
   private animationFrameId: number | null = null;
 
   // Timing constants
-  private readonly lookaheadMs = 30; // Check every 30ms
+  private readonly lookaheadMs = 25; // Check every 25ms
   private readonly scheduleAheadTime = 0.12; // Schedule audio 120ms ahead
 
   // State
@@ -24,6 +26,13 @@ export class AudioScheduler {
   private currentSection: RhythmSection = 'mainA';
   private nextSection: RhythmSection | null = null;
   private returnToSectionAfterFill: RhythmSection = 'mainA';
+
+  // Smart Fill state
+  private activeFillType: FillType | null = null;
+  private fillStartStep: number = -1;
+  private fillLengthSteps: number = 4;
+  private fillTargetSection: RhythmSection = 'mainA';
+  private fillPatternSource: 'fillA' | 'fillB' = 'fillA';
 
   private bpm: number = 120;
   private nextStepTime: number = 0;
@@ -66,7 +75,6 @@ export class AudioScheduler {
     if (resetBpm) {
       this.bpm = style.defaultBpm;
     }
-    // If running, ensure current step doesn't exceed new section length
     const pattern = this.currentStyle.sections[this.currentSection] || this.currentStyle.sections.mainA;
     if (this.currentStep >= pattern.steps.length) {
       this.currentStep = 0;
@@ -86,6 +94,85 @@ export class AudioScheduler {
     this.metronomeVolume = volume;
   }
 
+  /**
+   * Smart Contextual Transition Handler
+   * - Clicking same Main (e.g. Main A -> Main A): 1-beat micro fill (1/4 in 4/4, 1/3 in 3/4)
+   * - Clicking switch (Main A -> Main B): 2-beat medium fill (1/2 in 4/4)
+   * - Clicking Fill A / Fill B: Full 1-bar fill
+   */
+  public triggerSmartTransition(type: 'same' | 'switch' | 'full', targetSection?: RhythmSection) {
+    if (!this.isRunning) {
+      const target = targetSection || (this.currentSection === 'mainA' ? 'mainB' : 'mainA');
+      this.currentSection = target;
+      this.callbacks.onSectionChange?.(target);
+      return;
+    }
+
+    const pattern = this.currentStyle.sections[this.currentSection] || this.currentStyle.sections.mainA;
+    const stepsPerBeat = pattern.stepsPerBeat || 4;
+    const beatsInBar = this.currentStyle.timeSignature[0];
+    const stepsPerBar = beatsInBar * stepsPerBeat;
+    const stepInBar = this.currentStep % stepsPerBar;
+    const remainingInBar = stepsPerBar - stepInBar;
+
+    if (type === 'same') {
+      // 1-beat Micro Fill: 1/4 in 4/4, 1/3 in 3/4, or exactly 1 beat length
+      const fillDuration = stepsPerBeat;
+      this.activeFillType = 'micro';
+      this.fillLengthSteps = fillDuration;
+      this.fillPatternSource = this.currentSection === 'mainB' ? 'fillB' : 'fillA';
+      this.fillTargetSection = this.currentSection;
+
+      if (remainingInBar >= fillDuration) {
+        // Space available in CURRENT bar! Start at the beginning of the last beat of this bar
+        this.fillStartStep = this.currentStep + (remainingInBar - fillDuration);
+      } else {
+        // Space not available in current bar: schedule for the last beat of the next bar
+        this.fillStartStep = this.currentStep + remainingInBar + (stepsPerBar - fillDuration);
+      }
+      this.callbacks.onFillTriggered?.('micro', this.fillTargetSection);
+
+    } else if (type === 'switch') {
+      // 2-beat Medium Fill: 2x longer, half of 4/4 bar
+      const fillBeats = Math.max(1, Math.floor(beatsInBar / 2));
+      const fillDuration = fillBeats * stepsPerBeat;
+      const target = targetSection || (this.currentSection === 'mainA' ? 'mainB' : 'mainA');
+
+      this.activeFillType = 'medium';
+      this.fillLengthSteps = fillDuration;
+      this.fillPatternSource = target === 'mainB' ? 'fillA' : 'fillB';
+      this.fillTargetSection = target;
+
+      if (remainingInBar >= fillDuration) {
+        // Space available in CURRENT bar! Start at the halfway point of this bar
+        this.fillStartStep = this.currentStep + (remainingInBar - fillDuration);
+      } else {
+        // Space not available in current bar: schedule for the halfway point of the next bar
+        this.fillStartStep = this.currentStep + remainingInBar + (stepsPerBar - fillDuration);
+      }
+      this.callbacks.onFillTriggered?.('medium', target);
+
+    } else {
+      // Full 1-bar Fill
+      const fillSec = targetSection === 'fillB' ? 'fillB' : 'fillA';
+      this.activeFillType = 'full';
+      this.fillPatternSource = fillSec;
+      this.fillLengthSteps = stepsPerBar;
+      this.fillTargetSection = fillSec === 'fillB' ? 'mainB' : 'mainA';
+
+      if (stepInBar <= 2) {
+        // At very beginning of bar: play full fill now
+        this.currentSection = fillSec;
+        this.currentStep = 0;
+        this.callbacks.onSectionChange?.(fillSec);
+      } else {
+        // Queue for next bar
+        this.nextSection = fillSec;
+      }
+      this.callbacks.onFillTriggered?.('full', this.fillTargetSection);
+    }
+  }
+
   public triggerSection(section: RhythmSection, immediate = false) {
     if (!this.isRunning) {
       this.currentSection = section;
@@ -94,18 +181,27 @@ export class AudioScheduler {
     }
 
     if (section === 'fillA' || section === 'fillB') {
-      // Remember which main section to return to
-      if (this.currentSection === 'mainA' || this.currentSection === 'mainB') {
-        this.returnToSectionAfterFill = section === 'fillA' ? 'mainA' : 'mainB';
-      }
+      this.triggerSmartTransition('full', section);
+      return;
     }
 
     if (immediate) {
       this.currentSection = section;
       this.currentStep = 0;
+      this.activeFillType = null;
+      this.fillStartStep = -1;
       this.callbacks.onSectionChange?.(section);
     } else {
-      this.nextSection = section;
+      if (section === this.currentSection) {
+        this.triggerSmartTransition('same', section);
+      } else if (
+        (this.currentSection === 'mainA' && section === 'mainB') ||
+        (this.currentSection === 'mainB' && section === 'mainA')
+      ) {
+        this.triggerSmartTransition('switch', section);
+      } else {
+        this.nextSection = section;
+      }
     }
   }
 
@@ -119,6 +215,8 @@ export class AudioScheduler {
     this.currentStep = 0;
     this.currentBar = 1;
     this.totalBarsPlayed = 0;
+    this.activeFillType = null;
+    this.fillStartStep = -1;
     this.eventQueue = [];
 
     const beatsPerBar = this.currentStyle.timeSignature[0];
@@ -136,6 +234,8 @@ export class AudioScheduler {
     this.isRunning = false;
     this.isCountInActive = false;
     this.nextSection = null;
+    this.activeFillType = null;
+    this.fillStartStep = -1;
 
     if (this.timerId !== null) {
       clearInterval(this.timerId);
@@ -161,6 +261,10 @@ export class AudioScheduler {
 
   public getNextSection(): RhythmSection | null {
     return this.nextSection;
+  }
+
+  public getActiveFillType(): FillType | null {
+    return this.activeFillType;
   }
 
   // --- Scheduler Core ---
@@ -208,7 +312,23 @@ export class AudioScheduler {
     const stepsPerBar = stepsPerBeat * timeSigNumerator;
 
     const stepIndex = this.currentStep;
-    const hits = pattern.steps[stepIndex] || [];
+    let hits = pattern.steps[stepIndex] || [];
+    let sectionForDisplay = this.currentSection;
+
+    // Check if we are currently executing a micro or medium fill slice
+    if (this.activeFillType && this.fillStartStep >= 0 && stepIndex >= this.fillStartStep) {
+      const fillPattern: RhythmPattern = this.currentStyle.sections[this.fillPatternSource] || this.currentStyle.sections.fillA;
+      const fillStepsCount = fillPattern.steps.length;
+      const fillDuration = this.fillLengthSteps || stepsPerBeat;
+      const offsetInFill = stepIndex - this.fillStartStep;
+
+      // Map to the climactic end portion of the fill pattern
+      const sourceStepIdx = (fillStepsCount - fillDuration) + offsetInFill;
+      if (sourceStepIdx >= 0 && sourceStepIdx < fillStepsCount) {
+        hits = fillPattern.steps[sourceStepIdx] || [];
+        sectionForDisplay = this.fillPatternSource;
+      }
+    }
 
     // Metronome click on beat starts
     if (this.metronomeEnabled && stepIndex % stepsPerBeat === 0) {
@@ -230,7 +350,7 @@ export class AudioScheduler {
       time,
       step: stepIndex,
       bar: this.currentBar,
-      section: this.currentSection,
+      section: sectionForDisplay,
       hits
     });
 
@@ -238,7 +358,6 @@ export class AudioScheduler {
     let stepDuration = (60.0 / this.bpm) / stepsPerBeat;
     const swing = pattern.swing || 0;
     if (swing > 0 && stepsPerBeat === 4) {
-      // Swing on 16th notes
       if (stepIndex % 2 === 0) {
         stepDuration += (stepDuration * swing * 0.4);
       } else {
@@ -249,11 +368,20 @@ export class AudioScheduler {
     this.nextStepTime += stepDuration;
     this.currentStep++;
 
-    // Check if we finished a bar or the entire section
+    // Check if we finished a bar
     if (this.currentStep % stepsPerBar === 0) {
       this.currentBar++;
       this.totalBarsPlayed++;
       this.callbacks.onBarComplete?.(this.totalBarsPlayed);
+
+      // If a micro or medium fill just finished at the end of this bar, transition to destination section immediately!
+      if (this.activeFillType && this.activeFillType !== 'full' && this.fillStartStep >= 0 && this.currentStep > this.fillStartStep) {
+        this.currentSection = this.fillTargetSection;
+        this.activeFillType = null;
+        this.fillStartStep = -1;
+        this.callbacks.onSectionChange?.(this.currentSection);
+        this.callbacks.onFillTriggered?.(null, this.currentSection);
+      }
     }
 
     // Section transition logic at end of pattern
@@ -266,11 +394,17 @@ export class AudioScheduler {
         return;
       }
 
-      if (this.currentSection === 'intro') {
+      if (this.activeFillType) {
+        // Fill finished! Transition to target section
+        this.currentSection = this.fillTargetSection;
+        this.activeFillType = null;
+        this.fillStartStep = -1;
+        this.callbacks.onSectionChange?.(this.currentSection);
+        this.callbacks.onFillTriggered?.(null, this.currentSection);
+      } else if (this.currentSection === 'intro') {
         this.currentSection = 'mainA';
         this.callbacks.onSectionChange?.('mainA');
       } else if (this.currentSection === 'fillA' || this.currentSection === 'fillB') {
-        // Return to main after fill
         this.currentSection = this.returnToSectionAfterFill;
         this.callbacks.onSectionChange?.(this.returnToSectionAfterFill);
       } else if (this.nextSection) {

@@ -163,6 +163,11 @@ export const RetroDisplay: React.FC<RetroDisplayProps> = ({
             <p className={`mt-2 text-xs italic ${themeStyles.text} opacity-90 line-clamp-1`}>
               &quot;{currentStyle.description}&quot;
             </p>
+            {currentStyle.similarSongs && currentStyle.similarSongs.length > 0 && (
+              <p className={`mt-1 text-[11px] font-bold ${themeStyles.accentText} truncate`}>
+                ★ VIBE: {currentStyle.similarSongs[0].title} – {currentStyle.similarSongs[0].artist}
+              </p>
+            )}
           </div>
 
           {/* BPM Large Display & Beat LED Counter */}

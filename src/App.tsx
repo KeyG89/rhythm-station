@@ -4,16 +4,18 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { RetroDisplay } from './components/RetroDisplay';
 import { TransportBar } from './components/TransportBar';
 import { DrumMatrix } from './components/DrumMatrix';
+import { DrumTablature } from './components/DrumTablature';
+import { DrumKitStudio } from './components/DrumKitStudio';
 import { DrumMixer } from './components/DrumMixer';
 import { SpeedTrainer } from './components/SpeedTrainer';
 import { StyleBrowser } from './components/StyleBrowser';
 import { PracticeCoach } from './components/PracticeCoach';
 import { AudioExporter } from './components/AudioExporter';
 import { KeyboardHelpModal } from './components/KeyboardHelpModal';
-import { Sliders, Music, Zap, GraduationCap, Keyboard, Disc } from 'lucide-react';
+import { Sliders, Music, Zap, GraduationCap, Keyboard, Disc, BookOpen, Drum } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'matrix' | 'styles' | 'mixer' | 'trainer' | 'coach' | 'export'>('styles');
+  const [activeTab, setActiveTab] = useState<'matrix' | 'tablature' | 'kit' | 'styles' | 'mixer' | 'trainer' | 'coach' | 'export'>('styles');
   const [isHelpOpen, setIsHelpOpen] = useState<boolean>(false);
 
   const engine = useDrumEngine();
@@ -67,7 +69,7 @@ export default function App() {
       </header>
 
       {/* Main Content Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
+      <main className={`${activeTab === 'matrix' ? 'max-w-[98%] px-2 sm:px-4' : 'max-w-7xl px-4 sm:px-6'} mx-auto pt-6 space-y-6 transition-all`}>
         {/* Top: Authentic Retro Yamaha LCD Display */}
         <RetroDisplay
           currentStyle={engine.currentStyle}
@@ -91,6 +93,7 @@ export default function App() {
           isPlaying={engine.isPlaying}
           currentSection={engine.currentSection}
           nextSection={engine.nextSection}
+          activeFillType={engine.activeFillType}
           currentStyle={engine.currentStyle}
           bpm={engine.bpm}
           metronomeEnabled={engine.metronomeEnabled}
@@ -117,6 +120,18 @@ export default function App() {
           </button>
 
           <button
+            onClick={() => setActiveTab('tablature')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-2 whitespace-nowrap transition-all ${
+              activeTab === 'tablature'
+                ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 ring-2 ring-amber-400'
+                : 'bg-[#1a1c22] hover:bg-[#252830] text-gray-300 border border-amber-500/30 text-amber-300'
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Tabulatura & Zapis</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('matrix')}
             className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-2 whitespace-nowrap transition-all ${
               activeTab === 'matrix'
@@ -125,7 +140,19 @@ export default function App() {
             }`}
           >
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-            <span>Siatka Rytmu (Drum Grid)</span>
+            <span>Siatka Rytmu (100% Szerokości)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('kit')}
+            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-2 whitespace-nowrap transition-all ${
+              activeTab === 'kit'
+                ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 ring-2 ring-amber-400'
+                : 'bg-[#1a1c22] hover:bg-[#252830] text-gray-300 border border-emerald-500/30 text-emerald-300'
+            }`}
+          >
+            <Drum className="w-4 h-4" />
+            <span>Zestaw & Presety Brzmień</span>
           </button>
 
           <button
@@ -191,16 +218,42 @@ export default function App() {
           </div>
         )}
 
-        {activeTab === 'matrix' && (
-          <DrumMatrix
+        {activeTab === 'tablature' && (
+          <DrumTablature
             currentStyle={engine.currentStyle}
             currentSection={engine.currentSection}
             currentStep={engine.currentStep}
             isPlaying={engine.isPlaying}
-            mixerState={engine.mixerState}
+            onSelectSection={(sec) => engine.triggerSection(sec, true)}
             onTriggerInstrument={engine.triggerInstrument}
-            onToggleMute={engine.toggleChannelMute}
-            onToggleSolo={engine.toggleChannelSolo}
+          />
+        )}
+
+        {activeTab === 'matrix' && (
+          <div className="w-full">
+            <DrumMatrix
+              currentStyle={engine.currentStyle}
+              currentSection={engine.currentSection}
+              currentStep={engine.currentStep}
+              isPlaying={engine.isPlaying}
+              mixerState={engine.mixerState}
+              onTriggerInstrument={engine.triggerInstrument}
+              onToggleMute={engine.toggleChannelMute}
+              onToggleSolo={engine.toggleChannelSolo}
+            />
+          </div>
+        )}
+
+        {activeTab === 'kit' && (
+          <DrumKitStudio
+            soundParams={engine.soundParams}
+            currentPreset={engine.currentKitPreset}
+            onSoundParamChange={engine.setSoundParam}
+            onApplyPreset={engine.applyKitPreset}
+            onSaveCustomPreset={engine.saveCustomPreset}
+            onDeleteCustomPreset={engine.deleteCustomPreset}
+            customPresets={engine.customKitPresets}
+            onTriggerInstrument={engine.triggerInstrument}
           />
         )}
 

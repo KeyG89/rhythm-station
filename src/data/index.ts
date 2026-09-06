@@ -9,8 +9,9 @@ import { STYLES_LATIN } from './styles/cat6_latin';
 import { STYLES_COUNTRY_FOLK } from './styles/cat7_country';
 import { STYLES_BALLAD } from './styles/cat8_ballad';
 import { STYLES_TRADITIONAL } from './styles/cat9_traditional';
+import { SIMILAR_SONGS_MAP } from './similarSongsData';
 
-export const ALL_STYLES: RhythmStyle[] = [
+const RAW_STYLES: RhythmStyle[] = [
   ...STYLES_8BEAT,
   ...STYLES_16BEAT,
   ...STYLES_ROCK_BLUES,
@@ -22,6 +23,11 @@ export const ALL_STYLES: RhythmStyle[] = [
   ...STYLES_BALLAD,
   ...STYLES_TRADITIONAL
 ];
+
+export const ALL_STYLES: RhythmStyle[] = RAW_STYLES.map((style) => ({
+  ...style,
+  similarSongs: SIMILAR_SONGS_MAP[style.id] || []
+}));
 
 export const STYLES_MAP: Map<string, RhythmStyle> = new Map(
   ALL_STYLES.map((style) => [style.id, style])
@@ -44,6 +50,9 @@ export function searchStyles(query: string): RhythmStyle[] {
       s.name.toLowerCase().includes(q) ||
       s.description.toLowerCase().includes(q) ||
       s.category.toLowerCase().includes(q) ||
-      s.practiceFocus.toLowerCase().includes(q)
+      s.practiceFocus.toLowerCase().includes(q) ||
+      (s.similarSongs && s.similarSongs.some(song =>
+        song.title.toLowerCase().includes(q) || song.artist.toLowerCase().includes(q)
+      ))
   );
 }

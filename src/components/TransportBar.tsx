@@ -1,11 +1,13 @@
 import React from 'react';
 import { RhythmSection, RhythmStyle } from '../types/rhythm';
+import { FillType } from '../types/audio';
 import { Play, Square, RotateCcw, Volume2, Sparkles, Timer } from 'lucide-react';
 
 interface TransportBarProps {
   isPlaying: boolean;
   currentSection: RhythmSection;
   nextSection: RhythmSection | null;
+  activeFillType: FillType | null;
   currentStyle: RhythmStyle;
   bpm: number;
   metronomeEnabled: boolean;
@@ -21,6 +23,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
   isPlaying,
   currentSection,
   nextSection,
+  activeFillType,
   currentStyle,
   bpm,
   metronomeEnabled,
@@ -95,22 +98,29 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             Intro
           </button>
 
-          {/* MAIN A */}
-          <button
-            onClick={() => onTriggerSection('mainA')}
-            className={`px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow ${
-              currentSection === 'mainA'
-                ? 'bg-emerald-500 text-black ring-2 ring-emerald-300'
-                : nextSection === 'mainA'
-                ? 'bg-emerald-800 text-emerald-200 animate-pulse'
-                : 'bg-[#262932] hover:bg-[#313540] text-gray-300'
-            }`}
-            title="Klawisz V: Przełącz Main A / Main B"
-          >
-            Main A
-          </button>
+          {/* MAIN A - clicking same section = micro fill */}
+          <div className="relative">
+            <button
+              onClick={() => onTriggerSection('mainA')}
+              className={`px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow ${
+                currentSection === 'mainA' && !activeFillType
+                  ? 'bg-emerald-500 text-black ring-2 ring-emerald-300'
+                  : nextSection === 'mainA'
+                  ? 'bg-emerald-800 text-emerald-200 animate-pulse'
+                  : 'bg-[#262932] hover:bg-[#313540] text-gray-300'
+              }`}
+              title="Jeśli grasz Main A → Micro-fill (1 miara). Jeśli grasz Main B → Medium-fill (2 miary), a potem Main A."
+            >
+              Main A
+            </button>
+            {currentSection === 'mainA' && activeFillType && (
+              <span className="absolute -top-1.5 -right-1.5 text-[9px] font-bold px-1 py-0.5 rounded-full bg-orange-500 text-white shadow-sm">
+                {activeFillType === 'micro' ? 'μ' : activeFillType === 'medium' ? '½' : '→'}
+              </span>
+            )}
+          </div>
 
-          {/* FILL IN A */}
+          {/* FILL IN A – full 1-bar fill */}
           <button
             onClick={() => onTriggerSection('fillA')}
             className={`px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow ${
@@ -120,27 +130,34 @@ export const TransportBar: React.FC<TransportBarProps> = ({
                 ? 'bg-cyan-800 text-cyan-200 animate-pulse'
                 : 'bg-[#262932] hover:bg-[#313540] text-gray-300 border border-cyan-500/20'
             }`}
-            title="Klawisz F: Wyzwól przejście perkusyjne Fill-In"
+            title="Pełny 1-taktowy Fill-In A"
           >
             Fill A
           </button>
 
-          {/* MAIN B */}
-          <button
-            onClick={() => onTriggerSection('mainB')}
-            className={`px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow ${
-              currentSection === 'mainB'
-                ? 'bg-emerald-500 text-black ring-2 ring-emerald-300'
-                : nextSection === 'mainB'
-                ? 'bg-emerald-800 text-emerald-200 animate-pulse'
-                : 'bg-[#262932] hover:bg-[#313540] text-gray-300'
-            }`}
-            title="Klawisz V: Przełącz Main A / Main B"
-          >
-            Main B
-          </button>
+          {/* MAIN B - clicking same section = micro fill */}
+          <div className="relative">
+            <button
+              onClick={() => onTriggerSection('mainB')}
+              className={`px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow ${
+                currentSection === 'mainB' && !activeFillType
+                  ? 'bg-emerald-500 text-black ring-2 ring-emerald-300'
+                  : nextSection === 'mainB'
+                  ? 'bg-emerald-800 text-emerald-200 animate-pulse'
+                  : 'bg-[#262932] hover:bg-[#313540] text-gray-300'
+              }`}
+              title="Jeśli grasz Main B → Micro-fill (1 miara). Jeśli grasz Main A → Medium-fill (2 miary), a potem Main B."
+            >
+              Main B
+            </button>
+            {currentSection === 'mainB' && activeFillType && (
+              <span className="absolute -top-1.5 -right-1.5 text-[9px] font-bold px-1 py-0.5 rounded-full bg-orange-500 text-white shadow-sm">
+                {activeFillType === 'micro' ? 'μ' : activeFillType === 'medium' ? '½' : '→'}
+              </span>
+            )}
+          </div>
 
-          {/* FILL IN B */}
+          {/* FILL IN B – full 1-bar fill */}
           <button
             onClick={() => onTriggerSection('fillB')}
             className={`px-3 sm:px-4 py-2.5 rounded-lg text-xs font-bold uppercase transition-all shadow ${
@@ -150,7 +167,7 @@ export const TransportBar: React.FC<TransportBarProps> = ({
                 ? 'bg-cyan-800 text-cyan-200 animate-pulse'
                 : 'bg-[#262932] hover:bg-[#313540] text-gray-300 border border-cyan-500/20'
             }`}
-            title="Klawisz F: Wyzwól przejście perkusyjne Fill-In"
+            title="Pełny 1-taktowy Fill-In B"
           >
             Fill B
           </button>
@@ -167,6 +184,21 @@ export const TransportBar: React.FC<TransportBarProps> = ({
             Ending
           </button>
         </div>
+
+        {/* Fill type indicator strip */}
+        {activeFillType && (
+          <div className="w-full flex items-center justify-center">
+            <div className={`px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1.5 ${
+              activeFillType === 'micro'
+                ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                : activeFillType === 'medium'
+                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                : 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+            }`}>
+              <span>{activeFillType === 'micro' ? '⚡ Micro-Fill (1 miara)' : activeFillType === 'medium' ? '⚡⚡ Medium-Fill (2 miary)' : '⚡⚡⚡ Full Fill (1 takt)'}</span>
+            </div>
+          </div>
+        )}
 
         {/* Right: Tempo & Metronome controls */}
         <div className="flex flex-wrap items-center justify-end gap-3">

@@ -41,7 +41,7 @@ export const DrumMatrix: React.FC<DrumMatrixProps> = ({
   ).filter((inst) => DRUM_INSTRUMENTS_META[inst] !== undefined);
 
   return (
-    <div className="bg-[#1c1e24] border-2 border-[#2b2f38] rounded-2xl p-4 sm:p-5 shadow-xl">
+    <div className="bg-[#1c1e24] border-2 border-[#2b2f38] rounded-2xl p-4 sm:p-5 shadow-xl w-full">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-3 border-b border-gray-800">
         <div>
           <h2 className="text-base sm:text-lg font-bold text-gray-100 flex items-center space-x-2">
@@ -60,13 +60,15 @@ export const DrumMatrix: React.FC<DrumMatrixProps> = ({
         </div>
       </div>
 
-      {/* Grid Container with horizontal scroll for smaller screens */}
-      <div className="overflow-x-auto pb-2">
-        <div className="min-w-[640px]">
+      {/* Full-width scrollable grid */}
+      <div className="w-full overflow-x-auto pb-2">
+        <div className="w-full min-w-[560px]">
           {/* Header row: Step numbers & beat markers */}
-          <div className="grid grid-cols-[160px_repeat(auto-fill,minmax(26px,1fr))] items-center gap-1.5 mb-2 px-1 text-[11px] font-mono text-gray-400">
-            <div className="font-semibold uppercase tracking-wider text-gray-400">Instrument</div>
-            <div className="col-span-1 grid grid-flow-col auto-cols-fr gap-1.5">
+          <div className="flex items-center gap-0 mb-2 px-1 text-[11px] font-mono text-gray-400">
+            {/* Instrument label column */}
+            <div className="shrink-0 w-[148px] font-semibold uppercase tracking-wider text-gray-400">Instrument</div>
+            {/* Steps flex-grow to fill width */}
+            <div className="flex flex-1 gap-0">
               {Array.from({ length: totalSteps }).map((_, stepIdx) => {
                 const beatIndex = Math.floor(stepIdx / stepsPerBeat) + 1;
                 const isBeatStart = stepIdx % stepsPerBeat === 0;
@@ -75,15 +77,16 @@ export const DrumMatrix: React.FC<DrumMatrixProps> = ({
                 return (
                   <div
                     key={stepIdx}
-                    className={`text-center py-1 rounded transition-colors ${
+                    className={`flex-1 text-center py-1 rounded mx-px transition-colors ${
                       isCurrentStep
                         ? 'bg-amber-400 text-black font-extrabold shadow'
                         : isBeatStart
                         ? 'bg-gray-800 text-amber-400 font-bold border border-gray-700'
                         : 'text-gray-400'
                     }`}
+                    style={{ minWidth: '14px' }}
                   >
-                    {isBeatStart ? beatIndex : `.${(stepIdx % stepsPerBeat) + 1}`}
+                    {isBeatStart ? beatIndex : '.'}
                   </div>
                 );
               })}
@@ -98,95 +101,104 @@ export const DrumMatrix: React.FC<DrumMatrixProps> = ({
               const isMuted = channel?.isMuted;
               const isSolo = channel?.isSolo;
 
+              // Collect which step indices this instrument has hits
+              const hitSteps = new Set<number>(
+                pattern.steps.flatMap((stepHits, i) =>
+                  stepHits.some((h) => h.instrument === inst) ? [i] : []
+                )
+              );
+              const hitVelocities = new Map<number, number>(
+                pattern.steps.flatMap((stepHits, i) => {
+                  const hit = stepHits.find((h) => h.instrument === inst);
+                  return hit ? [[i, hit.velocity]] : [];
+                })
+              );
+
               return (
-                <div
-                  key={inst}
-                  className={`grid grid-cols-[160px_repeat(auto-fill,minmax(26px,1fr))] items-center gap-1.5 p-1 rounded-xl transition-colors ${
-                    isMuted
-                      ? 'bg-[#15171b]/60 opacity-50'
-                      : 'bg-[#22252c] hover:bg-[#272b33]'
-                  }`}
-                >
-                  {/* Left Label & Solo/Mute Controls */}
-                  <div className="flex items-center justify-between pr-2">
-                    <button
-                      onClick={() => onTriggerInstrument(inst)}
-                      className="flex items-center space-x-1.5 text-left text-xs font-bold text-gray-200 hover:text-amber-400 truncate active:scale-95 transition-transform"
-                      title="Kliknij aby zagrać dźwięk (Drum Pad)"
-                    >
-                      <span
-                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: meta.color }}
-                      />
-                      <span className="truncate">{meta.shortName} - {meta.name.split('(')[0]}</span>
-                    </button>
+                <div key={inst} className="flex items-center gap-0">
+                  {/* Instrument button */}
+                  <button
+                    onClick={() => onTriggerInstrument(inst)}
+                    className={`shrink-0 w-[148px] flex items-center space-x-2 px-2 py-1.5 rounded-lg transition-all text-xs font-semibold text-left ${
+                      isSolo
+                        ? 'bg-yellow-900/50 text-yellow-300 ring-1 ring-yellow-500/40'
+                        : isMuted
+                        ? 'bg-gray-900/80 text-gray-600'
+                        : 'bg-[#252830] hover:bg-[#2f3340] text-gray-200'
+                    }`}
+                    title={`Kliknij aby zagrać: ${meta.name}. Ctrl+Click: Mute. Shift+Click: Solo.`}
+                  >
+                    <span
+                      className="w-2.5 h-2.5 rounded-full shrink-0"
+                      style={{ backgroundColor: isMuted ? '#444' : meta.color }}
+                    />
+                    <span className="truncate">{meta.name}</span>
+                  </button>
 
-                    <div className="flex items-center space-x-1 flex-shrink-0">
-                      <button
-                        onClick={() => onToggleMute(inst)}
-                        className={`w-5 h-5 rounded text-[10px] font-bold flex items-center justify-center transition-colors ${
-                          isMuted
-                            ? 'bg-red-500 text-white font-extrabold'
-                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
-                        }`}
-                        title={isMuted ? 'Wyciszony (Kliknij by odciszyć)' : 'Wycisz ten instrument'}
-                      >
-                        M
-                      </button>
-                      <button
-                        onClick={() => onToggleSolo(inst)}
-                        className={`w-5 h-5 rounded text-[10px] font-bold flex items-center justify-center transition-colors ${
-                          isSolo
-                            ? 'bg-amber-400 text-black font-extrabold'
-                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
-                        }`}
-                        title={isSolo ? 'Tryb Solo aktywny' : 'Graj tylko ten instrument (Solo)'}
-                      >
-                        S
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Right: Step Grid Cells */}
-                  <div className="col-span-1 grid grid-flow-col auto-cols-fr gap-1.5">
+                  {/* Hit cells – flex to fill remaining width */}
+                  <div className="flex flex-1 gap-0">
                     {Array.from({ length: totalSteps }).map((_, stepIdx) => {
-                      const stepHits = pattern.steps[stepIdx] || [];
-                      const hit = stepHits.find((h) => h.instrument === inst);
-                      const isStepHit = Boolean(hit);
-                      const isCurrentPlayhead = isPlaying && currentStep === stepIdx;
+                      const hasHit = hitSteps.has(stepIdx);
+                      const velocity = hitVelocities.get(stepIdx) || 0;
+                      const isCurrentStep = isPlaying && currentStep === stepIdx;
                       const isBeatStart = stepIdx % stepsPerBeat === 0;
+                      const isGroup = Math.floor(stepIdx / stepsPerBeat) % 2 === 0;
+
+                      let bg = '';
+                      if (hasHit && !isMuted) {
+                        if (velocity > 0.85) bg = 'bg-amber-400';
+                        else if (velocity > 0.55) bg = 'bg-amber-600/90';
+                        else bg = 'bg-amber-800/80';
+                      } else if (isGroup) {
+                        bg = 'bg-[#1c1f26]';
+                      } else {
+                        bg = 'bg-[#181b21]';
+                      }
 
                       return (
                         <div
                           key={stepIdx}
                           onClick={() => onTriggerInstrument(inst)}
-                          className={`h-7 rounded flex items-center justify-center cursor-pointer transition-all ${
-                            isCurrentPlayhead
-                              ? isStepHit
-                                ? 'ring-2 ring-white scale-110 shadow-lg'
-                                : 'ring-1 ring-amber-400/80 bg-amber-400/20'
+                          style={{ minWidth: '14px' }}
+                          className={`flex-1 h-9 mx-px rounded transition-all cursor-pointer flex items-center justify-center ${bg} ${
+                            isCurrentStep
+                              ? 'ring-2 ring-amber-300 ring-inset z-10'
                               : isBeatStart
-                              ? 'border border-gray-700'
-                              : 'border border-gray-800/60'
-                          } ${
-                            isStepHit
-                              ? isMuted
-                                ? 'bg-gray-600 opacity-40'
-                                : ''
-                              : 'bg-[#16181d] hover:bg-gray-800'
-                          }`}
-                          style={{
-                            backgroundColor: isStepHit && !isMuted ? meta.color : undefined,
-                            opacity: isStepHit && !isMuted ? Math.max(0.6, hit?.velocity || 0.8) : undefined
-                          }}
-                          title={`Krok ${stepIdx + 1} - ${isStepHit ? `Aktywne uderzenie (Dynamika: ${Math.round((hit?.velocity || 0.8) * 100)}%)` : 'Pusty krok'}`}
+                              ? 'border-l border-gray-700/60'
+                              : ''
+                          } ${isMuted ? 'opacity-30' : ''} hover:opacity-80`}
                         >
-                          {isStepHit && (
-                            <div className="w-2 h-2 rounded-full bg-white/90 shadow-sm" />
+                          {hasHit && !isMuted && (
+                            <span
+                              className="block w-2 h-2 rounded-full shadow-sm"
+                              style={{ backgroundColor: meta.color }}
+                            />
                           )}
                         </div>
                       );
                     })}
+                  </div>
+
+                  {/* Mute / Solo mini buttons */}
+                  <div className="shrink-0 flex items-center space-x-1 ml-2">
+                    <button
+                      onClick={() => onToggleMute(inst)}
+                      className={`w-7 h-7 rounded text-[10px] font-extrabold transition-all ${
+                        isMuted ? 'bg-red-600 text-white' : 'bg-gray-800 hover:bg-gray-700 text-gray-400'
+                      }`}
+                      title="Mute"
+                    >
+                      M
+                    </button>
+                    <button
+                      onClick={() => onToggleSolo(inst)}
+                      className={`w-7 h-7 rounded text-[10px] font-extrabold transition-all ${
+                        isSolo ? 'bg-yellow-500 text-black' : 'bg-gray-800 hover:bg-gray-700 text-gray-400'
+                      }`}
+                      title="Solo"
+                    >
+                      S
+                    </button>
                   </div>
                 </div>
               );

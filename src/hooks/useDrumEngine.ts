@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { DrumInstrument, RhythmSection, RhythmStyle, DrumHit } from '../types/rhythm';
-import { DrumMixerState, SpeedTrainerConfig } from '../types/audio';
-import { DrumSynthesizer } from '../audio/DrumSynthesizer';
+import { DrumMixerState, SpeedTrainerConfig, DrumSoundParams, DrumKitPreset, FillType } from '../types/audio';
+import { DrumSynthesizer, DEFAULT_SOUND_PARAMS } from '../audio/DrumSynthesizer';
 import { AudioScheduler } from '../audio/AudioScheduler';
 import { AudioRecorder } from '../audio/AudioRecorder';
 import { ALL_STYLES, getStyleById } from '../data';
@@ -32,6 +32,7 @@ export function useDrumEngine() {
   const [currentStyle, setCurrentStyle] = useState<RhythmStyle>(ALL_STYLES[0]);
   const [currentSection, setCurrentSection] = useState<RhythmSection>('mainA');
   const [nextSection, setNextSection] = useState<RhythmSection | null>(null);
+  const [activeFillType, setActiveFillType] = useState<FillType | null>(null);
   const [bpm, setBpmState] = useState<number>(ALL_STYLES[0].defaultBpm);
 
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -59,6 +60,16 @@ export function useDrumEngine() {
     bpmStep: 2,
     barsPerStep: 4,
     currentCycleBars: 0
+  });
+
+  // Drum Kit Studio / Sound Params state
+  const [soundParams, setSoundParamsState] = useState<Record<DrumInstrument, DrumSoundParams>>({ ...DEFAULT_SOUND_PARAMS });
+  const [currentKitPreset, setCurrentKitPreset] = useState<DrumKitPreset | null>(null);
+  const [customKitPresets, setCustomKitPresets] = useState<DrumKitPreset[]>(() => {
+    try {
+      const saved = localStorage.getItem('yamaha_kit_presets');
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
   });
 
   // Recording
@@ -101,6 +112,13 @@ export function useDrumEngine() {
           setCurrentSection(section);
           setNextSection(null);
         },
+        onFillTriggered: (fillType, targetSection) => {
+          setActiveFillType(fillType);
+          if (fillType === null) {
+            setCurrentSection(targetSection);
+            setNextSection(null);
+          }
+        },
         onBarComplete: (barCount) => {
           setTotalBars(barCount);
         },
@@ -110,6 +128,7 @@ export function useDrumEngine() {
           setCountInBeat(null);
           setActiveHits([]);
           setNextSection(null);
+          setActiveFillType(null);
         },
         onCountInBeat: (current, total) => {
           setCountInActive(true);
@@ -347,12 +366,62 @@ export function useDrumEngine() {
     }
   }, []);
 
+  // ── Kit Studio: Sound Parameter Controls ─────────────────────────────────
+
+  const setSoundParam = useCallback((inst: DrumInstrument, key: keyof DrumSoundParams, val: number) => {
+    setSoundParamsState((prev) => {
+      const next = { ...prev, [inst]: { ...prev[inst], [key]: val } };
+      if (synthRef.current) {
+        synthRef.current.setAllSoundParams(next);
+      }
+      return next;
+    });
+  }, []);
+
+  const applyKitPreset = useCallback((preset: DrumKitPreset) => {
+    setCurrentKitPreset(preset);
+    if (synthRef.current) {
+      synthRef.current.applyKitPreset(preset);
+      setSoundParamsState({ ...synthRef.current.getSoundParams() });
+    }
+  }, []);
+
+  const saveCustomPreset = useCallback((name: string, description: string) => {
+    const id = `custom_${Date.now()}`;
+    const newPreset: DrumKitPreset = {
+      id,
+      name,
+      description,
+      model: 'acoustic_custom',
+      params: Object.fromEntries(
+        Object.entries(soundParams).map(([k, v]) => [k, { ...v }])
+      ) as DrumKitPreset['params'],
+      isCustom: true
+    };
+    setCustomKitPresets((prev) => {
+      const updated = [...prev, newPreset];
+      try { localStorage.setItem('yamaha_kit_presets', JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    setCurrentKitPreset(newPreset);
+  }, [soundParams]);
+
+  const deleteCustomPreset = useCallback((id: string) => {
+    setCustomKitPresets((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      try { localStorage.setItem('yamaha_kit_presets', JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+    setCurrentKitPreset((prev) => prev?.id === id ? null : prev);
+  }, []);
+
   return {
     // Sequencer / Playback state
     isPlaying,
     currentStyle,
     currentSection,
     nextSection,
+    activeFillType,
     bpm,
     currentStep,
     currentBar,
@@ -371,6 +440,11 @@ export function useDrumEngine() {
 
     // Speed Trainer
     speedTrainer,
+
+    // Kit Studio
+    soundParams,
+    currentKitPreset,
+    customKitPresets,
 
     // Recording
     isRecording,
@@ -395,6 +469,11 @@ export function useDrumEngine() {
     setMasterVolume,
     setSpeedTrainer,
     startRecording,
-    stopRecording
+    stopRecording,
+    setSoundParam,
+    applyKitPreset,
+    saveCustomPreset,
+    deleteCustomPreset
   };
 }
+
