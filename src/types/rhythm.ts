@@ -82,6 +82,8 @@ export interface DrumHit {
   velocity: number; // 0.0 - 1.0
   probability?: number; // 0.0 - 1.0 (default 1.0)
   role?: 'essential' | 'variation' | 'ghost';
+  rudiment?: 'drag' | 'flam' | 'triplet';
+  tripletSpan?: number; // Three equally spaced strokes across 1–4 grid cells.
 }
 
 export type PatternStep = DrumHit[];

@@ -1,5 +1,6 @@
 import { defaultStudioControls, KitInstrument, KIT, normalizeOptions, normalizeStudioControls, StudioControls, StudioOptions } from './studio';
 import { getGroove } from './grooves';
+import { getSongMap } from './songMaps';
 export interface VoiceMix { volume: number; pan: number; pitch: number; decay: number; brightness: number }
 export type KitMix = Record<KitInstrument, VoiceMix>;
 const bound = (v: unknown, min: number, max: number, fallback: number) => typeof v === 'number' && Number.isFinite(v) ? Math.max(min, Math.min(max, v)) : fallback;
@@ -14,7 +15,8 @@ export function normalizeDraft(value: unknown): PracticeDraft {
   if (v.version !== 1 || typeof v.id !== 'string') throw new Error('Nieobsługiwana wersja pliku groove’u.');
   const g = getGroove(v.id);
   const options = normalizeOptions(v.options ?? {});
+  const song = options.songPresetId ? getSongMap(options.songPresetId,v.id) : undefined;
   options.edits = options.edits.filter(e => e.step < g.style.sections[e.section].steps.length);
-  return { version: 1, id: v.id, bpm: Math.round(bound(v.bpm, ...g.tempo, g.style.defaultBpm)), controls: normalizeStudioControls(v.id, v.controls ?? defaultStudioControls(v.id)), options, mix: normalizeMix(v.mix ?? {}) };
+  return { version: 1, id: v.id, bpm: Math.round(bound(v.bpm, ...g.tempo, song?.bpm ?? g.style.defaultBpm)*10)/10, controls: normalizeStudioControls(v.id, { ...defaultStudioControls(v.id), ...(song ? {swing:song.swing} : {}), ...v.controls }), options, mix: normalizeMix(v.mix ?? {}) };
 }
 export function serializeDraft(draft: PracticeDraft): string { return JSON.stringify(normalizeDraft(draft), null, 2); }

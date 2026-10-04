@@ -1,4 +1,5 @@
 import { DrumHit, DrumInstrument, RhythmCategory, RhythmPattern, RhythmSection, RhythmStyle } from '../types/rhythm';
+import { applySongMap } from './songMaps';
 
 export type ControlKey = 'complexity' | 'ghostNotes' | 'kickDensity' | 'hihatDensity' | 'swing' | 'humanize';
 export type GrooveControls = Record<ControlKey, number>;
@@ -86,7 +87,7 @@ export const GROOVES: GrooveDefinition[] = [
     complexity: [[['hihat_open', [14], 0.5]], [['rimshot', [6], 0.45]], [['cowbell', [0, 6, 10], 0.4]]],
     ghost: [[7], [9], [15]], kick: [[6], [14], [11]], hat: [[['hihat_pedal', [4], 0.3]], [['hihat_pedal', [12], 0.3]], [['shaker', [2, 6, 10, 14], 0.25]]],
     explanations: ['Otwarcie hi-hatu, cross-stick i funkowe akcenty dzwonka.', 'Zapisany dialog duszków pomiędzy mocnymi 2 i 4.', 'Pojedyncze synkopy szesnastkowe, bez podwójnej stopy.', 'Hi-hat już gra szesnastki: suwak dodaje lewą stopę i shaker.'] }),
-  define({ id: '02', name: 'Half-Time Hip-Hop', category: 'DISCO_DANCE', bpm: 80, tag: 'Half-time', count: '1 & 2 & 3 & 4 & · werbel na 3', tempo: [40, 130], swing: [50, 62, 50],
+  define({ id: '02', name: 'Half-Time Hip-Hop', category: 'DISCO_DANCE', bpm: 80, tag: 'Half-time', count: '1 & 2 & 3 & 4 & · werbel na 3', tempo: [40, 180], swing: [50, 62, 50],
     description: 'Dużo przestrzeni. Jeden mocny backbeat na 3, zamiast rockowego 2 i 4.', focus: 'Utrzymuj podział, gdy werbel pojawia się dwa razy rzadziej.',
     lesson: ['Prawa ręka gra ósemki, a werbel tylko na 3.', 'Nie przyspieszaj w pustej przestrzeni przed werblem.', 'Wycisz werbel i pilnuj jego miejsca samodzielnie.'],
     notes: [['hihat_closed', seq(16, 2), 0.48], ['kick', [0, 6], 0.85], ['snare', [8], 0.95]],
@@ -172,10 +173,11 @@ export function normalizeControls(id: string, controls: Partial<GrooveControls>)
     return [key, Math.max(cap.min, Math.min(cap.max, Math.round(safe)))];
   })) as GrooveControls;
 }
-export function arrangeGroove(id: string, requested: Partial<GrooveControls> = {}): RhythmStyle {
+export function arrangeGroove(id: string, requested: Partial<GrooveControls> = {}, songPresetId = ''): RhythmStyle {
   const groove = getGroove(id);
   const controls = normalizeControls(id, requested);
   const style = structuredClone(groove.style);
+  if (songPresetId) applySongMap(style,songPresetId);
   for (const section of Object.keys(style.sections) as RhythmSection[]) {
     const p = style.sections[section];
     p.swingRatio = controls.swing;

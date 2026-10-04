@@ -183,6 +183,63 @@
         "Docs/GrooveDesign.md",
         "README.md"
       ]
+    },
+    {
+      "id": "rudiment-editor-playback",
+      "status": "complete",
+      "domain": [
+        "src/domain/rudiments.ts",
+        "src/domain/studio.ts"
+      ],
+      "gui": [
+        "src/App.tsx",
+        "src/audio/AudioScheduler.ts"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/rudiments.test.ts",
+        "tests/scheduler.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "README.md",
+        "Docs/GrooveDesign.md"
+      ]
+    },
+    {
+      "id": "song-practice-maps",
+      "status": "complete",
+      "domain": [
+        "src/domain/songMaps.ts",
+        "src/domain/songMetadata.json",
+        "src/domain/session.ts"
+      ],
+      "gui": [
+        "src/components/SongMaps.tsx",
+        "src/hooks/useDrumEngine.ts"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/songMaps.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "README.md",
+        "Docs/GrooveDesign.md",
+        "Docs/SongMaps.md"
+      ]
     }
   ]
 }

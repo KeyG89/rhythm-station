@@ -41,9 +41,9 @@ npm run build:standalone
 
 ## Practice
 
-Choose a groove, press **Graj groove**, and follow its counting and three lesson steps. Blue notes are the essential identity; green notes are optional vocabulary; `g` means a quiet ghost note. Mute a part with M and play it yourself; S solos a part. Clicking the instrument name auditions it. Practice buttons mute kick, snare/cross-stick or hi-hat together.
+Choose a groove, press **Graj groove**, and follow its counting and three lesson steps. Each instrument lane has its own color; filled notes mark the essential identity, and green optional notes show extra vocabulary; `g` means a quiet ghost note. Mute a part with M and play it yourself; S solos a part. Clicking the instrument name auditions it. Practice buttons mute kick, snare/cross-stick or hi-hat together.
 
-Tempo has groove-specific bounds. Complexity, Ghost notes, Kick density and Hi-hat density choose cumulative authored stages; their descriptions explain the musical action. Swing changes the long-short ratio; 67% approximates triplet eighths. Humanize adds bounded, repeatable hand timing and small velocity changes while drum anchors remain on the pulse. Unsupported controls are disabled with a reason. Reggae allows eighth-note swing (50–62%); bossa permits subtle sixteenth-note swing (50–56%) and restrained ghost/kick answers. Reset restores the original pattern, its default tempo and A variation.
+Tempo has groove-specific bounds. Complexity, Ghost notes, Kick density and Hi-hat density choose cumulative authored stages; Flamy, Dragi and Triole select written phrase ornaments; their descriptions explain the musical action. Swing changes the long-short ratio; 67% approximates triplet eighths. Humanize adds bounded, repeatable hand timing and small velocity changes while drum anchors remain on the pulse. Unsupported controls are disabled with a reason. Reggae allows eighth-note swing (50–62%); bossa permits subtle sixteenth-note swing (50–56%) and restrained ghost/kick answers. Reset restores the original pattern, its default tempo and A variation.
 
 While stopped, A/B/Fill selects a phrase for inspection/editing without starting audio. During playback, A/B and Fill changes wait for a complete phrase, including both bars of clave/bossa. Fills are restrained style-specific responses. Speed Trainer gradually increases BPM and respects the selected groove's maximum. Changing/resetting the groove disables Speed Trainer. Recording saves only the application's audible output, including its mixer and metronome; it does not record a microphone. Output format follows the browser (usually WebM, or M4A on Safari), with an inline playback control.
 
@@ -57,11 +57,19 @@ Reggae has an explicit **One Drop / kick + cross-stick on 2 and 4** selector. Ad
 
 **Mój zestaw** maps clave to cross-stick, cowbell to ride bell, congas to tom/floor, shaker/tambourine to hi-hat. Choose supported alternate mappings there, or audition the original percussion for comparison. Mapping changes the voice, not the written timeline. Entering the editor switches to the personal kit.
 
-**Edytuj pełną mapę** exposes all eleven articulation rows across the entire phrase. Click a cell to add/remove a hit; Shift+click sets its velocity to the selected ghost/light/medium/accent value. **Pusta fraza** clears the selected phrase so you can build it yourself. A/B/Fill edits are independent. Edits override automatic sliders, including explicit removals; **Cofnij własne nuty** restores automatic arrangements. Free editing retains your notes and reports simultaneous hand/articulation conflicts; it does not silently change them. It does not guarantee a user-written phrase is idiomatic at every tempo.
+**Edytuj pełną mapę** exposes all eleven articulation rows across the entire phrase. Repeated clicks on the same cell follow **1: normal → 2: ghost → 3: drag → 4: flam → 5: rest**. A true double-click also makes an already-filled cell a ghost. Clicking another cell starts a new sequence. Drag plays two quiet grace strokes before the principal hit; flam plays one, on any articulation. The **Triola** tool places three equally spaced strokes across 1, 2 or 4 grid cells; a small superscript shows the span and an underline marks its coverage. The span is bounded by the phrase end. Shift+click sets velocity without changing the ornament; Alt+click / Usuń nutę erases directly. **Pusta fraza** clears the selected phrase so you can build it yourself. A/B/Fill edits are independent. Edits override automatic sliders, including explicit removals; **Cofnij własne nuty** restores automatic arrangements. Free editing retains your notes and reports simultaneous hand/articulation conflicts; it does not silently change them. Long triplets are also checked at their actual onsets for collisions with later notes. It does not guarantee a user-written phrase is idiomatic at every tempo.
 
 **Zapisz lokalnie** stores one practice draft in this browser; **Wczytaj zapis** restores it after reload. JSON export/import transfers named files containing the groove ID, tempo, controls, mapping, section-specific cells and sound settings. Import validates version, meter bounds and allowed instruments. No database, account or server storage. Changing a groove/reset returns to its base; save/export edits before changing it.
 
 **Brzmienia** offers volume, pitch ±4 semitones, decay 35–100%, brightness and pan for each articulation, plus audition/reset. These affect actual recorded WAV playback. Pitch also changes natural sample duration; decay shortens the tail, not time-stretching it. Changes apply to subsequent hits. Mute/solo continues to affect audition/playback. Local drafts include tuning.
+
+## Song practice maps
+
+Each genre offers **five maps (60 total)** below the score, including Royal Blood, Red Hot Chili Peppers, Santana and Bob Marley. **Wczytaj** loads the written A loop, approximate researched tempo and feel, resetting sliders and manual edits. After loading, develop the map with the same controls or edit cells. Save/export before switching; drafts include the selected song, fractional BPM, rudiments and triplet spans.
+
+Every entry shows title, artist and an actual YouTube recording link; the selected entry explains its adaptation and links the tempo source. These are original, simplified practice arrangements, **not complete or note-for-note song transcriptions**. Live versions can differ in tempo: use Tap tempo. Shuffle includes half-time examples; the 6/8 bank includes openly identified jazz/compound adaptations. The 7/8 bank includes popular odd-rock examples and 7/4 exercises recast at half quarter BPM to preserve bar length, rather than presenting them as Balkan folk recordings. [All 60 maps, sources and adaptations](Docs/SongMaps.md).
+
+Section accents identify the violet library, blue player, mint score, rose song bank and gold controls. Instrument colors distinguish the lanes; `g`, `d`, `f`, `3` and outlines retain meaning without relying on color alone.
 
 ## Recorded instruments
 
@@ -75,11 +83,14 @@ The browser, CLI and MCP share authored groove/control, kit orchestration, cell 
 
 ```sh
 npm run cli -- list
+npm run cli -- songs 01
+npm run cli -- song 01-2 '{"drags":1,"triplets":1}'
+npm run cli -- cell '{"section":"mainA","instrument":"snare","step":4}' '{}' 3
 npm run cli -- inspect 05 '{"ghostNotes":2,"kickDensity":2,"tomDensity":1}' 75 '{"reggaeVariant":"two-four"}' '{"kick":{"pitch":-2,"decay":0.6}}'
 npm run build:adapters
 node scripts/groove-mcp.mjs
 ```
 
-For an MCP client use command `node` and the absolute path to `scripts/groove-mcp.mjs`, after `npm run build:adapters`. Do not launch through `npm run mcp` in a client: npm's command banners can interfere with stdio. Tools: `list_grooves`, `inspect_groove`, `inspect_draft`. No credentials or network services are required. Nothing is installed into global client configuration.
+For an MCP client use command `node` and the absolute path to `scripts/groove-mcp.mjs`, after `npm run build:adapters`. Do not launch through `npm run mcp` in a client: npm's command banners can interfere with stdio. Tools: `list_grooves`, `inspect_groove`, `inspect_draft`, `list_song_maps`, `inspect_song_map`, `cycle_cell`. Timed events include grace strokes (negative times at the start are relative to the first principal onset); real playback reserves 50 ms before that onset. No credentials or network services are required. Nothing is installed into global client configuration.
 
 Design and validation: [GrooveDesign](Docs/GrooveDesign.md), [MasterPlan](MasterPlan.md), [developer cockpit](Tutorial/index.html).

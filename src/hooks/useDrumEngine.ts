@@ -1,6 +1,7 @@
 // @refresh reset
 import { normalizeTrainer, trainerTempo } from '../domain/practice';
 import { getGroove } from '../domain/grooves';
+import { getSongMap } from '../domain/songMaps';
 import { composeGroove, defaultStudioControls, normalizeStudioControls, normalizeOptions, setCell, StudioControls, StudioControlKey, StudioOptions, CellEdit, KIT } from '../domain/studio';
 import { KitMix, normalizeDraft, normalizeMix, PracticeDraft, sampleTuning, serializeDraft, VoiceMix } from '../domain/session';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -187,7 +188,7 @@ export function useDrumEngine() {
   // Sync BPM changes to scheduler
   const setBpm = useCallback((newBpm: number) => {
     const [min, max] = getGroove(currentStyle.id).tempo;
-    const clamped = Math.max(min, Math.min(max, Math.round(newBpm)));
+    const clamped = Math.max(min, Math.min(max, Math.round(newBpm * 10) / 10));
     setBpmState(clamped);
     if (schedulerRef.current) {
       schedulerRef.current.setBpm(clamped);
@@ -261,12 +262,13 @@ export function useDrumEngine() {
   }, [isPlaying, start, stop]);
 
   // Style change
-  const selectStyle = useCallback((styleOrId: string | RhythmStyle) => {
+  const selectStyle = useCallback((styleOrId: string | RhythmStyle, songPresetId = '') => {
     const id = typeof styleOrId === 'string' ? getStyleById(styleOrId).id : styleOrId.id;
-    setSpeedTrainer(prev => normalizeTrainer({ ...prev, enabled: false, startBpm: getGroove(id).style.defaultBpm, targetBpm: getGroove(id).style.defaultBpm + 30 }, getGroove(id).tempo));
+    setSpeedTrainer(prev => normalizeTrainer({ ...prev, enabled: false, startBpm: songPresetId ? getSongMap(songPresetId,id).bpm : getGroove(id).style.defaultBpm, targetBpm: (songPresetId ? getSongMap(songPresetId,id).bpm : getGroove(id).style.defaultBpm) + 30 }, getGroove(id).tempo));
     setMixerState(prev => Object.fromEntries(Object.entries(prev).map(([inst, channel]) => [inst, { ...channel, isSolo: false }])));
     const controls = defaultStudioControls(id);
-    const options = normalizeOptions({ ...studioOptions, reggaeVariant: 'one-drop', edits: [] });
+    if (songPresetId) controls.swing = getSongMap(songPresetId,id).swing;
+    const options = normalizeOptions({ ...studioOptions, songPresetId, reggaeVariant: 'one-drop', edits: [] });
     setStudioOptions(options);
     const style = composeGroove(id, controls, options);
     setGrooveControls(controls);
@@ -529,7 +531,7 @@ export function useDrumEngine() {
   useEffect(() => () => { if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl); }, [recordedAudioUrl]);
 
   return {
-    studioOptions, updateStudioOptions, editCell, kitMix, updateVoiceMix, resetVoiceMix, draft, saveDraft, loadDraft, draftMessage, reportDraftError: setDraftMessage,
+    studioOptions, updateStudioOptions, editCell, loadSongMap: (id: string) => selectStyle(getSongMap(id).grooveId,id), kitMix, updateVoiceMix, resetVoiceMix, draft, saveDraft, loadDraft, draftMessage, reportDraftError: setDraftMessage,
     grooveControls, setGrooveControl, resetEssence, sampleStatus, soundMode, changeSoundMode,
     // Sequencer / Playback state
     isPlaying,
@@ -591,4 +593,3 @@ export function useDrumEngine() {
     deleteCustomPreset
   };
 }
-

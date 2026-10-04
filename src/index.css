@@ -180,3 +180,73 @@ input[type=range]:disabled { cursor: default; opacity: .35; }
 @media (max-width: 1190px) { .workspace { grid-template-columns: 210px minmax(0, 1fr); } .controls { grid-column: 2; position: static; max-height: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; } .controls > .panel-heading, .controls > h2, .controls > .muted, .essence-state, .master-control { grid-column: 1 / -1; } .library { grid-row: 1 / 3; } .lab-main, .lab-header { padding-left: 20px; padding-right: 20px; } }
 @media (max-width: 760px) { .lab-header { padding: 16px; gap: 12px; } .heritage { font-size: 0; } .heritage span { font-size: 8px; margin: 0; } .brand { font-size: 21px; } .lab-main { padding: 24px 14px; } .intro-row { margin-bottom: 20px; } .collection-mark { display: none; } .workspace { display: flex; flex-direction: column; gap: 16px; } .workspace > * { width: 100%; } .library { padding: 15px 12px; } .library .muted, .library-foot { display: none; } .groove-list { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-top: 12px; } .groove-choice { padding: 9px 6px; gap: 6px; min-height: 53px; } .groove-name { font-size: 11px; } .groove-name small { font-size: 9px; } .player { padding: 18px 14px; } .player-title { gap: 10px; margin-top: 18px; } .bpm-readout { margin-left: 0; } .content-tabs { gap: 15px; } .content-tabs button { font-size: 11px; } .score { padding: 16px 10px 0; } .score-heading h3 span { display: block; margin: 5px 0 0; } .practice-actions { margin: 0 -10px; padding: 12px 10px; } .legend-hint { margin-left: 0; width: 100%; } .groove-grid th:first-child { min-width: 128px; } .kit-panel { padding: 16px; } .replacement-grid, .sound-grid { grid-template-columns: 1fr; } .controls { display: grid; grid-template-columns: 1fr; position: static; } .controls > * { grid-column: 1; } .lesson li { font-size: 11px; } .lab-footer { flex-direction: column; } .reggae-variant { align-items: flex-start; flex-direction: column; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* A quiet groovebox: section identity + instrument-colored pad banks. */
+.library { background: #181826; border-color: #393453; border-top: 3px solid #a497e9; }
+.library .eyebrow, .library .panel-heading { color: #c2b4f6; }
+.groove-choice.selected { background: #302847; border-color: #716092; }
+.player { background: #152431; border-color: #324f64; border-top: 3px solid #79c9ed; }
+.player .eyebrow { color: #93d4f2; }
+.controls { background: #20201b; border-color: #4d4934; border-top: 3px solid #e6c47a; }
+.controls .panel-heading, .controls > h2 { color: #f0d69d; }
+.score { background: #141c23; border-color: #344955; border-top: 3px solid #6cd2b9; }
+.score .eyebrow { color: #8bddc9; }
+.lesson { background: #191b28; border-color: #3a3e5d; border-top: 3px solid #9ca9f0; }
+.lesson .eyebrow { color: #b4c0f3; }
+.song-panel { padding: 18px 16px; margin-top: 17px; background: #241b21; border-color: #593643; border-top: 3px solid #e59daf; }
+.song-panel .eyebrow, .song-panel .panel-heading { color: #edb6c4; }
+.song-list { display: flex; flex-direction: column; gap: 6px; }
+.song-row { display: flex; align-items: center; gap: 10px; border: 1px solid #44313a; background: #2c2129; border-radius: 6px; padding: 10px; }
+.song-row.selected { background: #3c2a36; border-color: #be8099; }
+.song-index { font-size: 9px; color: #c092a5; }
+.song-name { flex: 1; min-width: 0; }
+.song-name b { font-size: 12px; font-weight: 500; display: block; color: #f1dfe8; }
+.song-name small { display: block; font-size: 10px; color: #c1a2b4; margin-top: 4px; }
+.song-bpm { font-size: 12px; font-variant-numeric: tabular-nums; color: #f2bdcf; white-space: nowrap; }
+.song-bpm small { display: block; font-size: 8px; color: #bc9dac; margin-top: 3px; }
+.song-row .small-action { border-color: #765060; color: #efc6d5; background: #382833; white-space: nowrap; }
+.song-row .small-action:hover { background: #563344; border-color: #dc9ab4; }
+.song-link { display: flex; align-items: center; gap: 5px; font-size: 9px; color: #eebacf; padding: 7px; border: 1px solid #765060; border-radius: 4px; text-decoration: none; }
+.song-context { border-left: 2px solid #d997ae; padding: 4px 12px; margin-top: 16px; font-size: 11px; color: #d8baca; line-height: 1.6; }
+.song-context b { font-weight: 500; color: #f4dce6; }
+.song-context p { margin: 7px 0; }
+.song-context span { color: #f2c3d6; }
+.song-context small { display: block; margin-top: 9px; font-size: 10px; color: #bfa4b1; }
+.song-footnote { color: #b99fac; font-size: 10px; margin-bottom: 0; }
+.voice-control { border-left: 2px solid #79bdab; padding-left: 10px; }
+.ornament-control { border-left: 2px solid #c69bf2; padding-left: 10px; background: #25222c; border-radius: 4px; padding-top: 10px; padding-right: 10px; }
+.ornament-control label, .ornament-control output { color: #dcc0f8; }
+.ornament-control input { accent-color: #c69bf2; }
+.feel-control input { accent-color: #e4c77f; }
+.controls .control-block p { color: #b5b39f; }
+.controls .level-caption { color: #dbc88f; }
+.groove-grid { border-spacing: 2px 4px; }
+.groove-grid th { min-width: 27px; }
+.groove-grid tbody th { border-left: 3px solid var(--lane-color); padding-left: 7px; background: #17222b; border-radius: 3px; }
+.groove-grid td { min-width: 27px; height: 32px; background: color-mix(in srgb, var(--lane-color) 8%, #17212b); border-radius: 3px; }
+.groove-grid tr td:nth-child(4n+2) { background: color-mix(in srgb, var(--lane-color) 14%, #17212b); }
+.groove-grid .note.essential { color: #fff3df; background: color-mix(in srgb, var(--lane-color) 42%, #283445); border: 1px solid color-mix(in srgb, var(--lane-color) 65%, #75879a); }
+.groove-grid .note.variation { color: #e3f8ef; background: color-mix(in srgb, var(--lane-color) 22%, #243b39); border: 1px solid #719589; }
+.groove-grid .note.ghost { color: #d1deed; background: color-mix(in srgb, var(--lane-color) 12%, #1c2730); border: 1px dashed #9aaac0; }
+.note.drag, .note.flam, .note.triplet { font-weight: 600; font-size: 11px; }
+.note.triplet sup { font-size: 7px; margin-left: 1px; }
+.groove-grid td.triplet-covered { box-shadow: inset 0 -2px #62989e; }
+.groove-grid .note.drag { border-bottom: 2px solid #ddafff; }
+.groove-grid .note.flam { border-bottom: 2px solid #ffcb84; }
+.groove-grid .note.triplet { border-bottom: 2px solid #94e5e9; }
+.note.soft { opacity: .85; }
+.groove-grid .playing-step, .groove-grid tr td.playing-step:nth-child(4n+2) { background: #456577; box-shadow: inset 0 2px #9df3dd; }
+.groove-grid th:first-child { background: #141c23; }
+.cell-button, .cell-button.rest { width: 23px; height: 25px; }
+.grid-legend { color: #b9c8d1; }
+.editor-toolbar > span { color: #b4c8d4; }
+button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #c1eaff; outline-offset: 3px; }
+@media (max-width:760px) {
+  .song-panel { padding: 16px 10px; }
+  .song-row { flex-wrap: wrap; gap: 8px; }
+  .song-name { flex-basis: calc(100% - 85px); }
+  .song-row .small-action { margin-left: 18px; }
+  .song-link { margin-left: auto; }
+  .editor-toolbar label { flex-wrap: wrap; }
+  .editor-toolbar select { max-width: 100%; }
+}

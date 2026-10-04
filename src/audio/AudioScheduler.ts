@@ -1,4 +1,5 @@
-import { humanizedHit, pulses, stepDuration, unitDuration } from '../domain/timing';
+import { pulses, stepDuration, unitDuration } from '../domain/timing';
+import { expandHit } from '../domain/rudiments';
 import { RhythmStyle, RhythmSection, DrumHit } from '../types/rhythm';
 import { FillType } from '../types/audio';
 import { DrumSynthesizer } from './DrumSynthesizer';
@@ -35,6 +36,7 @@ export class AudioScheduler {
   private metronomeEnabled = false;
   private metronomeVolume = 0.6;
   private events: VisualEvent[] = [];
+  private pendingStrokes: { instrument: DrumHit['instrument']; time: number; velocity: number }[] = [];
   private callbacks: SchedulerCallbacks = {};
   private readonly ahead = 0.12;
 
@@ -79,14 +81,15 @@ export class AudioScheduler {
     this.isRunning = true;
     this.currentStep = 0; this.totalBars = 0; this.countInIndex = 0;
     this.countInTotal = Math.max(0, Math.floor(countInBars)) * pulses(this.currentStyle).length;
-    this.nextSection = null; this.events = []; this.endingScheduled = false;
+    this.nextSection = null; this.events = []; this.pendingStrokes = []; this.endingScheduled = false;
     this.nextStepTime = this.synth.getContext().currentTime + 0.05;
     this.timerId = window.setInterval(() => this.schedule(), 25);
     this.animationFrameId = requestAnimationFrame(() => this.visualSync());
+    this.schedule(); // First grace may precede the first 25 ms timer tick.
   }
   stop() {
     this.isRunning = false; this.countInTotal = 0; this.nextSection = null;
-    this.activeFillType = null; this.events = [];
+    this.activeFillType = null; this.events = []; this.pendingStrokes = [];
     this.synth.stopVoices();
     if (this.timerId !== null) clearInterval(this.timerId);
     if (this.animationFrameId !== null) cancelAnimationFrame(this.animationFrameId);
@@ -96,10 +99,18 @@ export class AudioScheduler {
   private schedule() {
     const ctx = this.synth.getContext();
     // Recover from a background-tab clock stall without a burst of missed bars.
-    if (this.nextStepTime < ctx.currentTime - this.ahead) this.nextStepTime = ctx.currentTime + 0.02;
-    while (this.isRunning && !this.endingScheduled && this.nextStepTime < ctx.currentTime + this.ahead) {
+    if (this.nextStepTime < ctx.currentTime - this.ahead) this.nextStepTime = ctx.currentTime + 0.05;
+    // Reserve 40 ms for anticipatory graces, even at a phrase boundary.
+    while (this.isRunning && !this.endingScheduled && this.nextStepTime < ctx.currentTime + this.ahead + 0.04) {
       if (this.countInIndex < this.countInTotal) this.scheduleCountIn();
       else this.scheduleStep();
+    }
+    // Chronological dispatch matters for hi-hat choking: a long triplet may
+    // overlap a later edited cell. Never schedule its future stroke first.
+    this.pendingStrokes.sort((a,b)=>a.time-b.time);
+    while (this.pendingStrokes.length && this.pendingStrokes[0].time < ctx.currentTime + this.ahead) {
+      const hit = this.pendingStrokes.shift()!;
+      this.synth.trigger(hit.instrument,Math.max(ctx.currentTime,hit.time),hit.velocity);
     }
   }
   private scheduleCountIn() {
@@ -122,8 +133,8 @@ export class AudioScheduler {
     const pulse = pulses(this.currentStyle).findIndex(item => item.unit * p.stepsPerBeat === step % stepsPerBar);
     if (this.metronomeEnabled && pulse >= 0) this.synth.triggerMetronome(time, pulse === 0, this.metronomeVolume);
     for (const hit of hits) {
-      const played = humanizedHit(hit, step, this.totalBars, this.humanize);
-      this.synth.trigger(hit.instrument, Math.max(this.synth.getContext().currentTime, time + played.offset), played.velocity);
+      for (const played of expandHit(hit, this.currentStyle, p, this.bpm, step, this.totalBars, this.humanize))
+        this.pendingStrokes.push({instrument:hit.instrument,time:time + played.offset,velocity:played.velocity});
     }
     this.events.push({ time, action: () => this.callbacks.onStepChange?.(step, bar, section, hits) });
     this.nextStepTime += stepDuration(this.currentStyle, p, this.bpm, step);

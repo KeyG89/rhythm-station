@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AudioScheduler } from '../src/audio/AudioScheduler';
 import { DrumSynthesizer } from '../src/audio/DrumSynthesizer';
 import { arrangeGroove } from '../src/domain/grooves';
+import { composeGroove } from '../src/domain/studio';
 import { humanizedHit, pulses, stepDuration } from '../src/domain/timing';
 import { DrumInstrument } from '../src/types/rhythm';
 
@@ -23,6 +24,19 @@ function harness(id: string, bpm = 120) {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('Production lookahead scheduler', () => {
+  it('plays anticipatory graces before first/loop anchors and dispatches overlapping triplet hats in time order',()=>{
+    const h=harness('00');
+    const style=composeGroove('00',{}, {edits:[{section:'mainA',step:0,instrument:'snare',velocity:.8,rudiment:'drag'},{section:'mainA',step:0,instrument:'hihat_closed',velocity:.5,rudiment:'triplet',tripletSpan:4}]});
+    h.scheduler.setStyle(style); h.scheduler.setBpm(120); h.scheduler.start(); h.advance(2.2);
+    const snare=h.hits.filter(hit=>hit.instrument==='snare' && hit.time<.1);
+    [.025,.0375,.05].forEach((time,i)=>expect(snare[i].time).toBeCloseTo(time,6));
+    const repeated=h.hits.filter(hit=>hit.instrument==='snare' && hit.time>2 && hit.time<2.1);
+    [2.025,2.0375,2.05].forEach((time,i)=>expect(repeated[i].time).toBeCloseTo(time,6));
+    const hats=h.hits.filter(hit=>hit.instrument==='hihat_closed');
+    expect(hats.map(hit=>hit.time)).toEqual([...hats.map(hit=>hit.time)].sort((a,b)=>a-b));
+    expect(hats.slice(0,4).map(hit=>Number(hit.time.toFixed(3)))).toEqual([.05,.217,.3,.383]);
+    h.scheduler.stop(); const n=h.hits.length; h.advance(1); expect(h.hits).toHaveLength(n);
+  });
   it('plays half-time backbeats every four quarters, and stops scheduling after stop', () => {
     const h = harness('02'); h.scheduler.start(); h.advance(4.1);
     const snares = h.hits.filter(h => h.instrument === 'snare');

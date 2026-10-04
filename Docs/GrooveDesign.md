@@ -23,7 +23,7 @@ These are concrete drum-set teaching arrangements, not exhaustive definitions of
 
 ## Personal-kit arrangement pipeline (T.1.1)
 
-`src/domain/studio.ts` composes: base library → authored control stages → explicit reggae variant → articulation vocabulary → auxiliary voice remapping → two-stick orchestration → manual cell overrides. UI and adapters consume exactly this result. All positions are fixed in `VOCABULARY`; no probability adds notes. Ending remains sparse.
+`src/domain/studio.ts` composes: base library → optional authored song map → authored control stages → explicit reggae variant → articulation vocabulary → auxiliary voice remapping → two-stick orchestration → authored rudiments → manual cell overrides. UI and adapters consume exactly this result. All positions are fixed in `VOCABULARY`; no probability adds notes. Ending remains sparse.
 
 Available voices: kick, snare/cross-stick, closed/open/pedal hi-hat, crash, ride/bell, rack tom and floor tom. Middle tom is always mapped to rack tom in personal-kit mode. Clave defaults to cross-stick, cowbell to ride bell, high/low congas to rack/floor, shaker and tambourine to hi-hat. Supported alternatives are explicit and validated. Clave's five hits and the seven bell anchors retain their timeline; duplicate mapped articulations merge, not flam.
 
@@ -43,6 +43,16 @@ Right-hand ride, open-hat and crash gestures transfer an existing hand note at t
 
 Individual slider stages are tested for an audible change. Free edits run after orchestration and intentionally retain the user's full choices, with visible playability feedback. Import strips out-of-phrase cells and invalid voices/values; last edit per cell wins. Local persistence is one validated draft plus JSON files, not a database.
 
+## Rudiments and song maps (T.1.2)
+
+`src/domain/songMetadata.json` holds 60 sourced song references; `songMaps.ts` contains 60 explicit, distinct phrase recipes, five per groove. Apply the selected recipe before the genre's existing vocabulary. The recipe, source and adaptation are returned unchanged by the GUI/CLI/MCP shared inspection. Loading resets controls/manual edits and chooses its BPM and swing; the persisted options store its ID. Tempo conversion and recording-version limits are documented in [SongMaps](SongMaps.md). Genre lessons are replaced with the selected exercise's note; half-time and compound counting reflect the chosen map. Preset swing is the control baseline. In compound adaptations without a bembé bell timeline, the bell slider transfers selected ride/hat eighths instead of accenting nonexistent bell notes.
+
+`studio.ts` defines separate authored flam, drag and triplet positions per groove. Stages are cumulative and individually tested across all 12 bases and 60 song maps. They ornament an existing snare, cross-stick or tom accent where available; otherwise a restrained response is orchestrated within two hands. Principal accents survive. Another enabled control can crowd out a lower-priority addition; the map shows the resolved result. Ending stays sparse. Automatic triplets are short three-stroke cell ornaments; the editor also supports longer, full-beat spans.
+
+`rudiments.ts` expands each gesture identically for playback and inspection. Flam: one grace stroke up to 26 ms before the principal, at 30% principal velocity. Drag: two grace strokes separated by up to 14 ms, at 25%/30%, before the principal. Very short cells shorten the spacing. Triplet: three strokes at 0, 1/3, 2/3 of the selected 1–4-cell duration, with 100%/70%/82% velocities. Duration sums the actual swung cell lengths, so a two-cell triplet replaces a complete long-short pair with three equal parts. Phrase ends bound spans; real attack-time checks report overlapping later manual notes. Humanization offsets the whole gesture together, retaining its internal rhythm.
+
+The editor's explicit click count implements normal/ghost/drag/flam/rest, including a real double-click on an existing note. Moving to another cell or loading/resetting a map resets the sequence. Headless `cycle_cell` accepts this optional count; without it, it advances from the supplied hit state. Articulation metadata remains optional for old draft compatibility; normalization bounds finite spans and rejects invalid ornament values.
+
 ## Recorded tuning
 
 `src/domain/session.ts` owns mix/tuning bounds and versioned draft validation. Pitch ±4 semitones becomes playback rate `2 ** (semitones/12)`; it changes pitch and natural duration. A lowpass controls brightness. A gain envelope can shorten the sample to 35–100% of its natural pitched duration; neutral settings retain the recorded tail. Volume and pan use the actual channel nodes. Sample voices schedule start before stop, keep hi-hat choking and disconnect source/filter/gain on completion. Mix resets are atomic. Browser effects close AudioContext once on cleanup, including development refresh.
@@ -51,7 +61,7 @@ Individual slider stages are tested for an audible change. Free edits run after 
 
 `src/domain/timing.ts` defines denominator units, pulse groups, long-short pair durations and repeatable humanization. In simple meters BPM is quarter notes. In Afro 6/8 BPM is dotted quarters: one bar lasts two clicks, each click contains three eighths. Balkan 7/8 uses quarter BPM; its three grouped clicks last two, two and three eighths. Swing is the fraction of a pair spent on its first note (50% straight, 67% near triplets). Pair and bar durations stay constant. Reggae groups two sixteenth grid steps per eighth so the hat offbeat actually swings; other enabled sixteenth grids use one step per pair side. Humanization never changes the transport clock; only hand onsets and velocities, bounded by 12 ms.
 
-The audio scheduler looks ahead 120 ms every 25 ms. Visual events and count-in labels follow actual audio time. A/B and Fill changes occur at complete phrase boundaries, preserving the correct side of clave. Background-tab clock stalls skip missed wall time without emitting a burst of missed bars. A fill retains the groove anchors and adds a small response; two-bar grooves retain two-bar fills.
+The audio scheduler dispatches up to 120 ms ahead every 25 ms and generates cells another 40 ms ahead so upcoming grace strokes arrive in time. Start/clock recovery reserves 50 ms before the first principal onset and schedules immediately. A pending stroke queue sorts extended triplets and later cells together before dispatch; this preserves hi-hat choke order. Stopping clears that queue and stops scheduled voices. Headless event origin is the principal onset (initial grace strokes can have negative times); sample take selection follows the same chronological attack order. Visual events and count-in labels follow actual audio time. A/B and Fill changes occur at complete phrase boundaries, preserving the correct side of clave. Background-tab clock stalls skip missed wall time without emitting a burst of missed bars. A fill retains the groove anchors and adds a small response; two-bar grooves retain two-bar fills.
 
 ## Sound
 
@@ -61,13 +71,14 @@ Preparation uses pinned upstream revisions, curl and ffmpeg. Leading silence is 
 
 ## Domain parity
 
-`grooveApi` returns the same arrangement/timing/sample decisions to CLI and three read-only SDK MCP tools. `scripts/check-adapters.mjs` launches the real stdio MCP server, calls the inspection tools, and compares all twelve arrangements to CLI and the shared core, including reggae variants, remapping, cell overrides, sound tuning and local draft normalization. `feature-parity.json` lists the evidence. Real-time AudioContext and MediaRecorder devices are browser adapters, not headless automation endpoints.
+`grooveApi` returns the same arrangement/timing/sample decisions to CLI and six read-only SDK MCP tools. `scripts/check-adapters.mjs` launches the real stdio MCP server, calls the inspection tools, and compares all twelve arrangements to CLI and the shared core, including reggae variants, remapping, cell overrides, sound tuning and local draft normalization. `feature-parity.json` lists the evidence. Real-time AudioContext and MediaRecorder devices are browser adapters, not headless automation endpoints.
 
 ## Verification
 
 - Unit tests run the real scheduler against a controlled audio clock and validate grouped count-in, swing, half-time backbeats, end handling and two-bar transitions.
 - Library tests exercise all 256 combinations of four density controls per groove and protect essential anchors; validate Cuban vs Brazilian timelines, bar lengths, velocities and unique articulations.
 - Studio tests check 1,536 automatic configurations for two-stick/mapped-voice constraints, each articulation stage for audible changes, reggae/bossa anchors, seven-stroke accents, editable sections and validated draft roundtrips. Audio graph tests exercise real SampleKit pitch/filter/envelope logic, start/stop ordering and hi-hat cleanup.
+- Song tests check all 60 distinct maps, individual ornament stages, 480 combinations for personal-kit/two-hand constraints, pulse conversions, source fields and fractional-tempo draft persistence. Rudiment tests verify the five-state cycle, exact grace/triplet timing, preserved principal hits and long-triplet overlap feedback. The clock harness checks immediate first graces and chronologically ordered overlapping hi-hat triplets. Adapter checks compare all 60 presets and five cell states through the real MCP stdio transport.
 - Sample tests verify instrument coverage and recorded ghost-note/snare-hand selection.
 - Speed Trainer tests call the production function, including duplicate-bar events and target/groove caps.
 - Browser checks cover real loading/playback, enabled reggae/bossa sliders, the 2/4 reggae variant, cell edits, local save/reload and sample pitch/decay, variations/reset, grouped meters, mute/solo, recording and desktop/mobile layout; standalone artifact checks verify that all recordings and licenses are embedded and match the source hashes. Direct file:// browser validation is blocked by the browser URL policy; open the produced file manually for that final check.
