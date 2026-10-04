@@ -24,6 +24,8 @@ npm run build:standalone
 
 `dist/` is the production site. `dist/standalone_yamaha.html` is a single file with **all recordings and license text embedded**; open it directly for offline use. No CDN or remote fonts are needed for playback. Source/credit links are optional external links.
 
+GitHub's **Build Release** workflow runs full diagnostics and attaches `standalone_yamaha.html` to a newly created release. Manual workflow runs keep the same file as the `groove-lab-standalone` build artifact. The private application is distributed as HTML rather than an npm package. **Deploy to GitHub Pages** deploys main automatically, or a selected branch through manual dispatch.
+
 ## Collection
 
 1. Straight Rock 8th

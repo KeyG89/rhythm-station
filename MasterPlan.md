@@ -8,6 +8,7 @@ A PSR-220/230-inspired practice station with authored variations and recorded in
 | 1.1 | Personal kit, musical vocabulary and groove editor | Done | [Item](Items/T.1.1-personal-kit.md) | [T.1.1] |
 | 1.2 | Rudiments, song practice maps and groovebox colors | Done | [Item](Items/T.1.2-song-maps.md) | [T.1.2] |
 | 1.3 | Song progression, expanded grooves and practice laboratory | Done | [Item](Items/T.1.3-progression-lab.md) | [T.1.3] |
+| 1.4 | GitHub PR and standalone release | In Progress | [Item](Items/T.1.4-github-release.md) | [T.1.4] |
 
 ## AI Augmentations
 - Show essential hits separately from optional vocabulary and explain each control.
