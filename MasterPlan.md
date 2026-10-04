@@ -5,6 +5,7 @@ A PSR-220/230-inspired practice station with authored variations and recorded in
 | ID | Title | Status | Item | Commit |
 |---|---|---|---|---|
 | 1 | Codex v2: twelve essential grooves | Done | [Item](Items/T.1-codex-v2.md) | [T.1] |
+| 1.1 | Personal kit, musical vocabulary and groove editor | Done | [Item](Items/T.1.1-personal-kit.md) | [T.1.1] |
 
 ## AI Augmentations
 - Show essential hits separately from optional vocabulary and explain each control.

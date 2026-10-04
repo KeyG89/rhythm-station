@@ -177,7 +177,7 @@ export class DrumSynthesizer {
     const channelNode = this.channelGains.get(instrument) || this.masterGain;
     const vel = Math.max(0.01, Math.min(1.0, velocity));
 
-    if (this.useSamples && this.sampleKit.trigger(instrument, time, vel, channelNode)) return;
+    if (this.useSamples && this.sampleKit.trigger(instrument, time, vel, channelNode, this.soundParams[instrument])) return;
 
     switch (instrument) {
       case 'clave':

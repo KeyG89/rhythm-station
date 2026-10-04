@@ -67,7 +67,7 @@ function define(s: Spec): GrooveDefinition {
   };
   return { style, tag: s.tag, count: s.count, tempo: s.tempo, lesson: s.lesson, controls, additions: {
     complexity: s.complexity, ghostNotes: s.ghost.map(indices => [['snare', indices, 0.24]]),
-    kickDensity: s.kick.map(indices => [['kick', indices, 0.65]]), hihatDensity: s.hat,
+    kickDensity: s.kick.map(indices => [['kick', indices, s.id === '04' ? 0.24 : s.id === '06' ? 0.38 : 0.65]]), hihatDensity: s.hat,
   } };
 }
 
@@ -106,20 +106,20 @@ export const GROOVES: GrooveDefinition[] = [
     notes: [['ride', [0, 2, 3, 4, 6, 7], 0.62], ['hihat_pedal', [2, 6], 0.7], ['kick', [0, 2, 4, 6], 0.23]],
     complexity: [[['snare', [3], 0.5]], [['snare', [5], 0.42]], [['snare', [1], 0.45]]], ghost: [[7], [4]], kick: [[7]], hat: [[['ride', [1], 0.35]], [['ride', [5], 0.35]]],
     explanations: ['Trzy zapisane odpowiedzi compingu zamiast backbeatu.', 'Ciche odpowiedzi werbla w swingowej frazie.', 'Jedna lekka antycypacja, feathering pozostaje cichy.', 'W tym groovie suwak rozwija ride; hi-hat nogą zachowuje 2 i 4.'] }),
-  define({ id: '05', name: 'Reggae One Drop', category: 'LATIN', bpm: 75, tag: 'Pusta jedynka', count: '1 & 2 & 3 & 4 & · stopa + obręcz na 3', tempo: [40, 130],
+  define({ id: '05', name: 'Reggae One Drop', category: 'LATIN', bpm: 75, swing: [50, 62, 50], tag: 'Pusta jedynka', count: '1 & 2 & 3 & 4 & · stopa + obręcz na 3', tempo: [40, 130],
     description: 'Stopa i cross-stick spotykają się na 3. Pierwsza miara pozostaje wolna od stopy.', focus: 'Poczuj ciężar na 3 i oddech przed nim.',
     lesson: ['Zostaw jedynkę pustą dla stopy i werbla.', 'Na 3 zagraj stopę i cross-stick razem.', 'Słuchaj akcentów hi-hatu na „&”.'],
     notes: [['hihat_closed', seq(16, 2), 0.45], ['kick', [8], 0.85], ['rimshot', [8], 0.9]],
     complexity: [[['hihat_open', [14], 0.4]], [['rimshot', [6], 0.35]], [['shaker', [2, 6, 10, 14], 0.3]]],
-    ghost: [], kick: [], hat: [[['hihat_closed', [7], 0.28]], [['hihat_closed', [15], 0.28]]],
-    explanations: ['Otwarcie hi-hatu, lekka antycypacja obręczy i shaker na offbeatach.', 'Tu uczymy cross-stick, a nie funkowego werbla z duszkami.', 'One drop wymaga stopy na 3. Dodawanie stopy zmieniłoby ten wariant w inny groove.', 'Dwa krótkie podprowadzenia hi-hatu do kolejnych akcentów.'] }),
-  define({ id: '06', name: 'Bossa Nova', category: 'LATIN', bpm: 115, bars: 2, tag: 'Brazylijska fraza', count: 'Dwa takty · obręcz 3+2 · cicha stopa', tempo: [50, 180],
+    ghost: [[7], [11], [15]], kick: [[14], [6]], hat: [[['hihat_closed', [7], 0.28]], [['hihat_closed', [15], 0.28]]],
+    explanations: ['Otwarcie hi-hatu, lekka antycypacja obręczy i shaker na offbeatach.', 'Ciche podprowadzenie werbla do akcentu i krótkie odpowiedzi; obręcz pozostaje głosem głównym.', 'Dwie oszczędne antycypacje na &4 i &2. Bez stopy na 1 i bez podwójnego pedału.', 'Dwa krótkie podprowadzenia hi-hatu do kolejnych akcentów.'] }),
+  define({ id: '06', name: 'Bossa Nova', category: 'LATIN', bpm: 115, bars: 2, swing: [50, 56, 50], tag: 'Brazylijska fraza', count: 'Dwa takty · obręcz 3+2 · cicha stopa', tempo: [50, 180],
     description: 'Cicha stopa samba, równe ósemki i dwutaktowa brazylijska fraza cross-stick.', focus: 'Nie akcentuj jak w rocku. Utrzymaj łagodną stopę.',
     lesson: ['Stopa gra 1, &2, 3, &4 w każdym takcie.', 'Obręcz: 1, &2, 4 | 2, &3 — pełne dwa takty.', 'Nie myl tej frazy z kubańską son clave.'],
     notes: [['hihat_closed', seq(32, 2), 0.4], ['kick', [0, 6, 8, 14, 16, 22, 24, 30], 0.5], ['rimshot', [0, 6, 12, 20, 26], 0.7]],
     complexity: [[['hihat_pedal', [4, 12, 20, 28], 0.3]], [['conga_high', [10, 28], 0.4]], [['shaker', seq(32, 4, 2), 0.25]]],
-    ghost: [], kick: [], hat: [[['hihat_closed', [7, 23], 0.25]], [['hihat_closed', [15, 31], 0.25]]],
-    explanations: ['Lewa stopa na 2 i 4, odpowiedzi congi i dyskretny shaker.', 'Cross-stick zachowuje brazylijską frazę; nie dodajemy funkowych duszków.', 'Ostinato stopy jest pełne i stałe, gęstsze uderzenia zakryłyby jego charakter.', 'Delikatne szesnastkowe podprowadzenia na końcach półtaktów.'] }),
+    ghost: [[11, 27], [15, 31]], kick: [[12], [28]], hat: [[['hihat_closed', [7, 23], 0.25]], [['hihat_closed', [15, 31], 0.25]]],
+    explanations: ['Lewa stopa na 2 i 4, odpowiedzi congi i dyskretny shaker.', 'Bardzo ciche dotknięcia werbla po akcentach obręczy, bez rockowego backbeatu.', 'Dwie ciche odpowiedzi na 4 w dwutaktowej frazie. Stałe ostinato pozostaje lekkie.', 'Delikatne szesnastkowe podprowadzenia na końcach półtaktów.'] }),
   define({ id: '07', name: 'Samba', category: 'LATIN', bpm: 105, tag: 'Ostinato stopy', count: '1 e & a 2 e & a 3 e & a 4 e & a', tempo: [50, 180],
     description: 'Stała stopa na ćwierćnutach i ich szesnastkowych przednutach; szesnastkowy puls ręki.', focus: 'Rozdziel stałe ostinato nóg od synkopowanych rąk.',
     lesson: ['Stopa: 1, a1, 2, a2, 3, a3, 4, a4.', 'Ćwicz powoli, bez podwójnego pedału.', 'Dodaj obręcz, utrzymując ostinato stopy bez zmian.'],
@@ -179,6 +179,7 @@ export function arrangeGroove(id: string, requested: Partial<GrooveControls> = {
   for (const section of Object.keys(style.sections) as RhythmSection[]) {
     const p = style.sections[section];
     p.swingRatio = controls.swing;
+    p.swingStepGroup = id === '05' ? 2 : 1;
     if (section === 'ending') continue;
     for (const key of ['complexity', 'ghostNotes', 'kickDensity', 'hihatDensity'] as const) {
       const amount = section === 'mainB' && key === 'complexity' ? Math.max(1, controls[key]) : controls[key];

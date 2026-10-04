@@ -19,12 +19,12 @@ export const AudioExporter: React.FC<AudioExporterProps> = ({
   onStopRecording
 }) => {
   return (
-    <div className="bg-[#1c1e24] border-2 border-[#2b2f38] rounded-2xl p-4 sm:p-5 shadow-xl">
+    <div className="bg-[#1c1e24] border-2 border-[#2b2f38] rounded-lg p-4 sm:p-5">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-gray-100 flex items-center space-x-2">
+          <h2 className="text-base font-medium text-gray-100 flex items-center space-x-2">
             <Disc className="w-5 h-5 text-red-400" />
-            <span>REJESTRATOR AUDIO & EKSPORT PĘTLI</span>
+            <span>Nagraj sesję</span>
           </h2>
           <p className="text-xs text-gray-400">
             Zapisz słyszalny podkład do pliku audio. Rejestrator nagrywa dźwięk aplikacji.
@@ -35,7 +35,7 @@ export const AudioExporter: React.FC<AudioExporterProps> = ({
           {/* Record / Stop Button */}
           <button
             onClick={isRecording ? onStopRecording : onStartRecording}
-            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase flex items-center space-x-2 transition-all shadow ${
+            className={`px-4 py-2 rounded-md text-xs font-bold uppercase flex items-center space-x-2 transition-all shadow ${
               isRecording
                 ? 'bg-red-600 hover:bg-red-500 text-white animate-pulse shadow-red-600/40 ring-2 ring-red-400'
                 : 'bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700'
@@ -50,7 +50,7 @@ export const AudioExporter: React.FC<AudioExporterProps> = ({
             <a
               href={recordedAudioUrl}
               download={`Yamaha_${currentStyleName.replace(/\s+/g, '_')}_Loop.${recordedAudioType.includes('mp4') ? 'm4a' : recordedAudioType.includes('ogg') ? 'ogg' : 'webm'}`}
-              className="px-4 py-2 rounded-xl text-xs font-bold uppercase bg-emerald-600 hover:bg-emerald-500 text-white flex items-center space-x-2 shadow-lg shadow-emerald-900/40 transition-all"
+              className="px-4 py-2 rounded-md text-xs font-bold uppercase bg-[#a1b4ff] hover:bg-[#b9c6ff] text-[#12182b] flex items-center space-x-2  transition-all"
             >
               <Download className="w-4 h-4" />
               <span>POBIERZ PLIK AUDIO</span>

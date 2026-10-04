@@ -92,6 +92,7 @@ export interface RhythmPattern {
   timeSignature: [number, number]; // [4,4], [3,4], [6,8], [12,8]
   bars: number;
   swing?: number; // 0.0 to 1.0 (triplet feel delay on even 16ths/8ths)
+  swingStepGroup?: number; // 1: paired grid steps; 2: swing eighths on a sixteenth grid
   swingRatio?: number; // 50 = straight; 66.67 = triplet long-short pairs
 }
 

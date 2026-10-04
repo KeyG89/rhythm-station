@@ -1,4 +1,5 @@
 import { SAMPLE_FILES, selectSample } from '../domain/samples';
+import { DrumSoundParams } from '../types/audio';
 import { DrumInstrument } from '../types/rhythm';
 
 declare global { interface Window { __GROOVE_SAMPLES__?: Record<string, string>; __GROOVE_CREDITS__?: string } }
@@ -30,7 +31,7 @@ export class SampleKit {
     })).then(() => undefined).catch(error => { this.loading = null; throw error; });
     return this.loading;
   }
-  trigger(instrument: DrumInstrument, time: number, velocity: number, destination: AudioNode): boolean {
+  trigger(instrument: DrumInstrument, time: number, velocity: number, destination: AudioNode, tuning: DrumSoundParams): boolean {
     const layers = this.buffers.get(instrument);
     if (!layers?.length) return false;
     // Three recorded dynamic layers, alternating left/right snare takes within each layer.
@@ -43,8 +44,16 @@ export class SampleKit {
     // Level-match takes without flattening the requested musical dynamics.
     const peak = this.peaks.get(source.buffer) ?? 1;
     gain.gain.setValueAtTime(velocity * 0.7 / peak, time);
-    source.playbackRate.value = selection.rate;
-    source.connect(gain); gain.connect(destination);
+    source.playbackRate.value = selection.rate * tuning.pitchMultiplier;
+    const duration = source.buffer.duration / source.playbackRate.value;
+    const tail = duration * Math.max(0.35, Math.min(1, tuning.decayMultiplier));
+    if (tuning.decayMultiplier < 1) {
+      gain.gain.setValueAtTime(velocity * 0.7 / peak, time + Math.min(0.015, tail / 4));
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + tail);
+    }
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = tuning.toneFrequency; filter.Q.value = 0.2;
+    source.connect(filter); filter.connect(gain); gain.connect(destination);
     if (instrument === 'hihat_closed' || instrument === 'hihat_pedal') {
       for (const voice of this.openHats) {
         if (voice.start > time) continue;
@@ -56,8 +65,9 @@ export class SampleKit {
     const hat = { source, gain, start: time };
     if (instrument === 'hihat_open') this.openHats.add(hat);
     this.voices.add(source);
-    source.onended = () => { this.openHats.delete(hat); this.voices.delete(source); source.disconnect(); gain.disconnect(); };
+    source.onended = () => { this.openHats.delete(hat); this.voices.delete(source); source.disconnect(); filter.disconnect(); gain.disconnect(); };
     source.start(time);
+    if (tuning.decayMultiplier < 1) source.stop(time + tail + 0.015);
     return true;
   }
   stop() {

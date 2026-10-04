@@ -33,13 +33,12 @@ describe('Twelve authored grooves', () => {
       }
     }
   });
-  it('clamps incompatible controls and keeps reggae one drop intact in every section', () => {
-    expect(normalizeControls('05', { kickDensity: 999, ghostNotes: 999, swing: 70 })).toMatchObject({ kickDensity: 0, ghostNotes: 0, swing: 50 });
-    for (const p of Object.values(arrangeGroove('05', { complexity: 3, kickDensity: 3, ghostNotes: 3, hihatDensity: 3 }).sections)) {
-      const kicks = p.steps.flatMap((hits, i) => hits.some(h => h.instrument === 'kick') ? [i] : []);
-      expect(kicks.every(i => i === 8)).toBe(true);
-      expect(p.steps[0].some(h => h.instrument === 'kick')).toBe(false);
-    }
+  it('allows restrained reggae vocabulary while keeping one-drop anchors', () => {
+    expect(normalizeControls('05', { kickDensity: 999, ghostNotes: 999, swing: 70 })).toMatchObject({ kickDensity: 2, ghostNotes: 3, swing: 62 });
+    const p = arrangeGroove('05', { kickDensity: 2, ghostNotes: 3 }).sections.mainA;
+    expect(p.steps.flatMap((hits, i) => hits.some(h => h.instrument === 'kick') ? [i] : [])).toEqual([6, 8, 14]);
+    expect(p.steps[0].some(h => h.instrument === 'kick')).toBe(false);
+    expect(p.steps[8].some(h => h.instrument === 'rimshot' && h.role === 'essential')).toBe(true);
   });
   it('distinguishes Brazilian cross-stick from Cuban son clave', () => {
     const notes = (id: string, inst: string) => arrangeGroove(id).sections.mainA.steps.flatMap((hits, i) => hits.some(h => h.instrument === inst) ? [i] : []);

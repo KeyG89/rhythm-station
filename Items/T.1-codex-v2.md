@@ -31,7 +31,7 @@ Main was clean at 4909e5f. The preservation branch points to that exact commit.
 Select Reggae, inspect locked kick density, play with the other controls; reset to essence. Compare Shuffle and Jazz; count 6/8 in two groups and 7/8 as 2+2+3. Mute a limb and play it yourself.
 
 ## Feedback and fixes
-None yet.
+See T.1.1 for the personal-kit editor and additional reggae/bossa controls. Its explicit variants supersede this item’s initial kick/ghost lockouts.
 
 ## Closure
 Implemented and verified. Playback uses real recordings by default; sample load failure is visible and never silently changes to synthesis. No application secrets or global client configuration. Runtime browser devices remain browser adapters; domain automation is exposed locally through CLI/MCP.

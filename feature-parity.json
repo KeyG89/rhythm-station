@@ -1,10 +1,188 @@
 {
   "version": 1,
-  "scope": "Codex v2 domain features; CLI/MCP inspect and plan, browser performs real-time playback and recording.",
+  "scope": "Codex v2 shared composition, local draft validation and tuning; CLI/MCP inspect, browser performs playback, recording and local file/storage access.",
   "features": [
-    {"id":"essential-grooves", "status":"complete", "domain":["src/domain/grooves.ts"], "gui":["src/App.tsx"], "cli":["scripts/groove-cli.mjs"], "mcp":["scripts/groove-mcp.mjs"], "tests":["tests/rhythms.test.ts","scripts/check-adapters.mjs"], "documentation":["Docs/GrooveDesign.md","README.md"]},
-    {"id":"authored-controls", "status":"complete", "domain":["src/domain/grooves.ts"], "gui":["src/hooks/useDrumEngine.ts","src/App.tsx"], "cli":["scripts/groove-cli.mjs"], "mcp":["scripts/groove-mcp.mjs"], "tests":["tests/rhythms.test.ts","scripts/check-adapters.mjs"], "documentation":["Docs/GrooveDesign.md"]},
-    {"id":"meter-swing-humanize", "status":"complete", "domain":["src/domain/timing.ts"], "gui":["src/audio/AudioScheduler.ts","src/App.tsx"], "cli":["src/adapters/grooveApi.ts","scripts/groove-cli.mjs"], "mcp":["scripts/groove-mcp.mjs"], "tests":["tests/scheduler.test.ts","scripts/check-adapters.mjs"], "documentation":["Docs/GrooveDesign.md"]},
-    {"id":"recorded-instrument-selection", "status":"complete", "domain":["src/domain/samples.ts"], "gui":["src/audio/SampleKit.ts","src/App.tsx"], "cli":["src/adapters/grooveApi.ts","scripts/groove-cli.mjs"], "mcp":["scripts/groove-mcp.mjs"], "tests":["tests/samples.test.ts","Diagnostics/check_samples.py","scripts/check-adapters.mjs"], "documentation":["public/samples/CREDITS.md","Docs/GrooveDesign.md"]}
+    {
+      "id": "essential-grooves",
+      "status": "complete",
+      "domain": [
+        "src/domain/grooves.ts"
+      ],
+      "gui": [
+        "src/App.tsx"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/rhythms.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md",
+        "README.md"
+      ]
+    },
+    {
+      "id": "authored-controls",
+      "status": "complete",
+      "domain": [
+        "src/domain/grooves.ts",
+        "src/domain/studio.ts"
+      ],
+      "gui": [
+        "src/hooks/useDrumEngine.ts",
+        "src/App.tsx"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/rhythms.test.ts",
+        "scripts/check-adapters.mjs",
+        "tests/studio.test.ts"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md"
+      ]
+    },
+    {
+      "id": "meter-swing-humanize",
+      "status": "complete",
+      "domain": [
+        "src/domain/timing.ts"
+      ],
+      "gui": [
+        "src/audio/AudioScheduler.ts",
+        "src/App.tsx"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/scheduler.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md"
+      ]
+    },
+    {
+      "id": "recorded-instrument-selection",
+      "status": "complete",
+      "domain": [
+        "src/domain/samples.ts"
+      ],
+      "gui": [
+        "src/audio/SampleKit.ts",
+        "src/App.tsx"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/samples.test.ts",
+        "Diagnostics/check_samples.py",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "public/samples/CREDITS.md",
+        "Docs/GrooveDesign.md"
+      ]
+    },
+    {
+      "id": "personal-kit-orchestration",
+      "status": "complete",
+      "domain": [
+        "src/domain/studio.ts"
+      ],
+      "gui": [
+        "src/App.tsx",
+        "src/components/PersonalKit.tsx"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/studio.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md",
+        "README.md"
+      ]
+    },
+    {
+      "id": "editable-local-grooves",
+      "status": "complete",
+      "domain": [
+        "src/domain/studio.ts",
+        "src/domain/session.ts"
+      ],
+      "gui": [
+        "src/App.tsx",
+        "src/hooks/useDrumEngine.ts"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/studio.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md",
+        "README.md"
+      ]
+    },
+    {
+      "id": "recorded-kit-tuning",
+      "status": "complete",
+      "domain": [
+        "src/domain/session.ts"
+      ],
+      "gui": [
+        "src/components/PersonalKit.tsx",
+        "src/audio/SampleKit.ts"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/samplePlayback.test.ts",
+        "tests/studio.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md",
+        "README.md"
+      ]
+    }
   ]
 }

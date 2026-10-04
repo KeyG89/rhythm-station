@@ -8,7 +8,7 @@ export function unitDuration(style: RhythmStyle, bpm: number): number {
 export function stepDuration(style: RhythmStyle, pattern: RhythmPattern, bpm: number, index: number): number {
   const base = unitDuration(style, bpm) / pattern.stepsPerBeat;
   const ratio = Math.max(50, Math.min(75, pattern.swingRatio ?? 50)) / 100;
-  return base * 2 * (index % 2 === 0 ? ratio : 1 - ratio);
+  return base * 2 * (Math.floor(index / (pattern.swingStepGroup ?? 1)) % 2 === 0 ? ratio : 1 - ratio);
 }
 export function pulses(style: RhythmStyle): { unit: number; durationUnits: number }[] {
   const groups = style.pulseGroups ?? Array.from({ length: style.timeSignature[0] }, () => 1);

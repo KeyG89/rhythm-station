@@ -41,13 +41,27 @@ npm run build:standalone
 
 ## Practice
 
-Choose a groove, press **Graj groove**, and follow its counting and three lesson steps. Orange notes are the essential identity; green notes are optional vocabulary; `g` means a quiet ghost note. Mute a part with M and play it yourself; S solos a part. Clicking the instrument name auditions it. Practice buttons mute kick, snare/cross-stick or hi-hat together.
+Choose a groove, press **Graj groove**, and follow its counting and three lesson steps. Blue notes are the essential identity; green notes are optional vocabulary; `g` means a quiet ghost note. Mute a part with M and play it yourself; S solos a part. Clicking the instrument name auditions it. Practice buttons mute kick, snare/cross-stick or hi-hat together.
 
-Tempo has groove-specific bounds. Complexity, Ghost notes, Kick density and Hi-hat density choose cumulative authored stages; their descriptions explain the musical action. Swing changes the long-short ratio; 67% approximates triplet eighths. Humanize adds bounded, repeatable hand timing and small velocity changes while drum anchors remain on the pulse. Unsupported controls are disabled with a reason. Reset restores the original pattern, its default tempo and A variation.
+Tempo has groove-specific bounds. Complexity, Ghost notes, Kick density and Hi-hat density choose cumulative authored stages; their descriptions explain the musical action. Swing changes the long-short ratio; 67% approximates triplet eighths. Humanize adds bounded, repeatable hand timing and small velocity changes while drum anchors remain on the pulse. Unsupported controls are disabled with a reason. Reggae allows eighth-note swing (50–62%); bossa permits subtle sixteenth-note swing (50–56%) and restrained ghost/kick answers. Reset restores the original pattern, its default tempo and A variation.
 
-A/B and Fill changes wait for a complete phrase, including both bars of clave/bossa. Fills are restrained style-specific responses. Speed Trainer gradually increases BPM and respects the selected groove's maximum. Changing/resetting the groove disables Speed Trainer. Recording saves only the application's audible output, including its mixer and metronome; it does not record a microphone. Output format follows the browser (usually WebM, or M4A on Safari), with an inline playback control.
+While stopped, A/B/Fill selects a phrase for inspection/editing without starting audio. During playback, A/B and Fill changes wait for a complete phrase, including both bars of clave/bossa. Fills are restrained style-specific responses. Speed Trainer gradually increases BPM and respects the selected groove's maximum. Changing/resetting the groove disables Speed Trainer. Recording saves only the application's audible output, including its mixer and metronome; it does not record a microphone. Output format follows the browser (usually WebM, or M4A on Safari), with an inline playback control.
 
 Shortcuts: Space play/stop; C count-in; M metronome; F fill; V A/B; T tap tempo; Up/Down ±1 BPM, Shift ±5; Esc stop. Inputs retain their normal keyboard controls.
+
+## Personal kit and own grooves
+
+The default kit contains kick, snare, cross-stick, closed/open/pedal hi-hat, crash, ride, ride bell, **one rack tom and floor tom**. Every articulation has a musical vocabulary slider. Sliders select written phrases, with one crash accent, short tom responses and right-hand transfers to ride/bell; combinations are orchestrated for at most two simultaneous hand hits. Base accents win conflicts. In Afro 6/8 the bell slider changes the accents of the complete seven-stroke timeline instead of filling its gaps. Zero restores that control's contribution to the base, rather than muting an essential part (use M to mute).
+
+Reggae has an explicit **One Drop / kick + cross-stick on 2 and 4** selector. Additional kicks are sparse &4/&2 answers, never continuous doubles. Bossa retains its Brazilian two-bar cross-stick while allowing quiet snare touches and two extra kick responses. Samba's already dense foot ostinato stays fixed.
+
+**Mój zestaw** maps clave to cross-stick, cowbell to ride bell, congas to tom/floor, shaker/tambourine to hi-hat. Choose supported alternate mappings there, or audition the original percussion for comparison. Mapping changes the voice, not the written timeline. Entering the editor switches to the personal kit.
+
+**Edytuj pełną mapę** exposes all eleven articulation rows across the entire phrase. Click a cell to add/remove a hit; Shift+click sets its velocity to the selected ghost/light/medium/accent value. **Pusta fraza** clears the selected phrase so you can build it yourself. A/B/Fill edits are independent. Edits override automatic sliders, including explicit removals; **Cofnij własne nuty** restores automatic arrangements. Free editing retains your notes and reports simultaneous hand/articulation conflicts; it does not silently change them. It does not guarantee a user-written phrase is idiomatic at every tempo.
+
+**Zapisz lokalnie** stores one practice draft in this browser; **Wczytaj zapis** restores it after reload. JSON export/import transfers named files containing the groove ID, tempo, controls, mapping, section-specific cells and sound settings. Import validates version, meter bounds and allowed instruments. No database, account or server storage. Changing a groove/reset returns to its base; save/export edits before changing it.
+
+**Brzmienia** offers volume, pitch ±4 semitones, decay 35–100%, brightness and pan for each articulation, plus audition/reset. These affect actual recorded WAV playback. Pitch also changes natural sample duration; decay shortens the tail, not time-stretching it. Changes apply to subsequent hits. Mute/solo continues to affect audition/playback. Local drafts include tuning.
 
 ## Recorded instruments
 
@@ -57,15 +71,15 @@ The acoustic sample subset is CC-BY-SA-4.0; VSCO is CC0. The modified recordings
 
 ## Shared domain and automation
 
-The browser, CLI and MCP share authored groove/control, timing and sample-selection functions. CLI/MCP return arrangements, timed note events, instrument sample choices, control capabilities and lessons; real-time browser audio, recording and device controls remain browser functions.
+The browser, CLI and MCP share authored groove/control, kit orchestration, cell editing, draft validation, sound tuning, timing and sample-selection functions. CLI/MCP return arrangements, timed note events, instrument sample choices, control capabilities and lessons; real-time browser audio, recording, file pickers and localStorage remain browser adapters. CLI `draft <draft JSON>` and MCP `inspect_draft` validate and inspect exported drafts without mutating storage.
 
 ```sh
 npm run cli -- list
-npm run cli -- inspect 05 '{"complexity":3,"kickDensity":3}' 75
+npm run cli -- inspect 05 '{"ghostNotes":2,"kickDensity":2,"tomDensity":1}' 75 '{"reggaeVariant":"two-four"}' '{"kick":{"pitch":-2,"decay":0.6}}'
 npm run build:adapters
 node scripts/groove-mcp.mjs
 ```
 
-For an MCP client use command `node` and the absolute path to `scripts/groove-mcp.mjs`, after `npm run build:adapters`. Do not launch through `npm run mcp` in a client: npm's command banners can interfere with stdio. Tools: `list_grooves`, `inspect_groove`. No credentials or network services are required. Nothing is installed into global client configuration.
+For an MCP client use command `node` and the absolute path to `scripts/groove-mcp.mjs`, after `npm run build:adapters`. Do not launch through `npm run mcp` in a client: npm's command banners can interfere with stdio. Tools: `list_grooves`, `inspect_groove`, `inspect_draft`. No credentials or network services are required. Nothing is installed into global client configuration.
 
 Design and validation: [GrooveDesign](Docs/GrooveDesign.md), [MasterPlan](MasterPlan.md), [developer cockpit](Tutorial/index.html).
