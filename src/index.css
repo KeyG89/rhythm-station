@@ -250,3 +250,30 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .editor-toolbar label { flex-wrap: wrap; }
   .editor-toolbar select { max-width: 100%; }
 }
+/* Optional practice tools stay behind a default-off flag. */
+.laboratory-panel { margin-top:16px; }
+.lab-toggle { width:100%;display:flex;justify-content:space-between;gap:12px;padding:13px 16px;border-color:#435d64;background:#17272e;color:#d1e9e9; }
+.lab-toggle span { font-size:10px;letter-spacing:1.5px;color:#9ac9c7; }
+.laboratory-content { padding:18px;background:#111f25;border:1px solid #34515c;border-radius:0 0 10px 10px; }
+.laboratory-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px; }
+.lab-card { padding:14px;background:#182930;border:1px solid #3a5259;border-radius:7px;min-width:0; }
+.lab-card>b { color:#bfe1e2;font-size:13px; }
+.lab-card p,.lab-card small { font-size:11px;line-height:1.7;color:#a7b9c5; }
+.lab-card small { display:block;margin-top:10px; }
+.lab-card label { display:flex;gap:7px;align-items:center;font-size:11px;color:#d4e4e8; }
+.lab-card input { accent-color:#85c8bd; }
+.lab-fields { display:flex;gap:10px;margin-top:12px; }
+.lab-fields label { display:flex;align-items:flex-start;flex-direction:column;flex:1; }
+.lab-card select { background:#102027;border:1px solid #43616b;padding:6px;width:100%;color:#d9edf0; }
+.comparison-slots>div { display:flex;flex-wrap:wrap;gap:6px;margin-top:10px; }
+.comparison-slots small { width:100%;margin:0; }
+.comparison-report { padding:12px;margin-top:14px;background:#203139;border-radius:6px;font-size:12px; }
+.comparison-report>div { display:flex;gap:12px;flex-wrap:wrap; }
+.song-row { grid-template-columns:24px minmax(0,1fr) 65px auto auto auto; }
+.spotify-link { color:#a5d7b2;border-color:#3c6347;background:#20382c; }
+.second-tom { display:flex;gap:9px;margin-bottom:16px;font-size:12px;color:#cfdfeb; }
+.second-tom input { accent-color:#9cc5ba; }
+.grace-lead .cell-button::after { content:'••';color:#d6b9fa;font-size:8px;position:absolute;bottom:0;right:1px;letter-spacing:1px; }
+.cell-button { position:relative; }
+@media(max-width:1100px) { .laboratory-grid { grid-template-columns:1fr; } .song-row { grid-template-columns:20px minmax(0,1fr) 60px auto; } .song-row>.song-link { grid-row:2; } .song-row>.spotify-link { grid-column:3 / span 2; } }
+@media(max-width:650px) { .song-row {grid-template-columns:20px 1fr 70px;} .song-row>.small-action {grid-row:2;grid-column:2;} .song-row>.song-link:not(.spotify-link) {grid-row:2;grid-column:3;} .song-row>.spotify-link {grid-row:3;grid-column:2 / span 2;justify-self:end;} }

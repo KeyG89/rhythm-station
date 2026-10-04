@@ -21,7 +21,7 @@ SONOR_FILES = {
  'hihat_open': ['HHOpenTip.flac', 'HHOpenTip#3.flac'],
  'hihat_pedal': ['HHPedal.flac', 'HHPedal#3.flac'],
  'tom_high': ['TomHigh.flac', 'TomHigh#4.flac'],
- 'tom_mid': ['TomClicks.flac', 'TomClicks#4.flac'],
+ 'tom_mid': ['TomHigh.flac', 'TomHigh#4.flac'],
  'tom_low': ['TomLow.flac', 'TomLow#6.flac'],
  'crash': ['CrashTip.flac', 'CrashTip#3.flac'],
  'ride': ['Ride.flac', 'Ride#4.flac'],
@@ -45,7 +45,7 @@ def convert(task):
   output = DEST / f'{inst}-{i}.wav'
   subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-i', str(original), '-af', 'silenceremove=start_periods=1:start_duration=0.001:start_threshold=-55dB', '-t', '5', '-ac', '1', '-ar', '44100', '-c:a', 'pcm_s16le', str(output)], check=True)
  if output.stat().st_size < 1000: raise RuntimeError(f'Empty converted sample: {source}')
- return {'instrument': inst, 'layer': i, 'file': output.name, 'source': url, 'license': 'CC-BY-SA-4.0' if base == SONOR else 'CC0-1.0', 'sha256': hashlib.sha256(output.read_bytes()).hexdigest()}
+ return {**({'adaptation':'Recorded rack tom played three semitones lower for optional Tom 2; runtime rate 2**(-3/12).'} if inst == 'tom_mid' else {}), 'instrument': inst, 'layer': i, 'file': output.name, 'source': url, 'license': 'CC-BY-SA-4.0' if base == SONOR else 'CC0-1.0', 'sha256': hashlib.sha256(output.read_bytes()).hexdigest()}
 
 tasks = [(inst, i, base, ('Samples/' + source if base == SONOR else source)) for base, mapping in [(SONOR, SONOR_FILES), (VSCO, VSCO_FILES)] for inst, sources in mapping.items() for i, source in enumerate(sources)]
 with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:

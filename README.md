@@ -1,6 +1,6 @@
 # Groove Lab — Codex v2
 
-A Yamaha PSR-220/230-inspired percussion practice station with **twelve distinct essential grooves**. Start with the musical skeleton, then develop it through explicitly authored vocabulary. The interface and learning prompts are in Polish.
+A Yamaha PSR-220/230-inspired percussion practice station with **fifteen distinct essential grooves**. Start with the musical skeleton, then develop it through explicitly authored vocabulary. The interface and learning prompts are in Polish.
 
 The previous 100-style application is preserved at local branch `feature/gemini_v1` (main commit `4909e5f`). This version lives on `feat/codex_v2`; main is unchanged.
 
@@ -38,6 +38,9 @@ npm run build:standalone
 10. Afro 6/8
 11. Waltz 3/4
 12. Balkan 7/8 (2+2+3)
+13. Five-Four 5/4 (3+2)
+14. Metal · Single Pedal
+15. Tom Groove
 
 ## Practice
 
@@ -51,13 +54,13 @@ Shortcuts: Space play/stop; C count-in; M metronome; F fill; V A/B; T tap tempo;
 
 ## Personal kit and own grooves
 
-The default kit contains kick, snare, cross-stick, closed/open/pedal hi-hat, crash, ride, ride bell, **one rack tom and floor tom**. Every articulation has a musical vocabulary slider. Sliders select written phrases, with one crash accent, short tom responses and right-hand transfers to ride/bell; combinations are orchestrated for at most two simultaneous hand hits. Base accents win conflicts. In Afro 6/8 the bell slider changes the accents of the complete seven-stroke timeline instead of filling its gaps. Zero restores that control's contribution to the base, rather than muting an essential part (use M to mute).
+The default kit contains kick, snare, cross-stick, closed/open/pedal hi-hat, crash, ride, ride bell, **one rack tom and floor tom**, with optional Tom 2 (enabled initially for Tom Groove). Every articulation has a musical vocabulary slider. Sliders select written phrases, with one crash accent, short tom responses and right-hand transfers to ride/bell; combinations are orchestrated for at most two simultaneous hand hits. Base accents win conflicts. In Afro 6/8 the bell slider changes the accents of the complete seven-stroke timeline instead of filling its gaps. Zero restores that control's contribution to the base, rather than muting an essential part (use M to mute).
 
 Reggae has an explicit **One Drop / kick + cross-stick on 2 and 4** selector. Additional kicks are sparse &4/&2 answers, never continuous doubles. Bossa retains its Brazilian two-bar cross-stick while allowing quiet snare touches and two extra kick responses. Samba's already dense foot ostinato stays fixed.
 
 **Mój zestaw** maps clave to cross-stick, cowbell to ride bell, congas to tom/floor, shaker/tambourine to hi-hat. Choose supported alternate mappings there, or audition the original percussion for comparison. Mapping changes the voice, not the written timeline. Entering the editor switches to the personal kit.
 
-**Edytuj pełną mapę** exposes all eleven articulation rows across the entire phrase. Repeated clicks on the same cell follow **1: normal → 2: ghost → 3: drag → 4: flam → 5: rest**. A true double-click also makes an already-filled cell a ghost. Clicking another cell starts a new sequence. Drag plays two quiet grace strokes before the principal hit; flam plays one, on any articulation. The **Triola** tool places three equally spaced strokes across 1, 2 or 4 grid cells; a small superscript shows the span and an underline marks its coverage. The span is bounded by the phrase end. Shift+click sets velocity without changing the ornament; Alt+click / Usuń nutę erases directly. **Pusta fraza** clears the selected phrase so you can build it yourself. A/B/Fill edits are independent. Edits override automatic sliders, including explicit removals; **Cofnij własne nuty** restores automatic arrangements. Free editing retains your notes and reports simultaneous hand/articulation conflicts; it does not silently change them. Long triplets are also checked at their actual onsets for collisions with later notes. It does not guarantee a user-written phrase is idiomatic at every tempo.
+**Edytuj pełną mapę** exposes all personal-kit articulation rows, including optional Tom 2 across the entire phrase. Repeated clicks on the same cell follow **1: normal → 2: ghost → 3: drag → 4: flam → 5: rest**. A true double-click also makes an already-filled cell a ghost. Clicking another cell starts a new sequence. Drag plays two distinct straight 32nds immediately before the principal hit of the marked field (62.5 ms apart at 120 quarter BPM); the preceding cells show small preparation dots. flam plays one, on any articulation. The **Triola** tool places three equally spaced strokes across 1, 2 or 4 grid cells; a small superscript shows the span and an underline marks its coverage. The span is bounded by the phrase end. Shift+click sets velocity without changing the ornament; Alt+click / Usuń nutę erases directly. **Pusta fraza** clears the selected phrase so you can build it yourself. A/B/Fill edits are independent. Edits override automatic sliders, including explicit removals; **Cofnij własne nuty** restores automatic arrangements. Free editing retains your notes and reports simultaneous hand/articulation conflicts; it does not silently change them. Long triplets are also checked at their actual onsets for collisions with later notes. It does not guarantee a user-written phrase is idiomatic at every tempo.
 
 **Zapisz lokalnie** stores one practice draft in this browser; **Wczytaj zapis** restores it after reload. JSON export/import transfers named files containing the groove ID, tempo, controls, mapping, section-specific cells and sound settings. Import validates version, meter bounds and allowed instruments. No database, account or server storage. Changing a groove/reset returns to its base; save/export edits before changing it.
 
@@ -65,17 +68,27 @@ Reggae has an explicit **One Drop / kick + cross-stick on 2 and 4** selector. Ad
 
 ## Song practice maps
 
-Each genre offers **five maps (60 total)** below the score, including Royal Blood, Red Hot Chili Peppers, Santana and Bob Marley. **Wczytaj** loads the written A loop, approximate researched tempo and feel, resetting sliders and manual edits. After loading, develop the map with the same controls or edit cells. Save/export before switching; drafts include the selected song, fractional BPM, rudiments and triplet spans.
+Each genre offers **five maps (75 total)** below the score, including Royal Blood, Red Hot Chili Peppers, Santana and Bob Marley. **Wczytaj** loads the written A loop, approximate researched tempo and feel, resetting sliders and manual edits. Complexity **0–3** teaches the skeleton, leading hand, kick syncopations and full foot phrase; **4** restores the authored reference section with its articulation/dynamics. **5–7** are clearly labeled genre exercises. All exposed levels change the sound; base grooves have 5–6 authored development levels above zero. Other sliders and manual edits can deliberately change the reference; reset/reload before studying the recording. Save/export before switching; drafts include the selected song, fractional BPM, rudiments and triplet spans.
 
-Every entry shows title, artist and an actual YouTube recording link; the selected entry explains its adaptation and links the tempo source. These are original, simplified practice arrangements, **not complete or note-for-note song transcriptions**. Live versions can differ in tempo: use Tap tempo. Shuffle includes half-time examples; the 6/8 bank includes openly identified jazz/compound adaptations. The 7/8 bank includes popular odd-rock examples and 7/4 exercises recast at half quarter BPM to preserve bar length, rather than presenting them as Balkan folk recordings. [All 60 maps, sources and adaptations](Docs/SongMaps.md).
+Every entry shows title, artist and actual YouTube and Spotify recording links; the selected entry explains its adaptation and links the tempo source. These are original, simplified practice arrangements, **not complete or note-for-note song transcriptions**. Live versions can differ in tempo: use Tap tempo. Shuffle includes half-time examples; the 6/8 bank includes openly identified jazz/compound adaptations. The 7/8 bank includes popular odd-rock examples and 7/4 exercises recast at half quarter BPM to preserve bar length, rather than presenting them as Balkan folk recordings. [All 75 maps, sources and adaptations](Docs/SongMaps.md).
 
 Section accents identify the violet library, blue player, mint score, rose song bank and gold controls. Instrument colors distinguish the lanes; `g`, `d`, `f`, `3` and outlines retain meaning without relying on color alone.
+
+## Optional practice laboratory
+
+Click **Odkryj dodatki treningowe** below the map to reveal three default-off tools with descriptions:
+
+- **Znikający groove**: whole phrases with drums/click alternate with whole silent phrases. Return on the next one; anticipatory graces do not cue the silent phrase. Recorded tails decay naturally.
+- **Drabinka Complexity**: progress one level after the selected number of complete phrases, up to the target. Tempo remains set; manual Complexity changes disable the ladder. Two-bar grooves retain their full phrases.
+- **Porównanie A/B**: keep two in-memory snapshots across application tabs. Recall stops playback and restores cells, tempo, mapping and sound; the comparison counts real strokes, including graces/triplets. JSON export retains a version after closing/reloading.
+
+Hiding the laboratory disables gap/ladder. No database. [Behavior and headless examples](Docs/PracticeLaboratory.md).
 
 ## Recorded instruments
 
 41 local PCM WAV recordings (~6.4 MiB): acoustic Sonor drums/cymbals by Sam Greene, with dynamic layers and alternating snare hands; VSCO claves, congas, cowbell, tambourine and shaker. Hi-hat closure chokes the open recording. Master limiting protects the mix.
 
-The acoustic sample subset is CC-BY-SA-4.0; VSCO is CC0. The modified recordings, exact upstream paths, conversion process and SHA-256 hashes are documented in [sample credits](public/samples/CREDITS.md) and `public/samples/manifest.json`. The low conga is a pitched articulation of the same conga recordings; the middle tom uses Sonor's TomClicks articulation. These are documented adaptations, not separate instrument recordings. This is not a dump of Yamaha ROM sounds.
+The acoustic sample subset is CC-BY-SA-4.0; VSCO is CC0. The modified recordings, exact upstream paths, conversion process and SHA-256 hashes are documented in [sample credits](public/samples/CREDITS.md) and `public/samples/manifest.json`. The low conga is a pitched articulation of the same conga recordings; Tom 2 uses the recorded rack tom three semitones lower. These are documented adaptations, not separate instrument recordings. This is not a dump of Yamaha ROM sounds.
 
 ## Shared domain and automation
 
@@ -84,13 +97,14 @@ The browser, CLI and MCP share authored groove/control, kit orchestration, cell 
 ```sh
 npm run cli -- list
 npm run cli -- songs 01
-npm run cli -- song 01-2 '{"drags":1,"triplets":1}'
+npm run cli -- song 00-5 '{"complexity":4}'
+npm run cli -- lab '{"config":{"enabled":true,"gap":true,"ladder":true},"start":0,"max":7,"phrases":16}'
 npm run cli -- cell '{"section":"mainA","instrument":"snare","step":4}' '{}' 3
 npm run cli -- inspect 05 '{"ghostNotes":2,"kickDensity":2,"tomDensity":1}' 75 '{"reggaeVariant":"two-four"}' '{"kick":{"pitch":-2,"decay":0.6}}'
 npm run build:adapters
 node scripts/groove-mcp.mjs
 ```
 
-For an MCP client use command `node` and the absolute path to `scripts/groove-mcp.mjs`, after `npm run build:adapters`. Do not launch through `npm run mcp` in a client: npm's command banners can interfere with stdio. Tools: `list_grooves`, `inspect_groove`, `inspect_draft`, `list_song_maps`, `inspect_song_map`, `cycle_cell`. Timed events include grace strokes (negative times at the start are relative to the first principal onset); real playback reserves 50 ms before that onset. No credentials or network services are required. Nothing is installed into global client configuration.
+For an MCP client use command `node` and the absolute path to `scripts/groove-mcp.mjs`, after `npm run build:adapters`. Do not launch through `npm run mcp` in a client: npm's command banners can interfere with stdio. Tools: `list_grooves`, `inspect_groove`, `inspect_draft`, `list_song_maps`, `inspect_song_map`, `cycle_cell`, `inspect_practice_plan`, `compare_practice_drafts`. Timed events include grace strokes (negative times at the start are relative to the first principal onset); playback reserves at least 50 ms, extended to fit tempo-based grace strokes safely. No credentials or network services are required. Nothing is installed into global client configuration.
 
 Design and validation: [GrooveDesign](Docs/GrooveDesign.md), [MasterPlan](MasterPlan.md), [developer cockpit](Tutorial/index.html).

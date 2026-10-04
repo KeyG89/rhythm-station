@@ -1,8 +1,8 @@
 // @refresh reset
-import { normalizeTrainer, trainerTempo } from '../domain/practice';
+import { normalizeTrainer, trainerTempo, normalizeLaboratory, LaboratoryConfig } from '../domain/practice';
 import { getGroove } from '../domain/grooves';
 import { getSongMap } from '../domain/songMaps';
-import { composeGroove, defaultStudioControls, normalizeStudioControls, normalizeOptions, setCell, StudioControls, StudioControlKey, StudioOptions, CellEdit, KIT } from '../domain/studio';
+import { composeGroove, defaultStudioControls, normalizeStudioControls, normalizeOptions, setCell, studioCapabilities, StudioControls, StudioControlKey, StudioOptions, CellEdit, KIT } from '../domain/studio';
 import { KitMix, normalizeDraft, normalizeMix, PracticeDraft, sampleTuning, serializeDraft, VoiceMix } from '../domain/session';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { DrumInstrument, RhythmSection, RhythmStyle, DrumHit } from '../types/rhythm';
@@ -98,6 +98,17 @@ export function useDrumEngine() {
   const schedulerRef = useRef<AudioScheduler | null>(null);
   const recorderRef = useRef<AudioRecorder | null>(null);
 
+  const [comparisonSlots,setComparisonSlots]=useState<{a:PracticeDraft|null;b:PracticeDraft|null}>({a:null,b:null});
+  const [practiceSilent,setPracticeSilent]=useState(false);
+  const [laboratory,setLaboratoryState]=useState(()=>normalizeLaboratory());
+  const liveArrangement=useRef({id:currentStyle.id,controls:grooveControls,options:studioOptions});
+  liveArrangement.current={id:currentStyle.id,controls:grooveControls,options:studioOptions};
+  const resolveComplexity=(level:number)=>{ const live=liveArrangement.current; return composeGroove(live.id,{...live.controls,complexity:level},live.options); };
+  const updateLaboratory=(update:Partial<LaboratoryConfig>)=>setLaboratoryState(prev=>normalizeLaboratory({...prev,...update}));
+  useEffect(()=>{
+    schedulerRef.current?.setLaboratory(laboratory,grooveControls.complexity,studioCapabilities(currentStyle.id,studioOptions).complexity.max,resolveComplexity);
+  },[laboratory,currentStyle.id]);
+
   // Tap Tempo state
   const tapTimesRef = useRef<number[]>([]);
 
@@ -118,11 +129,14 @@ export function useDrumEngine() {
       const scheduler = new AudioScheduler(synth, currentStyle);
       schedulerRef.current = scheduler;
       scheduler.setHumanize(grooveControls.humanize);
+      scheduler.setLaboratory(laboratory,grooveControls.complexity,studioCapabilities(currentStyle.id,studioOptions).complexity.max,resolveComplexity);
 
       const recorder = new AudioRecorder(ctx, synth.getMasterNode());
       recorderRef.current = recorder;
 
       scheduler.setCallbacks({
+        onPracticePhase:setPracticeSilent,
+        onComplexityChange:(level,style)=>{setGrooveControls(prev=>({...prev,complexity:level}));setCurrentStyle(style);},
         onStepChange: (step, bar, section, hits) => {
           setCountInActive(false); setCountInBeat(null);
           setCurrentStep(step);
@@ -145,7 +159,7 @@ export function useDrumEngine() {
           setTotalBars(barCount);
         },
         onPlaybackEnd: () => {
-          setIsPlaying(false);
+          setPracticeSilent(false); setIsPlaying(false);
           setCountInActive(false);
           setCountInBeat(null);
           setActiveHits([]);
@@ -158,7 +172,7 @@ export function useDrumEngine() {
         }
       });
     }
-  }, [currentStyle, mixerState, masterVolume, soundParams, soundMode, grooveControls.humanize]);
+  }, [currentStyle, mixerState, masterVolume, soundParams, soundMode, grooveControls.humanize, laboratory]);
 
   const trainerBarRef = useRef(0);
   // Handle Speed Trainer logic when bar completes
@@ -263,12 +277,12 @@ export function useDrumEngine() {
 
   // Style change
   const selectStyle = useCallback((styleOrId: string | RhythmStyle, songPresetId = '') => {
+    setLaboratoryState(prev=>normalizeLaboratory({...prev,gap:false,ladder:false}));
     const id = typeof styleOrId === 'string' ? getStyleById(styleOrId).id : styleOrId.id;
     setSpeedTrainer(prev => normalizeTrainer({ ...prev, enabled: false, startBpm: songPresetId ? getSongMap(songPresetId,id).bpm : getGroove(id).style.defaultBpm, targetBpm: (songPresetId ? getSongMap(songPresetId,id).bpm : getGroove(id).style.defaultBpm) + 30 }, getGroove(id).tempo));
     setMixerState(prev => Object.fromEntries(Object.entries(prev).map(([inst, channel]) => [inst, { ...channel, isSolo: false }])));
-    const controls = defaultStudioControls(id);
-    if (songPresetId) controls.swing = getSongMap(songPresetId,id).swing;
-    const options = normalizeOptions({ ...studioOptions, songPresetId, reggaeVariant: 'one-drop', edits: [] });
+    const controls = defaultStudioControls(id,{songPresetId});
+    const options = normalizeOptions({ ...studioOptions, secondTom: id === '14', songPresetId, reggaeVariant: 'one-drop', edits: [] });
     setStudioOptions(options);
     const style = composeGroove(id, controls, options);
     setGrooveControls(controls);
@@ -287,7 +301,8 @@ export function useDrumEngine() {
   }, [studioOptions]);
 
   const setGrooveControl = useCallback((key: StudioControlKey, value: number) => {
-    const next = normalizeStudioControls(currentStyle.id, { ...grooveControls, [key]: value });
+    if(key==='complexity') setLaboratoryState(prev=>normalizeLaboratory({...prev,ladder:false}));
+    const next = normalizeStudioControls(currentStyle.id, { ...grooveControls, [key]: value }, studioOptions);
     setGrooveControls(next);
     const style = composeGroove(currentStyle.id, next, studioOptions);
     setCurrentStyle(style);
@@ -297,9 +312,10 @@ export function useDrumEngine() {
 
 
   const updateStudioOptions = useCallback((update: StudioOptions) => {
-    const options = normalizeOptions({ ...studioOptions, ...update });
-    setStudioOptions(options);
-    const style = composeGroove(currentStyle.id, grooveControls, options);
+    const options = normalizeOptions({ ...studioOptions, ...update },currentStyle.id);
+    const controls=normalizeStudioControls(currentStyle.id,grooveControls,options);
+    setStudioOptions(options); setGrooveControls(controls);
+    const style = composeGroove(currentStyle.id, controls, options);
     setCurrentStyle(style); schedulerRef.current?.setStyle(style, false);
   }, [studioOptions, currentStyle.id, grooveControls]);
   const editCell = useCallback((edit: CellEdit) => updateStudioOptions({ edits: setCell(studioOptions.edits, edit) }), [studioOptions.edits, updateStudioOptions]);
@@ -317,12 +333,12 @@ export function useDrumEngine() {
     setSoundParamsState(params); synthRef.current?.setAllSoundParams(params);
     setMixerState(prev => ({ ...prev, [inst]: { ...prev[inst], volume: mix.volume, pan: mix.pan } }));
   };
-  const draft: PracticeDraft = { version: 1, id: currentStyle.id, bpm, controls: grooveControls, options: studioOptions, mix: kitMix };
+  const draft: PracticeDraft = { laboratory, version: 1, id: currentStyle.id, bpm, controls: grooveControls, options: studioOptions, mix: kitMix };
   const saveDraft = () => { try { localStorage.setItem('groovelab_practice_v1', serializeDraft(draft)); setDraftMessage('Zapisano w tej przeglądarce.'); } catch { setDraftMessage('Zapis lokalny niedostępny. Użyj eksportu JSON.'); } };
   const loadDraft = (json?: string) => {
     try {
       const value = normalizeDraft(JSON.parse(json ?? localStorage.getItem('groovelab_practice_v1') ?? 'null'));
-      stop(); setGrooveControls(value.controls); setStudioOptions(value.options); setKitMix(value.mix); setBpmState(value.bpm);
+      stop(); setLaboratoryState(normalizeLaboratory(value.laboratory)); setGrooveControls(value.controls); setStudioOptions(value.options); setKitMix(value.mix); setBpmState(value.bpm);
       const style = composeGroove(value.id, value.controls, value.options);
       setCurrentStyle(style); setCurrentSection('mainA'); setNextSection(null); setCurrentStep(0); setTotalBars(0);
       setSpeedTrainer(prev => normalizeTrainer({ ...prev, enabled: false, startBpm: value.bpm, targetBpm: value.bpm + 30 }, getGroove(value.id).tempo));
@@ -531,7 +547,7 @@ export function useDrumEngine() {
   useEffect(() => () => { if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl); }, [recordedAudioUrl]);
 
   return {
-    studioOptions, updateStudioOptions, editCell, loadSongMap: (id: string) => selectStyle(getSongMap(id).grooveId,id), kitMix, updateVoiceMix, resetVoiceMix, draft, saveDraft, loadDraft, draftMessage, reportDraftError: setDraftMessage,
+    comparisonSlots, captureComparisonSlot:(key:'a'|'b')=>setComparisonSlots(prev=>({...prev,[key]:normalizeDraft(draft)})), practiceSilent, laboratory,updateLaboratory, studioOptions, updateStudioOptions, editCell, loadSongMap: (id: string) => selectStyle(getSongMap(id).grooveId,id), kitMix, updateVoiceMix, resetVoiceMix, draft, saveDraft, loadDraft, draftMessage, reportDraftError: setDraftMessage,
     grooveControls, setGrooveControl, resetEssence, sampleStatus, soundMode, changeSoundMode,
     // Sequencer / Playback state
     isPlaying,

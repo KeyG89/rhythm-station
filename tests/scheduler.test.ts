@@ -28,14 +28,54 @@ describe('Production lookahead scheduler', () => {
     const h=harness('00');
     const style=composeGroove('00',{}, {edits:[{section:'mainA',step:0,instrument:'snare',velocity:.8,rudiment:'drag'},{section:'mainA',step:0,instrument:'hihat_closed',velocity:.5,rudiment:'triplet',tripletSpan:4}]});
     h.scheduler.setStyle(style); h.scheduler.setBpm(120); h.scheduler.start(); h.advance(2.2);
-    const snare=h.hits.filter(hit=>hit.instrument==='snare' && hit.time<.1);
-    [.025,.0375,.05].forEach((time,i)=>expect(snare[i].time).toBeCloseTo(time,6));
-    const repeated=h.hits.filter(hit=>hit.instrument==='snare' && hit.time>2 && hit.time<2.1);
-    [2.025,2.0375,2.05].forEach((time,i)=>expect(repeated[i].time).toBeCloseTo(time,6));
+    const snare=h.hits.filter(hit=>hit.instrument==='snare' && hit.time<.2);
+    [.03,.0925,.155].forEach((time,i)=>expect(snare[i].time).toBeCloseTo(time,6));
+    const repeated=h.hits.filter(hit=>hit.instrument==='snare' && hit.time>2 && hit.time<2.2);
+    [2.03,2.0925,2.155].forEach((time,i)=>expect(repeated[i].time).toBeCloseTo(time,6));
     const hats=h.hits.filter(hit=>hit.instrument==='hihat_closed');
     expect(hats.map(hit=>hit.time)).toEqual([...hats.map(hit=>hit.time)].sort((a,b)=>a-b));
-    expect(hats.slice(0,4).map(hit=>Number(hit.time.toFixed(3)))).toEqual([.05,.217,.3,.383]);
+    expect(hats.slice(0,4).map(hit=>Number(hit.time.toFixed(3)))).toEqual([.155,.322,.405,.488]);
     h.scheduler.stop(); const n=h.hits.length; h.advance(1); expect(h.hits).toHaveLength(n);
+  });
+  it('mutes whole gap phrases including the metronome and prevents return graces from cueing the silent phrase',()=>{
+    const h=harness('00',40);
+    h.scheduler.setStyle(composeGroove('00',{}, {edits:[{section:'mainA',step:0,instrument:'snare',velocity:.8,rudiment:'drag'}]}));
+    h.scheduler.setBpm(40); h.scheduler.setMetronome(true);
+    h.scheduler.setLaboratory({enabled:true,gap:true,audiblePhrases:1,silentPhrases:1});
+    h.scheduler.start(); h.advance(12.6);
+    expect(h.hits.filter(n=>n.time>=6.405-1e-6 && n.time<12.405-1e-6)).toEqual([]);
+    expect(h.clicks.filter(n=>n.time>=6.405-1e-6 && n.time<12.405-1e-6)).toEqual([]);
+    expect(h.hits.filter(n=>n.instrument==='snare' && n.time>=12 && n.time<12.6).map(n=>n.time)).toHaveLength(1);
+    expect(h.hits.filter(n=>n.instrument==='snare' && n.time>=12)[0].time).toBeCloseTo(12.405);
+  });
+  it('advances Complexity only at complete two-bar boundaries, with unchanged tempo',()=>{
+    const h=harness('08'),levels:number[]=[];
+    h.scheduler.setCallbacks({onComplexityChange:n=>levels.push(n)});
+    h.scheduler.setLaboratory({enabled:true,ladder:true,phrasesPerLevel:1,targetLevel:2},0,7,n=>composeGroove('08',{complexity:n}));
+    h.scheduler.start(); h.advance(3.9); expect(levels).toEqual([]);
+    h.advance(.3); expect(levels).toEqual([1]);
+    h.advance(3.9); expect(levels).toEqual([1,2]);
+    h.advance(4); expect(levels).toEqual([1,2]); expect(h.scheduler.getBpm()).toBe(120);
+  });
+  it('anticipates a newly introduced drag on a ladder boundary even at slow BPM',()=>{
+    const h=harness('00',40);
+    h.scheduler.setLaboratory({enabled:true,ladder:true,phrasesPerLevel:1,targetLevel:1},0,7,()=>composeGroove('00',{}, {edits:[{section:'mainA',step:0,instrument:'snare',velocity:.8,rudiment:'drag'}]}));
+    h.scheduler.start(); h.advance(6.3);
+    const notes=h.hits.filter(n=>n.instrument==='snare' && n.time>5.5 && n.time<6.3);
+    expect(notes).toHaveLength(3);
+    [5.675,5.8625,6.05].forEach((time,i)=>expect(notes[i].time).toBeCloseTo(time,6));
+  });
+  it('does not revive a queued ladder change after manual disabling',()=>{
+    const h=harness('00'),levels:number[]=[];
+    h.scheduler.setCallbacks({onComplexityChange:n=>levels.push(n)});
+    h.scheduler.setLaboratory({enabled:true,ladder:true,phrasesPerLevel:1,targetLevel:4},0,7,n=>composeGroove('00',{complexity:n}));
+    h.scheduler.start(); h.advance(1.9);
+    h.scheduler.setLaboratory({enabled:true,ladder:false},0,7); h.scheduler.setStyle(composeGroove('00'),false);
+    h.advance(2.2); expect(levels).toEqual([]);
+  });
+  it('counts 5/4 in complete 3+2 groups and starts after all five quarters',()=>{
+    const h=harness('12'); h.scheduler.start(1); h.advance(2.6);
+    expect(h.clicks.map(c=>c.time)).toEqual([.05,1.55]); expect(h.hits[0].time).toBeCloseTo(2.55);
   });
   it('plays half-time backbeats every four quarters, and stops scheduling after stop', () => {
     const h = harness('02'); h.scheduler.start(); h.advance(4.1);

@@ -5,7 +5,7 @@ import { composeGroove, defaultStudioControls, KIT, normalizeOptions, playabilit
 import { normalizeDraft, normalizeMix, sampleTuning, serializeDraft } from '../src/domain/session';
 const notes = (id: string, inst: string, controls = {}, options = {}) => composeGroove(id, controls, options).sections.mainA.steps.flatMap((s, i) => s.some(h => h.instrument === inst) ? [i] : []);
 describe('Personal-kit musical studio', () => {
-  it('only uses the personal kit with all vocabulary and respects two sticks across 1,536 control configurations', () => {
+  it('only uses the personal kit with all vocabulary and respects two sticks across 1,920 control configurations', () => {
     for (const g of GROOVES) {
       const caps = studioCapabilities(g.style.id);
       for (let config = 0; config < 128; config++) {

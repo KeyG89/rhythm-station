@@ -1,5 +1,5 @@
 import { DrumHit, DrumInstrument, RhythmCategory, RhythmPattern, RhythmSection, RhythmStyle } from '../types/rhythm';
-import { applySongMap } from './songMaps';
+import { applySongMap, SONG_ORIGINAL_LEVEL, songDevelopment } from './songMaps';
 
 export type ControlKey = 'complexity' | 'ghostNotes' | 'kickDensity' | 'hihatDensity' | 'swing' | 'humanize';
 export type GrooveControls = Record<ControlKey, number>;
@@ -33,6 +33,24 @@ interface Spec {
   notes: Addition[]; complexity: Addition[][]; ghost: number[][]; kick: number[][]; hat: Addition[][];
   explanations: [string, string, string, string]; swing?: [number, number, number]; groups?: number[];
 }
+const EXTRA_COMPLEXITY: Record<string,Addition[][]> = {
+  '00': [[['snare',[11],.22]],[['tom_high',[13],.4]],[['hihat_closed',[7],.3]]],
+  '01': [[['snare',[1],.2]],[['tom_high',[13],.4]],[['tom_low',[15],.4]]],
+  '02': [[['snare',[13],.2]],[['tom_high',[15],.38]],[['hihat_closed',[7],.3]]],
+  '03': [[['snare',[1],.2]],[['tom_high',[5],.35]],[['rimshot',[3],.3]]],
+  '04': [[['snare',[0],.2]],[['tom_high',[7],.32]],[['rimshot',[4],.3]]],
+  '05': [[['snare',[15],.2]],[['tom_high',[13],.3]],[['hihat_closed',[7],.25]]],
+  '06': [[['snare',[15,31],.18]],[['tom_low',[14,30],.3]],[['rimshot',[10,28],.32]]],
+  '07': [[['snare',[13],.2]],[['tom_high',[11],.35]],[['hihat_pedal',[0,8],.25]]],
+  '08': [[['conga_high',[15,31],.32]],[['tom_low',[4,20],.3]],[['hihat_pedal',[4,12,20,28],.25]]],
+  '09': [[['snare',[11,23],.2]],[['tom_high',[5,17],.3]],[['hihat_pedal',[8,20],.25]]],
+  '10': [[['snare',[3],.2]],[['tom_high',[9],.35]],[['hihat_pedal',[4,8],.25]]],
+  '11': [[['snare',[11],.2]],[['tom_low',[7],.32]],[['hihat_pedal',[0,4,8],.25]]],
+  '12': [[['snare',[11],.2]],[['tom_low',[17],.35]],[['hihat_pedal',[0,12],.25]]],
+  '13': [[['snare',[11],.22]],[['tom_high',[13],.5]],[['hihat_pedal',[0,8],.3]]],
+  '14': [[['tom_high',[7],.4]],[['tom_low',[13],.4]],[['hihat_pedal',[6,14],.25]]],
+};
+const PART_NAMES:Partial<Record<DrumInstrument,string>>={kick:'Stopa',snare:'Werbel',rimshot:'Cross-stick',hihat_closed:'Hi-hat',hihat_open:'Otwarcie hi-hatu',hihat_pedal:'Hi-hat nogą',ride:'Ride',ride_bell:'Bell',tom_high:'Tom 1',tom_mid:'Tom 2',tom_low:'Floor tom',cowbell:'Bell / cowbell',conga_high:'Tom / conga',conga_low:'Floor / conga',shaker:'Hi-hat / shaker',tambourine:'Hi-hat / tamburyn'};
 function define(s: Spec): GrooveDefinition {
   const meter = s.meter ?? [4, 4];
   const essential = pattern(meter, s.spb ?? 4, s.bars ?? 1, s.notes);
@@ -52,8 +70,9 @@ function define(s: Spec): GrooveDefinition {
   };
   const ending = structuredClone(essential);
   ending.steps = ending.steps.map((hits, i) => i < essential.stepsPerBeat ? hits : []);
+  const extendedComplexity = [...s.complexity, ...(EXTRA_COMPLEXITY[s.id] ?? [])];
   const controls: GrooveDefinition['controls'] = {
-    complexity: stage(s.explanations[0], ['Esencja', 'Odpowiedź', 'Rozwinięcie', 'Pełna fraza'], s.complexity.length),
+    complexity: stage(s.explanations[0], ['Esencja',...extendedComplexity.map(notes=>notes.map(([instrument,positions])=>`${PART_NAMES[instrument] ?? instrument}: pola ${positions.map(i=>i+1).join(', ')}`).join(' · '))], extendedComplexity.length),
     ghostNotes: s.ghost.length ? stage(s.explanations[1], ['Bez duszków', 'Jeden gest', 'Dialog', 'Pełny dialog'], s.ghost.length) : locked(s.explanations[1]),
     kickDensity: s.kick.length ? stage(s.explanations[2], ['Szkielet', 'Antycypacja', 'Synkopa', 'Pełna fraza'], s.kick.length) : locked(s.explanations[2]),
     hihatDensity: stage(s.explanations[3], ['Ostinato', 'Jedna odpowiedź', 'Dwie odpowiedzi', 'Pełna faktura'], s.hat.length),
@@ -67,7 +86,7 @@ function define(s: Spec): GrooveDefinition {
     sections: { mainA: essential, mainB: makeResponse(true), fillA: makeResponse(false), fillB: makeResponse(true), intro: structuredClone(essential), ending },
   };
   return { style, tag: s.tag, count: s.count, tempo: s.tempo, lesson: s.lesson, controls, additions: {
-    complexity: s.complexity, ghostNotes: s.ghost.map(indices => [['snare', indices, 0.24]]),
+    complexity: extendedComplexity, ghostNotes: s.ghost.map(indices => [['snare', indices, 0.24]]),
     kickDensity: s.kick.map(indices => [['kick', indices, s.id === '04' ? 0.24 : s.id === '06' ? 0.38 : 0.65]]), hihatDensity: s.hat,
   } };
 }
@@ -91,7 +110,7 @@ export const GROOVES: GrooveDefinition[] = [
     description: 'Dużo przestrzeni. Jeden mocny backbeat na 3, zamiast rockowego 2 i 4.', focus: 'Utrzymuj podział, gdy werbel pojawia się dwa razy rzadziej.',
     lesson: ['Prawa ręka gra ósemki, a werbel tylko na 3.', 'Nie przyspieszaj w pustej przestrzeni przed werblem.', 'Wycisz werbel i pilnuj jego miejsca samodzielnie.'],
     notes: [['hihat_closed', seq(16, 2), 0.48], ['kick', [0, 6], 0.85], ['snare', [8], 0.95]],
-    complexity: [[['hihat_open', [14], 0.4]], [['rimshot', [12], 0.3]], [['shaker', [2, 10], 0.3]]],
+    complexity: [[['hihat_open', [14], 0.4]], [['rimshot', [12], 0.3]], [['hihat_closed', [11], 0.3]]],
     ghost: [[7], [11], [15]], kick: [[14], [3]], hat: [[['hihat_closed', [3], 0.3]], [['hihat_closed', [7], 0.3]], [['hihat_closed', [13, 15], 0.3]]],
     explanations: ['Drobne odpowiedzi w przestrzeni; werbel nadal wyłącznie na 3.', 'Ciche wejście w backbeat i odpowiedzi po nim.', 'Nieliczne synkopy; maksymalnie dwie dodatkowe stopy.', 'Krótkie zakończenia szesnastkowe, zamiast losowych rolli.'] }),
   define({ id: '03', name: 'Shuffle', category: 'ROCK_BLUES', bpm: 110, spb: 2, tag: 'Długa–krótka', count: '1 a 2 a 3 a 4 a', tempo: [40, 190], swing: [60, 72, 67],
@@ -111,22 +130,22 @@ export const GROOVES: GrooveDefinition[] = [
     description: 'Stopa i cross-stick spotykają się na 3. Pierwsza miara pozostaje wolna od stopy.', focus: 'Poczuj ciężar na 3 i oddech przed nim.',
     lesson: ['Zostaw jedynkę pustą dla stopy i werbla.', 'Na 3 zagraj stopę i cross-stick razem.', 'Słuchaj akcentów hi-hatu na „&”.'],
     notes: [['hihat_closed', seq(16, 2), 0.45], ['kick', [8], 0.85], ['rimshot', [8], 0.9]],
-    complexity: [[['hihat_open', [14], 0.4]], [['rimshot', [6], 0.35]], [['shaker', [2, 6, 10, 14], 0.3]]],
+    complexity: [[['hihat_open', [14], 0.4]], [['rimshot', [6], 0.35]], [['hihat_pedal', [4,12], 0.3]]],
     ghost: [[7], [11], [15]], kick: [[14], [6]], hat: [[['hihat_closed', [7], 0.28]], [['hihat_closed', [15], 0.28]]],
     explanations: ['Otwarcie hi-hatu, lekka antycypacja obręczy i shaker na offbeatach.', 'Ciche podprowadzenie werbla do akcentu i krótkie odpowiedzi; obręcz pozostaje głosem głównym.', 'Dwie oszczędne antycypacje na &4 i &2. Bez stopy na 1 i bez podwójnego pedału.', 'Dwa krótkie podprowadzenia hi-hatu do kolejnych akcentów.'] }),
   define({ id: '06', name: 'Bossa Nova', category: 'LATIN', bpm: 115, bars: 2, swing: [50, 56, 50], tag: 'Brazylijska fraza', count: 'Dwa takty · obręcz 3+2 · cicha stopa', tempo: [50, 180],
     description: 'Cicha stopa samba, równe ósemki i dwutaktowa brazylijska fraza cross-stick.', focus: 'Nie akcentuj jak w rocku. Utrzymaj łagodną stopę.',
     lesson: ['Stopa gra 1, &2, 3, &4 w każdym takcie.', 'Obręcz: 1, &2, 4 | 2, &3 — pełne dwa takty.', 'Nie myl tej frazy z kubańską son clave.'],
     notes: [['hihat_closed', seq(32, 2), 0.4], ['kick', [0, 6, 8, 14, 16, 22, 24, 30], 0.5], ['rimshot', [0, 6, 12, 20, 26], 0.7]],
-    complexity: [[['hihat_pedal', [4, 12, 20, 28], 0.3]], [['conga_high', [10, 28], 0.4]], [['shaker', seq(32, 4, 2), 0.25]]],
+    complexity: [[['hihat_pedal', [4, 12, 20, 28], 0.3]], [['conga_high', [10, 28], 0.4]], [['shaker', [3,19], 0.25]]],
     ghost: [[11, 27], [15, 31]], kick: [[12], [28]], hat: [[['hihat_closed', [7, 23], 0.25]], [['hihat_closed', [15, 31], 0.25]]],
     explanations: ['Lewa stopa na 2 i 4, odpowiedzi congi i dyskretny shaker.', 'Bardzo ciche dotknięcia werbla po akcentach obręczy, bez rockowego backbeatu.', 'Dwie ciche odpowiedzi na 4 w dwutaktowej frazie. Stałe ostinato pozostaje lekkie.', 'Delikatne szesnastkowe podprowadzenia na końcach półtaktów.'] }),
   define({ id: '07', name: 'Samba', category: 'LATIN', bpm: 105, tag: 'Ostinato stopy', count: '1 e & a 2 e & a 3 e & a 4 e & a', tempo: [50, 180],
     description: 'Stała stopa na ćwierćnutach i ich szesnastkowych przednutach; szesnastkowy puls ręki.', focus: 'Rozdziel stałe ostinato nóg od synkopowanych rąk.',
     lesson: ['Stopa: 1, a1, 2, a2, 3, a3, 4, a4.', 'Ćwicz powoli, bez podwójnego pedału.', 'Dodaj obręcz, utrzymując ostinato stopy bez zmian.'],
     notes: [['kick', [0, 3, 4, 7, 8, 11, 12, 15], 0.6], ['hihat_closed', seq(16), 0.42], ['rimshot', [0, 6, 10, 12], 0.65]],
-    complexity: [[['tambourine', [2, 6, 10, 14], 0.38]], [['conga_low', [4, 12], 0.42]], [['conga_high', [7, 15], 0.4]]],
-    ghost: [[5], [9]], kick: [], hat: [[['hihat_pedal', [4, 12], 0.35]], [['shaker', [2, 6, 10, 14], 0.3]]],
+    complexity: [[['hihat_pedal', [4,12], 0.3]], [['conga_low', [4, 12], 0.42]], [['conga_high', [7, 15], 0.4]]],
+    ghost: [[5], [9]], kick: [], hat: [[['hihat_pedal', [4, 12], 0.35]], [['hihat_pedal', [4,12], 0.3]]],
     explanations: ['Tamburyn i dialog congi nad ostinatem samba.', 'Dwa lekkie dotknięcia werbla między akcentami obręczy.', 'Samba ma już gęste, określone ostinato stopy. Zachowujemy je.', 'Hi-hat gra szesnastki; dodawaj lewą stopę i dyskretną fakturę shakera.'] }),
   define({ id: '08', name: 'Afro-Cuban Clave', category: 'LATIN', bpm: 105, bars: 2, tag: 'Son clave 3–2', count: '1, &2, 4 | 2, 3 · dwa takty', tempo: [40, 180],
     description: 'Pięć uderzeń son clave 3–2 organizuje pełną dwutaktową frazę. Tumbao antycypuje mocne miary.', focus: 'Usłysz asymetrię 3–2 bez odwracania stron frazy.',
@@ -152,9 +171,27 @@ export const GROOVES: GrooveDefinition[] = [
     description: 'Siedem ósemek w grupach 2+2+3. Dwa krótkie kroki i jeden długi.', focus: 'Przestań liczyć do siedmiu: usłysz trzy nierówne grupy.',
     lesson: ['Powiedz „krótka, krótka, długa”: 2+2+3.', 'Stopa rozpoczyna pierwszą i trzecią grupę, werbel drugą.', 'BPM oznacza ćwierćnutę; pojedyncza ósemka trwa połowę jej czasu.'],
     notes: [['hihat_closed', seq(14, 2), 0.5], ['kick', [0, 8], 0.85], ['snare', [4], 0.8], ['rimshot', [12], 0.6]],
-    complexity: [[['tom_low', [10], 0.45]], [['tambourine', [0, 4, 8], 0.38]], [['tom_high', [13], 0.38]]],
+    complexity: [[['tom_low', [10], 0.45]], [['hihat_pedal', [4,8], 0.3]], [['tom_high', [13], 0.38]]],
     ghost: [[3], [7], [11]], kick: [[12], [6]], hat: [[['hihat_closed', [3], 0.3]], [['hihat_closed', [7], 0.3]], [['hihat_closed', [13], 0.3]]],
     explanations: ['Odpowiedź w długiej grupie i akcenty 2+2+3.', 'Duszki podprowadzają do początku kolejnych grup.', 'Dwie zapisane ósemkowe odpowiedzi bez zmiany 2+2+3.', 'Szesnastkowe zakończenia każdej nierównej grupy.'] }),
+  define({ id: '12', name: 'Five-Four 5/4', category: 'JAZZ_SWING', bpm: 110, meter: [5,4], groups: [3,2], tag: 'Pięć ćwierćnut', count: '1 & 2 & 3 & · 4 & 5 &', tempo: [40,240], swing: [50,70,50],
+    description: 'Pięć ćwierćnut w grupach 3+2. Ride lub hi-hat prowadzi, stopa otwiera obie grupy.', focus: 'Utrzymaj równy puls, zanim zaczniesz synkopować w pięciu.',
+    lesson: ['Policz 1–2–3, 4–5; akcentuj 1 i 4.', 'Stopa na 1 i 4; werbel odpowiada na 2 i 5.', 'Zachowaj pięć ćwierćnut także w przejściu.'],
+    notes: [['hihat_closed',seq(20,2),.45],['kick',[0,12],.75],['snare',[4,16],.7]],
+    complexity: [[['hihat_pedal',[4,16],.3]],[['snare',[10],.35]],[['tom_high',[19],.4]]], ghost: [[7],[15],[19]], kick: [[10],[18]], hat: [[['hihat_closed',[7],.28]],[['hihat_closed',[15],.28]],[['hihat_closed',[19],.28]]],
+    explanations: ['Odpowiedzi na końcach grup 3+2, bez dodawania szóstej miary.','Ciche podprowadzenia do odpowiedzi w pięciu.','Dwie izolowane antycypacje stopy.','Krótkie szesnastkowe odpowiedzi nad pięcioma ćwierćnutami.'] }),
+  define({ id: '13', name: 'Metal · Single Pedal', category: 'ROCK_BLUES', bpm: 120, tag: 'Riff i pojedyncza stopa', count: '1 & 2 & 3 & 4 & · mocny backbeat', tempo: [40,190], swing: [50,67,50],
+    description: 'Ciężki riff, mocny werbel i pojedyncze synkopy stopy. Bez ciągłych szesnastek i podwójnego pedału.', focus: 'Zgraj stopę z riffem, zostawiając przestrzeń między uderzeniami.',
+    lesson: ['Zacznij od ósemek na hi-hacie i werbla 2/4.', 'Dodaj pojedyncze stopy na 1, &2, 3 i &3.', 'Crash i tomy akcentują frazę; nie zwiększaj gęstości stopy kosztem riffu.'],
+    notes: [['hihat_closed',seq(16,2),.6],['kick',[0,6,8,10],.9],['snare',[4,12],.92]],
+    complexity: [[['hihat_open',[14],.6]],[['tom_low',[15],.6]],[['ride_bell',[0,8],.5]]], ghost: [[7],[11]], kick: [[14],[2]], hat: [[['hihat_pedal',[4],.3]],[['hihat_pedal',[12],.3]]],
+    explanations: ['Ciężar riffu, otwarcie hi-hatu i krótkie odpowiedzi tomów.','Dwa ciche podprowadzenia; backbeat pozostaje mocny.','Izolowane ósemki dla jednej stopy. Bez rolli i ciągłych szesnastek.','Lewa stopa pod ósemkową prawą ręką; bez blast beatów.'] }),
+  define({ id: '14', name: 'Tom Groove', category: 'ROCK_BLUES', bpm: 100, tag: 'Melodia tomów', count: '1 & 2 & 3 & 4 & · tom → floor', tempo: [40,240], swing: [50,70,50],
+    description: 'Tomy prowadzą cały groove: wysoki, opcjonalny drugi tom i floor. Hi-hat nogą pilnuje pulsu.', focus: 'Rozdziel ręce między tomy i akcent werbla.',
+    lesson: ['Ósemki naprzemiennie na tomie i floor tomie.', 'Dodaj stopę na 1 i 3 oraz werbel 2/4.', 'Drugi tom rozszerza melodię; możesz go wyłączyć w Mój zestaw.'],
+    notes: [['tom_high',[0,4,8,12],.65],['tom_mid',[6,14],.55],['tom_low',[2,10],.62],['kick',[0,8],.8],['snare',[4,12],.75],['hihat_pedal',[0,4,8,12],.3]],
+    complexity: [[['tom_high',[3],.35]],[['tom_low',[11],.4]],[['tom_mid',[15],.42]]], ghost: [[7],[15]], kick: [[6],[14]], hat: [[['hihat_pedal',[2],.3]],[['hihat_pedal',[10],.3]]],
+    explanations: ['Rozwijaj melodię tomów szesnastkowymi odpowiedziami.','Ciche nuty werbla między tomami.','Pojedyncze odpowiedzi stopy, nie ciągła druga stopa.','Lewa stopa utrzymuje puls, kiedy obie ręce grają tomy.'] }),
 ];
 
 export function getGroove(id: string): GrooveDefinition {
@@ -176,16 +213,18 @@ export function normalizeControls(id: string, controls: Partial<GrooveControls>)
 export function arrangeGroove(id: string, requested: Partial<GrooveControls> = {}, songPresetId = ''): RhythmStyle {
   const groove = getGroove(id);
   const controls = normalizeControls(id, requested);
+  const songLevel = Math.max(0,Math.min(7,Math.round(Number.isFinite(requested.complexity) ? requested.complexity! : 0)));
   const style = structuredClone(groove.style);
-  if (songPresetId) applySongMap(style,songPresetId);
+  if (songPresetId) applySongMap(style,songPresetId,songLevel);
   for (const section of Object.keys(style.sections) as RhythmSection[]) {
     const p = style.sections[section];
     p.swingRatio = controls.swing;
-    p.swingStepGroup = id === '05' ? 2 : 1;
+    p.swingStepGroup = id === '05' || ['12-1','13-4','14-5'].includes(songPresetId) ? 2 : 1;
     if (section === 'ending') continue;
     for (const key of ['complexity', 'ghostNotes', 'kickDensity', 'hihatDensity'] as const) {
-      const amount = section === 'mainB' && key === 'complexity' ? Math.max(1, controls[key]) : controls[key];
-      for (const additions of groove.additions[key].slice(0, amount)) {
+      const amount = songPresetId && key === 'complexity' ? Math.max(0,songLevel-SONG_ORIGINAL_LEVEL) : section === 'mainB' && key === 'complexity' ? Math.max(1, controls[key]) : controls[key];
+      const vocabulary = songPresetId && key === 'complexity' ? songDevelopment(id,songPresetId) : groove.additions[key];
+      for (const additions of vocabulary.slice(0, amount)) {
         for (const [instrument, indices, velocity = 0.55] of additions) {
           for (const index of indices) {
             const step = p.steps[index];

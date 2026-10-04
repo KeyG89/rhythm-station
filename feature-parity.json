@@ -240,6 +240,85 @@
         "Docs/GrooveDesign.md",
         "Docs/SongMaps.md"
       ]
+    },
+    {
+      "id": "song-learning-progression",
+      "status": "complete",
+      "domain": [
+        "src/domain/songMaps.ts",
+        "src/domain/songMetadata.json",
+        "src/domain/grooves.ts"
+      ],
+      "gui": [
+        "src/App.tsx",
+        "src/components/SongMaps.tsx"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/progression.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/SongMaps.md"
+      ]
+    },
+    {
+      "id": "whole-phrase-gap-and-ladder",
+      "status": "complete",
+      "domain": [
+        "src/domain/practice.ts"
+      ],
+      "gui": [
+        "src/components/PracticeLaboratory.tsx",
+        "src/audio/AudioScheduler.ts"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/laboratory.test.ts",
+        "tests/scheduler.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/PracticeLaboratory.md"
+      ]
+    },
+    {
+      "id": "snapshot-comparison",
+      "status": "complete",
+      "domain": [
+        "src/domain/comparison.ts",
+        "src/domain/session.ts"
+      ],
+      "gui": [
+        "src/components/PracticeLaboratory.tsx",
+        "src/hooks/useDrumEngine.ts"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/laboratory.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/PracticeLaboratory.md"
+      ]
     }
   ]
 }

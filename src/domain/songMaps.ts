@@ -15,10 +15,10 @@ const sambaHat = E8;
 // recipes. Shared ostinatos are intentional; song-specific feet/answers differ.
 const PHRASES: Record<string,Lane[]> = {
   '00-1': [['hihat_closed',E8,.55],['kick',[0,3,8,10],.82],['snare',[4,12],.9]],
-  '00-2': [['hihat_closed',E8,.5],['kick',[0,6,8,11],.85],['snare',[4,12],.88],['hihat_open',[14],.55]],
-  '00-3': [['hihat_closed',E8,.62],['kick',[0,2,8,11,14],.9],['snare',[4,12],.92]],
+  '00-2': [['hihat_closed',E8,.5],['kick',[0,3,6,8,10],.85],['snare',[4,12],.88],['hihat_open',[14],.55]],
+  '00-3': [['hihat_closed',E8,.48],['kick',[0,2,8,9,10],.86],['snare',[4,12],.9]],
   '00-4': [['hihat_closed',E8,.52],['kick',[0,8],.8],['snare',[4,12],.82]],
-  '00-5': [['hihat_closed',E8,.58],['kick',[0,6,8,10,14],.82],['snare',[4,12],.88]],
+  '00-5': [['crash',[0],.8],['hihat_open',[4,8,12],.62],['kick',[0,3,8,10,11,14],.9],['snare',[4,7,9,12],.9]],
   '01-1': [['hihat_closed',E16,.46],['kick',[0,3,6,10],.8],['snare',[4,12],.86],['snare',[7,11,15],.2]],
   '01-2': [['hihat_closed',E8,.58],['kick',[0,3,6,8,10],.82],['snare',[4,12],.84],['snare',[7,15],.2],['hihat_open',[14],.5]],
   '01-3': [['hihat_closed',E16,.42],['kick',[0,6,10,14],.75],['snare',[4,12],.8],['snare',[3,7,9,15],.22]],
@@ -74,9 +74,107 @@ const PHRASES: Record<string,Lane[]> = {
   '11-3': [['ride',[0,2,4,6,8,10,12],.55],['kick',[0,8,12],.7],['snare',[4,10],.8]],
   '11-4': [['hihat_closed',[0,2,4,6,8,10,12],.6],['kick',[0,6,8,12],.86],['snare',[4,10],.88],['tom_low',[13],.5]],
   '11-5': [['ride',[0,2,4,6,8,10,12],.55],['kick',[0,4,8],.75],['snare',[6,12],.8],['tom_high',[11],.4]],
+  '12-1': [['ride',[0,4,6,8,10,12,16,18],.52],['kick',[0,12],.22],['hihat_pedal',[4,16],.35],['snare',[2,8,16],.38]],
+  '12-2': [['hihat_closed',[0,2,4,6,8,10,12,14,16,18],.4],['kick',[0,6,12,18],.6],['rimshot',[4,10,16],.6],['hihat_open',[14],.36]],
+  '12-3': [['hihat_closed',[0,2,4,6,8,10,12,14,16,18],.42],['kick',[0,3,8,10,15],.72],['snare',[4,12,18],.75],['snare',[7,17],.22]],
+  '12-4': [['hihat_closed',[0,2,4,6,8,10,12,14,16,18],.45],['kick',[0,6,12,14],.7],['snare',[4,10,16],.72]],
+  '12-5': [['ride_bell',[0,6,12,16],.56],['hihat_closed',[0,4,8,12,16],.38],['kick',[0,6,12,16],.72],['snare',[4,10,18],.6]],
+  '13-1': [['hihat_open',E8,.65],['kick',[0,3,6,8,10,14],.94],['snare',[4,12],.95],['tom_low',[15],.65]],
+  '13-2': [['ride',E8,.6],['ride_bell',[0,8],.65],['kick',[0,2,6,8,14],.92],['snare',[4,12],.95],['tom_low',[10],.55]],
+  '13-3': [['hihat_closed',E8,.58],['kick',[0,3,6,8,11,14],.94],['snare',[4,12],.95]],
+  '13-4': [['hihat_closed',E8,.6],['kick',[0,3,8,11],.92],['snare',[4,12],.95]],
+  '13-5': [['ride',E8,.6],['kick',[0,6,8,14],.88],['snare',[4,12],.9],['snare',[15],.28]],
+  '14-1': [['tom_high',[0,1,3],.8],['tom_mid',[4,5,7],.8],['tom_low',[8,9,11,12,13],.86],['kick',[0,4,8,12,14],.8]],
+  '14-2': [['tom_low',[0,3,6,8,11,14],.62],['tom_high',[2,10],.5],['tom_mid',[7,15],.45],['kick',[0,8],.7],['snare',[4,12],.72]],
+  '14-3': [['tom_low',[0,2,4,6,8,10,12,14],.55],['tom_high',[3,7,11,15],.45],['kick',[0,8],.65],['snare',[4,12],.55]],
+  '14-4': [['tom_low',[0,3,6,8,11,14],.58],['tom_high',[2,5,10,13],.52],['tom_mid',[7,15],.45],['kick',[0,8],.65],['snare',[4,12],.72]],
+  '14-5': [['tom_low',E8,.62],['tom_high',[3,7,11,15],.35],['kick',[0,4,8,12],.24],['hihat_pedal',[4,12],.34]],
 };
 
-export const SONG_MAPS = metadata.map(song => ({ ...song, lanes: PHRASES[song.id], swing: song.id === '01-4' ? 60 : song.grooveId === '03' ? 67 : song.grooveId === '04' ? 67 : 50 }));
+// Each song has an authored foundation and first riff feet. Other source notes
+// are revealed as hand dialogue, then full articulation/dynamics. No random density.
+const FOOT_PATHS: Record<string,[number[],number[]]> = {
+ '00-1':[[0,8],[0,3,8]],'00-2':[[0,8],[0,6,8,10]],'00-3':[[0,8],[0,2,8,10]],'00-4':[[0],[0,8]],'00-5':[[0,8],[0,3,8,10]],
+ '01-1':[[0,10],[0,3,10]],'01-2':[[0,8],[0,6,8,10]],'01-3':[[0,10],[0,6,10]],'01-4':[[0,8],[0,6,8]],'01-5':[[0],[0,6]],
+ '02-1':[[0],[0,10]],'02-2':[[0],[0,6]],'02-3':[[0],[0,10]],'02-4':[[0],[0,6]],'02-5':[[0],[0,10]],
+ '03-1':[[0,4],[0,2,4]],'03-2':[[0,4],[0,3,4]],'03-3':[[0,4],[0,4]],'03-4':[[0],[0,3]],'03-5':[[0],[0,5]],
+ '04-1':[[0],[0,4]],'04-2':[[0,4],[0,2,4]],'04-3':[[0],[0]],'04-4':[[],[]],'04-5':[[0],[0,4]],
+ '05-1':[[8],[8]],'05-2':[[8],[8]],'05-3':[[8],[8]],'05-4':[[8],[8]],'05-5':[[8],[8]],
+ '06-1':[[0,8,16,24],[0,6,8,16,22,24]],'06-2':[[0,8,16,24],[0,6,8,16,22,24]],'06-3':[[0,8,16,24],[0,6,8,16,22,24]],'06-4':[[0,8,16,24],[0,6,8,16,22,24]],'06-5':[[0,8,16,24],[0,6,8,16,22,24]],
+ '07-1':[[0,4,8,12],[0,3,4,8,11,12]],'07-2':[[0,4,8,12],[0,3,4,8,11,12]],'07-3':[[0,4,8,12],[0,3,4,8,11,12]],'07-4':[[0,4,8,12],[0,3,4,8,11,12]],'07-5':[[0,4,8,12],[0,3,4,8,11,12]],
+ '08-1':[[0,16],[0,10,16]],'08-2':[[14],[14]],'08-3':[[14,30],[6,14,30]],'08-4':[[14],[14]],'08-5':[[0,16],[0,8,16]],
+ '09-1':[[0,12],[0,12]],'09-2':[[0],[0,12]],'09-3':[[0],[0,12]],'09-4':[[0,12],[0,12]],'09-5':[[0,12],[0,10,12]],
+ '10-1':[[0],[0]],'10-2':[[0],[0,6]],'10-3':[[0],[0,6]],'10-4':[[0],[0]],'10-5':[[0],[0]],
+ '11-1':[[0,8],[0,8,12]],'11-2':[[0],[0,6]],'11-3':[[0,8],[0,8]],'11-4':[[0,8],[0,6,8]],'11-5':[[0,8],[0,4,8]],
+ '12-1':[[0],[0,12]],'12-2':[[0,12],[0,6,12]],'12-3':[[0,10],[0,8,10]],'12-4':[[0,12],[0,6,12]],'12-5':[[0,12],[0,6,12]],
+ '13-1':[[0,8],[0,6,8,14]],'13-2':[[0,8],[0,6,8,14]],'13-3':[[0,8],[0,6,8,14]],'13-4':[[0,8],[0,3,8]],'13-5':[[0,8],[0,6,8]],
+ '14-1':[[0,8],[0,4,8,12]],'14-2':[[0],[0,8]],'14-3':[[0],[0,8]],'14-4':[[0],[0,8]],'14-5':[[0,8],[0,4,8]],
+};
+export const SONG_ORIGINAL_LEVEL = 4;
+function curriculumFor(id:string):string[] {
+ const [core,riff]=FOOT_PATHS[id];
+ const target=PHRASES[id];
+ const feet=target.filter(l=>l[0]==='kick').flatMap(l=>l[1]);
+ const fmt=(a:number[])=>a.length ? a.map(i=>String(i+1)).join(', ') : 'bez stopy';
+ return [`Szkielet · stopa: pola ${fmt(core)}`, 'Puls rąk · prowadzenie wybranego fragmentu', `Pierwsza synkopa · stopa: pola ${fmt(riff)}`, `Pełna stopa (${feet.length}) i dialog rąk`, id==='00-5' ? 'Riff Grohla · ćwierćnutowy hi-hat, szybka stopa i werbel' : 'Partia docelowa · artykulacja i dynamika fragmentu', 'Ćwiczenie +1 · odpowiedź gatunkowa', 'Ćwiczenie +2 · dialog', 'Ćwiczenie +3 · zakończenie'];
+}
+function learningLanes(song:SongMap,level:number):Lane[] {
+ if(level>=SONG_ORIGINAL_LEVEL) return structuredClone(song.lanes);
+ const [core,riff]=FOOT_PATHS[song.id];
+ const spb=['03','04','09','11'].includes(song.grooveId)?2:4;
+ const lead=(i:DrumInstrument)=>['hihat_closed','hihat_open','ride','ride_bell','cowbell','clave','shaker','tambourine'].includes(i);
+ const result:Lane[]=[];
+ for(const [instrument,positions,velocity=.6,rudiment] of song.lanes) {
+  let selected=positions;
+  let voice=instrument;
+  if(instrument==='kick') selected=level<2?core:level<3?riff:positions;
+  else if(lead(instrument)) {
+   if(level===0) selected=positions.filter(i=>i%(song.grooveId==='09'?6:song.grooveId==='11'?4:spb)===0);
+   if(instrument==='hihat_open') voice='hihat_closed';
+   // Source chorus has quarters, but eighths provide a stable intermediate scaffold.
+   if(song.id==='00-5' && level>=1 && ['hihat_open','crash'].includes(instrument)) { if(instrument==='crash') continue; selected=E8; voice='hihat_closed'; }
+  } else if(instrument==='snare' || instrument==='rimshot') {
+   if(level<3) selected=velocity<.35?[]:positions.filter(i=>i%spb===0);
+   // A Brazilian/Cuban timeline gradually returns; avoid an invented rock backbeat.
+   if(!selected.length && velocity>=.35 && positions.length) selected=[positions[0]];
+  } else if(instrument.startsWith('tom') || instrument.startsWith('conga')) {
+   selected=level>=3?positions:level===0?positions.filter(i=>i%(spb*2)===0):positions.filter(i=>i%2===0);
+  }
+  if(selected.length) result.push([voice,selected,velocity*[.75,.8,.9,.95][level],level>=3?rudiment:undefined]);
+ }
+ return result;
+}
+type Development = [DrumInstrument,number[],number?][][];
+const DEVELOPMENT:Record<string,Development>={
+ '00':[[['snare',[11],.22]],[['tom_high',[15],.4]],[['hihat_pedal',[4,12],.3]]],
+ '01':[[['snare',[1],.2]],[['tom_high',[13],.4]],[['tom_low',[15],.4]]],
+ '02':[[['tom_high',[15],.4]],[['rimshot',[12],.3]],[['hihat_closed',[11],.3]]],
+ '03':[[['tom_high',[5],.35]],[['hihat_pedal',[0,4],.3]],[['rimshot',[3],.3]]],
+ '04':[[['snare',[0],.2]],[['tom_high',[7],.32]],[['rimshot',[4],.3]]],
+ '05':[[['snare',[11],.2]],[['tom_high',[13],.3]],[['hihat_pedal',[4,12],.3]]],
+ '06':[[['snare',[27],.18]],[['tom_low',[31],.3]],[['hihat_pedal',[4,12,20,28],.3]]],
+ '07':[[['snare',[13],.2]],[['tom_high',[11],.35]],[['hihat_pedal',[0,8],.25]]],
+ '08':[[['conga_high',[15,31],.32]],[['tom_low',[4,20],.3]],[['hihat_pedal',[4,12,20,28],.25]]],
+ '09':[[['snare',[11,23],.2]],[['tom_high',[5,17],.3]],[['hihat_pedal',[8,20],.25]]],
+ '10':[[['snare',[3],.2]],[['tom_high',[9],.35]],[['hihat_pedal',[4,8],.25]]],
+ '11':[[['snare',[11],.2]],[['tom_low',[7],.32]],[['hihat_pedal',[0,4,8],.25]]],
+ '12':[[['snare',[11],.2]],[['tom_low',[17],.35]],[['hihat_pedal',[0,12],.25]]],
+ '13':[[['snare',[11],.22]],[['tom_high',[13],.5]],[['hihat_pedal',[0,8],.3]]],
+ '14':[[['tom_high',[7],.4]],[['tom_low',[13],.4]],[['hihat_pedal',[6,14],.25]]],
+};
+const SONG_DEVELOPMENT:Record<string,Development>={
+ '00-5':[[['snare',[15],.22]],[['tom_high',[13],.4]],[['hihat_pedal',[2,10],.3]]],
+ '02-5':[[['tom_high',[15],.4]],[['rimshot',[12],.3]],[['hihat_closed',[13],.3]]],
+ '03-5':[[['tom_high',[5],.35]],[['hihat_pedal',[0,4],.3]],[['hihat_pedal',[2,6],.3]]],
+ '07-2':[[['snare',[13],.2]],[['tom_high',[15],.35]],[['hihat_pedal',[0,8],.25]]],
+ '13-1':[[['snare',[11],.22]],[['tom_high',[13],.5]],[['hihat_pedal',[1,9],.3]]],
+ '14-1':[[['tom_high',[2],.4]],[['tom_mid',[10],.4]],[['hihat_pedal',[6,14],.25]]],
+ '14-3':[[['tom_high',[1],.4]],[['tom_low',[13],.4]],[['hihat_pedal',[6,14],.25]]],
+ '14-5':[[['tom_mid',[9],.4]],[['tom_low',[13],.4]],[['hihat_pedal',[6,14],.25]]],
+};
+export function songDevelopment(id:string,songId=''):Development {return SONG_DEVELOPMENT[songId] ?? DEVELOPMENT[id];}
+
+export const SONG_MAPS = metadata.map(song => ({ ...song, lanes: PHRASES[song.id], swing: ['03','04'].includes(song.grooveId) || ['12-1','13-4','14-5'].includes(song.id) ? 67 : song.id === '01-4' ? 60 : 50, curriculum: curriculumFor(song.id) }));
 export type SongMap = typeof SONG_MAPS[number];
 export function listSongMaps(grooveId?: string) { return SONG_MAPS.filter(s => !grooveId || s.grooveId === grooveId).map(s => structuredClone(s)); }
 export function getSongMap(id: string, grooveId?: string): SongMap {
@@ -85,12 +183,13 @@ export function getSongMap(id: string, grooveId?: string): SongMap {
   return song;
 }
 /** Applied before groove vocabulary, kit remapping and manual edits. */
-export function applySongMap(style: RhythmStyle, id: string): void {
+export function applySongMap(style: RhythmStyle, id: string, level = 0): void {
   const song = getSongMap(id,style.id);
   style.defaultBpm = song.bpm;
   style.name = `${song.title} · ${style.name}`;
   style.description = `${song.artist} · mapa inspirowana utworem do ćwiczeń na zestawie.`;
   style.practiceFocus = `Opanuj puls i akcenty: ${song.title}.`;
+  style.description += ` Complexity ${level}: ${song.curriculum[level]}.`;
   if (['03-4','03-5'].includes(id)) style.drumPatternDescription = '1 a 2 a 3 a 4 a · half-time: główny werbel na 3';
   else if (song.grooveId === '09' && id !== '09-1') style.drumPatternDescription = '1 la li 2 la li · dwie grupy po trzy ósemki, bez timeline’u bembé';
   else if (song.grooveId === '06') style.drumPatternDescription = '1 & 2 & 3 & 4 & · dwutaktowa odpowiedź cross-stick';
@@ -98,13 +197,13 @@ export function applySongMap(style: RhythmStyle, id: string): void {
   style.drumPatternDescription += ` · ${song.title}`;
   for (const [section, pattern] of Object.entries(style.sections)) {
     pattern.steps = pattern.steps.map(()=>[]);
-    for (const [instrument,positions,velocity=0.6,rudiment] of song.lanes) for (const step of positions) {
+    for (const [instrument,positions,velocity=0.6,rudiment] of learningLanes(song,Math.min(SONG_ORIGINAL_LEVEL,level))) for (const step of positions) {
       if (!pattern.steps[step] || section === 'ending' && step >= pattern.stepsPerBeat) continue;
       const hit: DrumHit = { instrument,velocity,role: velocity < .35 ? 'ghost' : 'essential', ...(rudiment ? {rudiment} : {}), ...(rudiment === 'triplet' ? {tripletSpan:1} : {}) };
       const existing = pattern.steps[step].find(h=>h.instrument === instrument);
       if (!existing) pattern.steps[step].push(hit);
     }
-    if (['mainB','fillA','fillB'].includes(section)) {
+    if (['fillA','fillB'].includes(section)) {
       const last = pattern.steps.length - 1;
       const response: DrumHit = { instrument: ['05','06','08'].includes(style.id) ? 'tom_high' : 'snare', velocity:.4,role:'variation' };
       if (!pattern.steps[last].some(h=>h.instrument === response.instrument)) pattern.steps[last].push(response);

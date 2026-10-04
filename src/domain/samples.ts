@@ -13,5 +13,5 @@ export function selectSample(instrument: DrumInstrument, velocity: number, take:
   let layer = Math.min(count - 1, Math.floor(Math.max(0, Math.min(1, velocity)) * count));
   if (instrument === 'snare') layer = (velocity < 0.4 ? 0 : velocity < 0.78 ? 2 : 4) + take % 2;
   if (['clave', 'cowbell', 'tambourine', 'shaker'].includes(instrument)) layer = take % count;
-  return { layer, file: `${instrument}-${layer}.wav`, rate: instrument === 'conga_low' ? 0.82 : 1 };
+  return { layer, file: `${instrument}-${layer}.wav`, rate: instrument === 'conga_low' ? 0.82 : instrument === 'tom_mid' ? 2 ** (-3/12) : 1 };
 }

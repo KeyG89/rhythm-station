@@ -5,18 +5,20 @@ import { composeGroove, KIT, playability, studioCapabilities } from '../src/doma
 import { inspectSongMap } from '../src/adapters/grooveApi';
 import { normalizeDraft, serializeDraft } from '../src/domain/session';
 
-describe('Sixty song practice maps',()=>{
+describe('Seventy-five song practice maps',()=>{
   it('has five distinct authored maps per groove, valid positions, sourced tempos and recording URLs',()=>{
-    expect(SONG_MAPS).toHaveLength(60); expect(new Set(SONG_MAPS.map(s=>s.id)).size).toBe(60);
+    expect(SONG_MAPS).toHaveLength(75); expect(new Set(SONG_MAPS.map(s=>s.id)).size).toBe(75);
     for(const g of GROOVES) {
       const songs=listSongMaps(g.style.id); expect(songs).toHaveLength(5);
       const signatures=new Set<string>();
       for(const song of songs) {
         expect(song.youtube).toMatch(/^https:\/\/www.youtube.com\/watch\?v=[\w-]{11}$/);
+        expect(song.spotify).toMatch(/^https:\/\/open.spotify.com\/track\/[A-Za-z0-9]{22}$/);
+        expect(song.referenceSource).toMatch(/^https:\/\//);
         expect(song.tempoSource).toMatch(/^https:\/\//); expect(song.note.length).toBeGreaterThan(50);
         expect(song.bpm).toBeGreaterThanOrEqual(g.tempo[0]); expect(song.bpm).toBeLessThanOrEqual(g.tempo[1]);
         for(const [,indices] of song.lanes) expect(indices.every(i=>Number.isInteger(i) && i>=0 && i<g.style.sections.mainA.steps.length)).toBe(true);
-        const s=composeGroove(g.style.id,{}, {songPresetId:song.id});
+        const s=composeGroove(g.style.id,{complexity:4}, {songPresetId:song.id});
         expect(s.defaultBpm).toBe(song.bpm); expect(s.name).toContain(song.title);
         expect(playability(s),song.id).toEqual([]);
         expect(s.sections.mainA.steps.flat().every(h=>KIT.includes(h.instrument as typeof KIT[number]))).toBe(true);
@@ -24,7 +26,7 @@ describe('Sixty song practice maps',()=>{
         for(const key of ['flams','drags','triplets'] as const) {
           let previous=s.sections.mainA.steps;
           for(let n=1;n<=studioCapabilities(g.style.id)[key].max;n++) {
-            const next=composeGroove(g.style.id,{[key]:n},{songPresetId:song.id}).sections.mainA.steps;
+            const next=composeGroove(g.style.id,{complexity:4,[key]:n},{songPresetId:song.id}).sections.mainA.steps;
             expect(next,`${song.id} ${key} ${n}`).not.toEqual(previous); previous=next;
           }
         }
@@ -35,7 +37,7 @@ describe('Sixty song practice maps',()=>{
   it('song vocabulary has bounded hands and immutable templates across all presets and staged settings',()=>{
     const before=JSON.stringify(SONG_MAPS);
     for(const song of SONG_MAPS) for(let config=0;config<8;config++) {
-      const caps=studioCapabilities(song.grooveId);
+      const caps=studioCapabilities(song.grooveId,{songPresetId:song.id});
       const controls=Object.fromEntries(Object.entries(caps).map(([key,cap],i)=>[key,config === 7 ? cap.max : (config*(i+2))%(cap.max+1)]));
       const s=composeGroove(song.grooveId,controls,{songPresetId:song.id});
       for(const section of Object.keys(s.sections) as (keyof typeof s.sections)[]) expect(playability(s,section), `${song.id} ${config} ${section}`).toEqual([]);

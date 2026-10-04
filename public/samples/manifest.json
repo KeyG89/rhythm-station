@@ -155,17 +155,19 @@
     "instrument": "tom_mid",
     "layer": 0,
     "file": "tom_mid-0.wav",
-    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomClicks.flac",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomHigh.flac",
     "license": "CC-BY-SA-4.0",
-    "sha256": "a56f7626f8ce928bb611d4c1c6bb6d240c37f481e425a592ab19b7f536a4f62f"
+    "sha256": "767ca0c94323567cfc57147ed6833b0766b6b588348da6f821fc4e24aceb87ed",
+    "adaptation": "Recorded rack tom played three semitones lower for optional Tom 2; runtime rate 2**(-3/12)."
   },
   {
     "instrument": "tom_mid",
     "layer": 1,
     "file": "tom_mid-1.wav",
-    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomClicks%234.flac",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomHigh%234.flac",
     "license": "CC-BY-SA-4.0",
-    "sha256": "7bd26fddfb4430e7f4cdf149256c1d8c7006926ee87dcf14938765d0539eb106"
+    "sha256": "ab4d2d5162c4f4ce7791d4ae49a231c4be12422c50ac6609a4c14b6663f569e0",
+    "adaptation": "Recorded rack tom played three semitones lower for optional Tom 2; runtime rate 2**(-3/12)."
   },
   {
     "instrument": "tom_low",

@@ -1,13 +1,13 @@
-import { arrangeGroove, Capability, ControlKey, defaultControls, getGroove, GrooveControls, normalizeControls } from './grooves';
+import { arrangeGroove, Capability, ControlKey, defaultControls, getGroove, GrooveControls } from './grooves';
 import { DrumHit, DrumInstrument, RhythmSection, RhythmStyle } from '../types/rhythm';
 import { getSongMap, SONG_MAPS } from './songMaps';
 import { expandHit } from './rudiments';
 import { stepDuration } from './timing';
 
-export const KIT = ['kick', 'snare', 'rimshot', 'hihat_closed', 'hihat_open', 'hihat_pedal', 'crash', 'ride', 'ride_bell', 'tom_high', 'tom_low'] as const;
+export const KIT = ['kick', 'snare', 'rimshot', 'hihat_closed', 'hihat_open', 'hihat_pedal', 'crash', 'ride', 'ride_bell', 'tom_high', 'tom_mid', 'tom_low'] as const;
 export type KitInstrument = typeof KIT[number];
-export const KIT_NAMES: Record<KitInstrument, string> = { kick: 'Stopa', snare: 'Werbel', rimshot: 'Cross-stick', hihat_closed: 'Hi-hat', hihat_open: 'Otwarty hi-hat', hihat_pedal: 'Hi-hat nogą', crash: 'Crash', ride: 'Ride', ride_bell: 'Bell ride’u', tom_high: 'Tom', tom_low: 'Floor tom' };
-export const VOICE_CONTROLS = { snareDensity: 'snare', rimshotDensity: 'rimshot', openHatDensity: 'hihat_open', pedalDensity: 'hihat_pedal', crashDensity: 'crash', rideDensity: 'ride', bellDensity: 'ride_bell', tomDensity: 'tom_high', floorDensity: 'tom_low' } as const;
+export const KIT_NAMES: Record<KitInstrument, string> = { kick: 'Stopa', snare: 'Werbel', rimshot: 'Cross-stick', hihat_closed: 'Hi-hat', hihat_open: 'Otwarty hi-hat', hihat_pedal: 'Hi-hat nogą', crash: 'Crash', ride: 'Ride', ride_bell: 'Bell ride’u', tom_high: 'Tom 1', tom_mid: 'Tom 2', tom_low: 'Floor tom' };
+export const VOICE_CONTROLS = { snareDensity: 'snare', rimshotDensity: 'rimshot', openHatDensity: 'hihat_open', pedalDensity: 'hihat_pedal', crashDensity: 'crash', rideDensity: 'ride', bellDensity: 'ride_bell', tomDensity: 'tom_high', midTomDensity: 'tom_mid', floorDensity: 'tom_low' } as const;
 export type VoiceControlKey = keyof typeof VOICE_CONTROLS;
 export type RudimentControlKey = 'flams' | 'drags' | 'triplets';
 export type StudioControlKey = ControlKey | VoiceControlKey | RudimentControlKey;
@@ -16,7 +16,7 @@ export type PercussionSource = 'clave' | 'cowbell' | 'conga_high' | 'conga_low' 
 export const REPLACEMENT_CHOICES: Record<PercussionSource, KitInstrument[]> = { clave: ['rimshot', 'ride_bell', 'tom_high'], cowbell: ['ride_bell', 'ride', 'rimshot'], conga_high: ['tom_high', 'snare', 'rimshot'], conga_low: ['tom_low', 'tom_high'], shaker: ['hihat_closed', 'hihat_pedal', 'ride'], tambourine: ['hihat_closed', 'hihat_pedal', 'ride_bell'] };
 export const DEFAULT_REPLACEMENTS: Record<PercussionSource, KitInstrument> = { clave: 'rimshot', cowbell: 'ride_bell', conga_high: 'tom_high', conga_low: 'tom_low', shaker: 'hihat_closed', tambourine: 'hihat_closed' };
 export interface CellEdit { section: RhythmSection; step: number; instrument: KitInstrument; velocity: number | null; rudiment?: DrumHit['rudiment']; tripletSpan?: number }
-export interface StudioOptions { songPresetId?: string; reggaeVariant?: 'one-drop' | 'two-four'; kitMode?: 'personal' | 'original'; replacements?: Partial<Record<PercussionSource, KitInstrument>>; edits?: CellEdit[] }
+export interface StudioOptions { secondTom?: boolean; songPresetId?: string; reggaeVariant?: 'one-drop' | 'two-four'; kitMode?: 'personal' | 'original'; replacements?: Partial<Record<PercussionSource, KitInstrument>>; edits?: CellEdit[] }
 // Each row is an authored response: snare, cross-stick, open hat, pedal, crash,
 // ride, bell, rack tom, floor tom. Stages expose a progressively longer phrase.
 // Positions use each groove's native grid; two-bar phrases stay two bars.
@@ -34,40 +34,50 @@ const VOCABULARY: Record<string, number[][]> = {
   '10': [[6], [10], [10], [4, 8], [0], [0, 4, 8, 2, 6, 10], [0], [9, 11], [10]],
   '11': [[10], [6], [12], [4, 8], [0], [0, 4, 8, 2, 6, 10, 12], [0, 4, 8], [11, 13], [10, 12]],
 };
+for (const positions of Object.values(VOCABULARY)) positions.splice(8,0,[]);
+VOCABULARY['12'] = [[10,18],[14],[18],[4,16],[0],[0,12,4,8,16,2,6,10,14,18],[0,12],[17,19],[],[18]];
+VOCABULARY['13'] = [[10],[6],[14],[4,12],[0],[0,8,2,6,10,14],[0,8],[13,15],[],[14]];
+VOCABULARY['14'] = [[10],[6],[14],[2,10],[0],[0,8],[0,8],[3,11],[5,13,15],[7,15]];
 const keys = Object.keys(VOICE_CONTROLS) as VoiceControlKey[];
 // Deliberate phrase-end answers; no automatic ornaments on kick, hats or bell timelines.
 const ORNAMENTS: Record<string, [number[], number[], number[]]> = {
-  '00': [[4,12],[7,15],[13,11]], '01': [[4,12],[7,15],[13,11]],
-  '02': [[8],[7,15],[13,11]], '03': [[2,6],[1,5],[7,3]],
-  '04': [[5],[3,7],[1]], '05': [[14],[7,15],[13]],
-  '06': [[14,30],[11,27],[15,31]], '07': [[14],[7,15],[13]],
-  '08': [[30],[15],[31]], '09': [[16],[11],[23]],
-  '10': [[6],[7,11],[9]], '11': [[8],[7,13],[11]],
+  '00': [[4,12],[4,12],[13,11]], '01': [[4,12],[4,12],[13,11]],
+  '02': [[8],[8],[13,11]], '03': [[2,6],[2,6],[7,3]],
+  '04': [[5],[3,7],[1]], '05': [[14],[8],[13]],
+  '06': [[14,30],[12,28],[15,31]], '07': [[14],[6,14],[13]],
+  '08': [[30],[12],[31]], '09': [[16],[6,18],[23]],
+  '10': [[6],[8],[9]], '11': [[8],[7,13],[11]], '12': [[4,16],[4,16],[19]], '13': [[4,12],[4,12],[15]], '14': [[4,12],[4,12],[15]],
 };
+const SONG_ORNAMENTS:Record<string,[number[],number[],number[]]> = {
+  '12-5':[[4,10],[4,10],[19]],
+  '14-1':[[4,12],[4,8],[15]],
+};
+const ornamentPositions=(id:string,options:StudioOptions)=>SONG_ORNAMENTS[options.songPresetId ?? ''] ?? ORNAMENTS[id];
 const ornamentKeys: RudimentControlKey[] = ['flams','drags','triplets'];
 export function studioCapabilities(id: string, options: StudioOptions = {}): Record<StudioControlKey, Capability> {
   const cap = structuredClone(getGroove(id).controls) as Record<StudioControlKey, Capability>;
   const song = options.songPresetId ? getSongMap(options.songPresetId,id) : undefined;
-  if (song) cap.swing.default = song.swing;
+  if (song) { cap.swing.default = song.swing; cap.complexity = {min:0,max:7,default:0,description:'Od szkieletu przez charakterystyczną partię wybranego fragmentu (poziom 4), a potem trzy wyraźnie oznaczone wariacje ćwiczeniowe.',levels:song.curriculum}; }
   if (id === '05') cap.swing.description = 'Swing ósemek hi-hatu: od prostego do lekkiego kołysania (50–62%). Stopa i cross-stick na miarach nie przesuwają się.';
   if (id === '06') cap.swing.description = 'Delikatny swing szesnastkowych odpowiedzi (50–56%). Brazylijska baza pozostaje prosta; to współczesny wariant ćwiczeniowy.';
   keys.forEach((key, i) => {
     const n = VOCABULARY[id][i].length;
-    const max = id === '09' && key === 'bellDensity' ? 3 : Math.min(3, n);
+    const max = key === 'midTomDensity' && !(options.secondTom ?? id === '14') ? 0 : id === '09' && key === 'bellDensity' ? 3 : Math.min(3, n);
     const inst = VOICE_CONTROLS[key];
     cap[key] = { min: 0, max, default: 0, levels: ['Baza', 'Krótki gest', 'Dialog', 'Pełna odpowiedź'], description: inst === 'ride' ? 'Zapisana partia ride’u. Zastępuje hi-hat w tych samych miejscach; nie mnoży rąk.' : inst === 'crash' ? 'Jeden akcent frazy, zamiast crasha na każdej ćwierćnucie.' : inst === 'hihat_open' ? 'Krótkie otwarcia w wybranych miejscach; zastępują zamknięty hi-hat.' : `${KIT_NAMES[inst]}: przygotowana odpowiedź dla ${getGroove(id).style.name}. Przy zagęszczeniu tomy przejmują rękę prowadzącą, a akcenty esencji mają pierwszeństwo.` };
   });
+  if (id !== '14') cap.midTomDensity.description = 'Drugi tom jest opcjonalny w pełnym edytorze. Automatyczna melodia trzech tomów jest przygotowana w Tom Groove.';
   if (id === '09') cap.bellDensity = { ...cap.bellDensity, levels: ['Fraza 7 nut', 'Akcent 1', 'Dwa filary', 'Kontrast frazy'], description: 'Siedmionutowa fraza jest kompletna. Suwak rozwija jej akcenty; nie wypełnia przerw kolejnymi dzwonkami.' };
   if (id === '09' && song && song.id !== '09-1') cap.bellDensity = { ...cap.bellDensity, levels: ['Baza','Krótki gest','Dialog','Pełna odpowiedź'], description: 'Wybrane ósemki ride’u lub hi-hatu przechodzą na bell. Akcenty odpowiedzi do tej compound frazy, bez dodawania timeline’u bembé.' };
-  ornamentKeys.forEach((key, i) => { cap[key] = { min: 0, max: ORNAMENTS[id][i].length, default: 0, levels: ['Bez ozdobników','Jedna odpowiedź','Dwie odpowiedzi'], description: key === 'flams' ? 'Jedna cicha przednutka przed zapisanym akcentem werbla lub tomu. Główna nuta zostaje na swoim miejscu.' : key === 'drags' ? 'Dwie ciche przednutki prowadzą do krótkiej odpowiedzi werbla. Nie zagęszczają stopy ani osi clave.' : 'Trzy równe uderzenia w czasie jednego pola mapy. Krótka odpowiedź werbla/tomu, dobrana do tej frazy; nie zmienia całego groove’u w shuffle.' }; });
+  ornamentKeys.forEach((key, i) => { cap[key] = { min: 0, max: ornamentPositions(id,options)[i].length, default: 0, levels: ['Bez ozdobników','Jedna odpowiedź','Dwie odpowiedzi'], description: key === 'flams' ? 'Jedna cicha przednutka przed zapisanym akcentem werbla lub tomu. Główna nuta zostaje na swoim miejscu.' : key === 'drags' ? 'Dwie wyraźne 32-ki przed główną nutą zaznaczonego pola. Zaczynają się szesnastkę przed akcentem, w tempie groove’u; nie są flamem.' : 'Trzy równe uderzenia w czasie jednego pola mapy. Krótka odpowiedź werbla/tomu, dobrana do tej frazy; nie zmienia całego groove’u w shuffle.' }; });
   return cap;
 }
 export function defaultStudioControls(id: string, options: StudioOptions = {}): StudioControls { return { ...defaultControls(id), ...(options.songPresetId ? {swing:getSongMap(options.songPresetId,id).swing} : {}), ...Object.fromEntries([...keys,...ornamentKeys].map(key => [key, 0])) } as StudioControls; }
-export function normalizeStudioControls(id: string, input: Partial<StudioControls> = {}): StudioControls {
-  const caps = studioCapabilities(id);
+export function normalizeStudioControls(id: string, input: Partial<StudioControls> = {}, options: StudioOptions = {}): StudioControls {
+  const caps = studioCapabilities(id,options);
   return Object.fromEntries(Object.entries(caps).map(([key, cap]) => [key, Math.max(cap.min, Math.min(cap.max, Number.isFinite(input[key as StudioControlKey]) ? Math.round(input[key as StudioControlKey]!) : cap.default))])) as StudioControls;
 }
-export function normalizeOptions(input: StudioOptions = {}): Required<StudioOptions> {
+export function normalizeOptions(input: StudioOptions = {}, id?: string): Required<StudioOptions> {
   const replacements = { ...DEFAULT_REPLACEMENTS };
   for (const source of Object.keys(replacements) as PercussionSource[]) if (REPLACEMENT_CHOICES[source].includes(input.replacements?.[source] as KitInstrument)) replacements[source] = input.replacements![source]!;
   const sections: RhythmSection[] = ['mainA', 'mainB', 'fillA', 'fillB', 'intro', 'ending'];
@@ -80,7 +90,7 @@ export function normalizeOptions(input: StudioOptions = {}): Required<StudioOpti
     if (cell.rudiment === 'triplet') cell.tripletSpan = Number.isFinite(edit.tripletSpan) ? Math.max(1,Math.min(4,Math.round(edit.tripletSpan!))) : 1;
     cells.set(`${cell.section}:${cell.step}:${cell.instrument}`, cell);
   }
-  return { songPresetId: SONG_MAPS.some(s=>s.id === input.songPresetId) ? input.songPresetId! : '', kitMode: input.kitMode === 'original' ? 'original' : 'personal', reggaeVariant: input.reggaeVariant === 'two-four' ? 'two-four' : 'one-drop', replacements, edits: [...cells.values()] };
+  return { secondTom:typeof input.secondTom === 'boolean' ? input.secondTom : id === '14', songPresetId: SONG_MAPS.some(s=>s.id === input.songPresetId) ? input.songPresetId! : '', kitMode: input.kitMode === 'original' ? 'original' : 'personal', reggaeVariant: input.reggaeVariant === 'two-four' ? 'two-four' : 'one-drop', replacements, edits: [...cells.values()] };
 }
 const foot = (i: DrumInstrument) => i === 'kick' || i === 'hihat_pedal';
 const lead = (i: DrumInstrument) => ['hihat_closed', 'hihat_open', 'ride', 'ride_bell', 'cowbell', 'clave'].includes(i);
@@ -100,10 +110,10 @@ export function orchestrate(hits: DrumHit[]): DrumHit[] {
   return notes;
 }
 export function composeGroove(id: string, requested: Partial<StudioControls> = {}, input: StudioOptions = {}): RhythmStyle {
-  const controls = normalizeStudioControls(id, requested);
-  const options = normalizeOptions(input);
+  const options = normalizeOptions(input,id);
+  const controls = normalizeStudioControls(id, requested, options);
   if (options.songPresetId && requested.swing === undefined) controls.swing = getSongMap(options.songPresetId,id).swing;
-  const style = arrangeGroove(id, normalizeControls(id, controls), options.songPresetId);
+  const style = arrangeGroove(id, controls, options.songPresetId);
   if (id === '05' && options.reggaeVariant === 'two-four') {
     style.name = 'Reggae · 2 i 4';
     style.description = 'Wariant ćwiczeniowy: stopa i cross-stick razem na 2 i 4, z offbeatowym hi-hatem.';
@@ -129,7 +139,7 @@ export function composeGroove(id: string, requested: Partial<StudioControls> = {
       }
       const positions = VOCABULARY[id][i];
       const inst = VOICE_CONTROLS[key];
-      const max = studioCapabilities(id)[key].max;
+      const max = studioCapabilities(id,options)[key].max;
       const chosen = positions.slice(0, Math.ceil(positions.length * amount / max));
       for (const step of chosen) {
         const hits = pattern.steps[step];
@@ -142,18 +152,18 @@ export function composeGroove(id: string, requested: Partial<StudioControls> = {
       }
     });
     pattern.steps = pattern.steps.map(hits => {
-      const mapped = hits.map(h => ({ ...h, instrument: options.kitMode === 'personal' ? h.instrument === 'tom_mid' ? 'tom_high' : options.replacements[h.instrument as PercussionSource] ?? h.instrument : h.instrument }));
+      const mapped = hits.map(h => ({ ...h, instrument: options.kitMode === 'personal' ? h.instrument === 'tom_mid' && !options.secondTom ? 'tom_high' : options.replacements[h.instrument as PercussionSource] ?? h.instrument : h.instrument }));
       // Toms are phrase responses: reclaim the right hand rather than stack it.
       const tom = mapped.some(h => h.instrument.startsWith('tom') && h.role !== 'essential');
       const response = mapped.some(h => ['snare', 'rimshot', 'clave'].includes(h.instrument));
       return orchestrate(tom && response ? mapped.filter(h => !lead(h.instrument) || h.role === 'essential' && ['clave', 'cowbell', 'ride_bell'].includes(h.instrument)) : mapped);
     });
     if (section !== 'ending') ornamentKeys.forEach((key, i) => {
-      for (const step of ORNAMENTS[id][i].slice(0, controls[key])) {
+      for (const step of ornamentPositions(id,options)[i].slice(0, controls[key])) {
         const hits = pattern.steps[step]; if (!hits) continue;
         // Reuse an existing snare/tom. An extra response occupies a free hand,
         // or replaces an optional lead; essential timeline strokes stay intact.
-        let hit = hits.find(h => ['snare','rimshot','tom_high','tom_low'].includes(h.instrument));
+        let hit = hits.find(h => ['snare','rimshot','tom_high','tom_mid','tom_low'].includes(h.instrument));
         if (!hit) {
           const candidate: DrumHit = { instrument: key === 'triplets' ? 'tom_high' : 'snare', velocity: ['04','05','06','07','08','09','10'].includes(id) ? 0.38 : 0.62, role: 'variation' };
           const next = orchestrate([...hits, candidate]);
@@ -164,14 +174,38 @@ export function composeGroove(id: string, requested: Partial<StudioControls> = {
         if (hit.rudiment === 'triplet') hit.tripletSpan = 1;
       }
     });
+    resolveGraceCollisions(style,pattern);
     // Explicit editor overrides apply last. Free edits are visible, never silently corrected.
     for (const edit of options.edits.filter(e => e.section === section)) {
       const hits = pattern.steps[edit.step]; if (!hits) continue;
-      pattern.steps[edit.step] = hits.filter(h => h.instrument !== edit.instrument);
-      if (edit.velocity !== null) pattern.steps[edit.step].push({ instrument: edit.instrument, velocity: edit.velocity, role: edit.velocity < 0.35 ? 'ghost' : 'variation', ...(edit.rudiment ? { rudiment: edit.rudiment } : {}), ...(edit.rudiment === 'triplet' ? { tripletSpan: Math.min(edit.tripletSpan ?? 1, pattern.steps.length - edit.step) } : {}) });
+      const instrument=edit.instrument === 'tom_mid' && !options.secondTom ? 'tom_high' : edit.instrument;
+      pattern.steps[edit.step] = hits.filter(h => h.instrument !== instrument);
+      if (edit.velocity !== null) pattern.steps[edit.step].push({ instrument: edit.instrument === 'tom_mid' && !options.secondTom ? 'tom_high' : edit.instrument, velocity: edit.velocity, role: edit.velocity < 0.35 ? 'ghost' : 'variation', ...(edit.rudiment ? { rudiment: edit.rudiment } : {}), ...(edit.rudiment === 'triplet' ? { tripletSpan: Math.min(edit.tripletSpan ?? 1, pattern.steps.length - edit.step) } : {}) });
     }
   }
   return style;
+}
+/** Keep authored grace attacks clear, including the preceding loop cell. */
+function resolveGraceCollisions(style:RhythmStyle,pattern:RhythmStyle['sections']['mainA']) {
+  let time=0;
+  const onsets=pattern.steps.map((_,step)=>{const at=time;time+=stepDuration(style,pattern,120,step);return at;});
+  for(const [step,hits] of pattern.steps.entries()) for(const hit of hits) {
+    if(!['drag','flam'].includes(hit.rudiment ?? '')) continue;
+    for(const grace of expandHit(hit,style,pattern,120,step).filter(s=>s.kind==='grace')) {
+      const at=((onsets[step]+grace.offset)%time+time)%time;
+      const previous=onsets.findIndex(t=>Math.abs(t-at)<1e-6);
+      if(previous<0) continue;
+      const notes=pattern.steps[previous];
+      const conflict=notes.find(h=>h.instrument===hit.instrument || ['snare','rimshot'].includes(hit.instrument) && ['snare','rimshot'].includes(h.instrument));
+      if(conflict?.role==='essential') {delete hit.rudiment;break;}
+      if(conflict) notes.splice(notes.indexOf(conflict),1);
+      if(notes.filter(h=>!foot(h.instrument)).length>=2) {
+        const optional=notes.filter(h=>!foot(h.instrument)&&h.role!=='essential').sort((a,b)=>priority(a)-priority(b))[0];
+        if(optional) notes.splice(notes.indexOf(optional),1);
+        else {delete hit.rudiment;break;}
+      }
+    }
+  }
 }
 export function playability(style: RhythmStyle, section: RhythmSection = 'mainA'): { step: number; reason: string }[] {
   const pattern=style.sections[section];
@@ -183,19 +217,20 @@ export function playability(style: RhythmStyle, section: RhythmSection = 'mainA'
   });
   // Wider manual triplets may land on later grid cells. Check actual onsets,
   // including grace strokes, instead of treating the glyph as one note.
-  if (pattern.steps.flat().some(h=>h.rudiment === 'triplet' && (h.tripletSpan ?? 1)>1)) {
+  if (pattern.steps.flat().some(h=>h.rudiment)) {
     let time=0;
     const batches=new Map<number,{step:number;instrument:DrumInstrument}[]>();
+    const duration=pattern.steps.reduce((n,_,i)=>n+stepDuration(style,pattern,120,i),0);
     pattern.steps.forEach((hits,step)=>{
       hits.forEach(hit=>expandHit(hit,style,pattern,120,step).forEach(stroke=>{
-        const at=Math.round((time+stroke.offset)*1e6);
+        const at=Math.round(((time+stroke.offset+duration)%duration)*1e6);
         batches.set(at,[...(batches.get(at) ?? []),{step,instrument:hit.instrument}]);
       }));
       time+=stepDuration(style,pattern,120,step);
     });
     for(const notes of batches.values()) {
-      if (notes.filter(n=>!foot(n.instrument)).length>2 && !warnings.some(w=>w.step===notes[0].step)) warnings.push({step:notes[0].step,reason:'triola nakłada więcej niż dwa uderzenia rękami'});
-      if (new Set(notes.map(n=>n.instrument)).size<notes.length) warnings.push({step:notes[0].step,reason:'triola nakłada się na inną nutę tego samego instrumentu'});
+      if (notes.filter(n=>!foot(n.instrument)).length>2 && !warnings.some(w=>w.step===notes[0].step)) warnings.push({step:notes[0].step,reason:'ozdobnik nakłada więcej niż dwa uderzenia rękami'});
+      if (new Set(notes.map(n=>n.instrument)).size<notes.length) warnings.push({step:notes[0].step,reason:'triola nakłada się lub przednutka zbiega się z inną nutą tego samego instrumentu'});
     }
   }
   return warnings;
@@ -215,7 +250,7 @@ export function cycleCell(cell: Omit<CellEdit, 'velocity' | 'rudiment' | 'triple
 }
 
 export function studioLesson(id: string, input: StudioOptions = {}): string[] {
-  const options = normalizeOptions(input);
+  const options = normalizeOptions(input,id);
   if (options.songPresetId) { const song = getSongMap(options.songPresetId,id); return [song.note, 'Mapa to krótka aranżacja do ćwiczeń, nie pełna transkrypcja. Rozwijaj ją suwakami i własną edycją.', 'Tempo jest przybliżone; różne wydania i wykonania różnią się. Przy graniu z YouTube dopasuj puls funkcją Tap tempo.']; }
   if (id === '05' && options.reggaeVariant === 'two-four') return ['Hi-hat podkreśla offbeaty: & po każdej ćwierćnucie.', 'Stopa i cross-stick razem na 2 i 4. Jedynka nadal lekka.', 'Dodawaj ciche odpowiedzi, zachowując akcenty 2 i 4.'];
   const lesson = getGroove(id).lesson;

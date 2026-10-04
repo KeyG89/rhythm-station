@@ -3,10 +3,10 @@ import { ALL_STYLES, searchStyles } from '../src/data';
 import { arrangeGroove, defaultControls, getGroove, GROOVES, normalizeControls } from '../src/domain/grooves';
 import { DRUM_INSTRUMENTS_META } from '../src/types/rhythm';
 
-describe('Twelve authored grooves', () => {
+describe('Fifteen authored grooves', () => {
   it('contains exactly the requested collection in order', () => {
-    expect(ALL_STYLES.map(s => s.name)).toEqual(['Straight Rock 8th', 'Funk 16th', 'Half-Time Hip-Hop', 'Shuffle', 'Jazz Swing', 'Reggae One Drop', 'Bossa Nova', 'Samba', 'Afro-Cuban Clave', 'Afro 6/8', 'Waltz 3/4', 'Balkan 7/8']);
-    expect(new Set(ALL_STYLES.map(s => s.id)).size).toBe(12);
+    expect(ALL_STYLES.map(s => s.name)).toEqual(['Straight Rock 8th', 'Funk 16th', 'Half-Time Hip-Hop', 'Shuffle', 'Jazz Swing', 'Reggae One Drop', 'Bossa Nova', 'Samba', 'Afro-Cuban Clave', 'Afro 6/8', 'Waltz 3/4', 'Balkan 7/8', 'Five-Four 5/4', 'Metal · Single Pedal', 'Tom Groove']);
+    expect(new Set(ALL_STYLES.map(s => s.id)).size).toBe(15);
     expect(searchStyles('bossa').map(s => s.id)).toEqual(['06']);
   });
   it('has complete bars, valid velocities and no duplicate articulations in every section', () => {

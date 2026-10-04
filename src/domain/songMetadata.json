@@ -9,31 +9,40 @@
     "tempoSource": "https://www.drumstheword.com/pdf/RoyalBlood_FigureItOut.pdf",
     "note": "Zwrotka: ósemkowy hi-hat, stopa pod riffem, werbel 2/4. Uproszczona pętla; pomija przejścia.",
     "tempoNote": "≈ 108 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/6tPUSaejY2IMpBPFfQqjKd",
+    "referenceSource": "https://www.youtube.com/watch?v=jhgVu2lsi_k",
+    "referenceSection": "Zwrotka"
   },
   {
     "id": "00-2",
     "grooveId": "00",
-    "artist": "Royal Blood",
-    "title": "Little Monster",
-    "bpm": 95,
-    "youtube": "https://www.youtube.com/watch?v=ere2Mstl8ww",
-    "tempoSource": "https://getsongbpm.com/song/little-monster/lxNMqr",
-    "note": "Ciężki ósemkowy puls i synkopowana stopa. Zachowaj krótkie otwarcie hi-hatu na końcu frazy.",
-    "tempoNote": "≈ 95 ♩",
-    "researchedAt": "2026-10-04"
+    "artist": "Foo Fighters",
+    "title": "Learn to Fly",
+    "bpm": 136,
+    "youtube": "https://www.youtube.com/watch?v=1VQ_3sBZEm0",
+    "tempoSource": "https://drumeoblog.s3.amazonaws.com/beat/wp-content/uploads/2022/06/10120438/Foo-Fighters-Learn-To-Fly-1.pdf",
+    "note": "Główny groove zwrotki: zamknięte ósemki, synkopy stopy i backbeat. Poziom 4 przywraca pełną stopę i dynamikę; przejścia całej piosenki są pominięte.",
+    "tempoNote": "≈ 136 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5OQsiBsky2k2kDKy2bX2eT",
+    "referenceSource": "https://www.youtube.com/watch?v=1VQ_3sBZEm0",
+    "referenceSection": "Główny groove zwrotki"
   },
   {
     "id": "00-3",
     "grooveId": "00",
-    "artist": "Royal Blood",
-    "title": "Out of the Black",
-    "bpm": 159,
-    "youtube": "https://www.youtube.com/watch?v=bSdtvfBQd6c",
-    "tempoSource": "https://songbpm.com/%40royal-blood/out-of-the-black-syig8",
-    "note": "Riff i mocny backbeat; krótka pętla ćwiczeniowa bez zmian metrum i przerw całego utworu.",
-    "tempoNote": "≈ 159 ♩",
-    "researchedAt": "2026-10-04"
+    "artist": "Led Zeppelin",
+    "title": "When the Levee Breaks",
+    "bpm": 71,
+    "youtube": "https://www.youtube.com/watch?v=28ZOwVAZS0o",
+    "tempoSource": "https://getsongbpm.com/song/when-the-levee-breaks/pYvM2",
+    "note": "Główny loop Bonhama: mocny backbeat i krótka szesnastkowa odpowiedź stopy. Suchy zestaw nie odtwarza przestrzeni klatki schodowej oryginału.",
+    "tempoNote": "≈ 71 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/31JPQ2tHR7fpyRzwIsF7tT",
+    "referenceSource": "https://articles.roland.com/behind-the-beat-when-the-levee-breaks-by-led-zeppelin/",
+    "referenceSection": "Główny loop Bonhama"
   },
   {
     "id": "00-4",
@@ -45,7 +54,10 @@
     "tempoSource": "https://songbpm.com/%40ac-dc/back-in-black",
     "note": "Oszczędny backbeat Phila Rudda. Ćwicz równe ósemki, stopę i przestrzeń między akcentami.",
     "tempoNote": "≈ 94 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/2iEGj7kAwH7HAa5epwYwLB",
+    "referenceSource": "https://www.youtube.com/watch?v=pAgnJDJN4VA",
+    "referenceSection": "Oszczędny backbeat Phila Rudda"
   },
   {
     "id": "00-5",
@@ -55,9 +67,12 @@
     "bpm": 117,
     "youtube": "https://www.youtube.com/watch?v=hTWKbfoikeg",
     "tempoSource": "https://tunebat.com/Info/Smells-Like-Teen-Spirit-Nirvana/1f3yAtsJtY87CTmM8RLnxf",
-    "note": "Zwrotka w zamkniętym hi-hacie. Refren i flamy we wstępie są osobnymi rozwinięciami, nie częścią tej pętli.",
+    "note": "Refren: ćwierćnutowy otwarty hi-hat i crash na 1, dodatkowy werbel oraz szybka para stopy na 3&–3a. Docelowy takt odpowiada środkowemu taktowi Level 5 w lekcji Drumeo; intro i końcowy fill z zapisu nie są częścią pętli. Wcześniejsze poziomy upraszczają nogę i prowadzenie.",
     "tempoNote": "≈ 117 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/1f3yAtsJtY87CTmM8RLnxf",
+    "referenceSource": "https://www.drumeo.com/beat/?p=24183",
+    "referenceSection": "Refren — środkowy takt przykładu Level 5 Drumeo"
   },
   {
     "id": "01-1",
@@ -69,7 +84,10 @@
     "tempoSource": "https://songbpm.com/%40red-hot-chili-peppers/give-it-away",
     "note": "Funk rock: synkopy stopy pod backbeatem, ciche szesnastki werbla. Krótkie uproszczenie partii Chada Smitha.",
     "tempoNote": "≈ 92 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0IRA91bYKETRPMmR7ElJ4X",
+    "referenceSource": "https://www.youtube.com/watch?v=Mr_uHJPUlO8",
+    "referenceSection": "Funk rock"
   },
   {
     "id": "01-2",
@@ -81,7 +99,10 @@
     "tempoSource": "https://songbpm.com/%40red-hot-chili-peppers/cant-stop-l692w",
     "note": "Równy hi-hat i sprężysta stopa; zwrotkowa pętla inspirowana partią Chada Smitha.",
     "tempoNote": "≈ 91 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7of7YJQq2fFeFxpZ2CuXhj",
+    "referenceSource": "https://www.youtube.com/watch?v=8DyziWtkfBw",
+    "referenceSection": "Równy hi-hat i sprężysta stopa; zwrotkowa pętla inspirowana partią Chada Smitha"
   },
   {
     "id": "01-3",
@@ -93,7 +114,10 @@
     "tempoSource": "https://songbpm.com/%40red-hot-chili-peppers/if-you-have-to-ask",
     "note": "Rzadkie akcenty stopy i rozmowa ghostów. Zostaw duży kontrast do werbla na 2/4.",
     "tempoNote": "≈ 96 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7j68H39iKm7aJA9WGZ0x90",
+    "referenceSource": "https://www.youtube.com/watch?v=7PgaW596DKc",
+    "referenceSection": "Rzadkie akcenty stopy i rozmowa ghostów"
   },
   {
     "id": "01-4",
@@ -105,7 +129,10 @@
     "tempoSource": "https://songbpm.com/%40stevie-wonder/superstition",
     "note": "Kołyszące szesnastki. Ograniczony swing 60% zamiast mocniejszego oryginalnego feelu; wariant funkowy do ćwiczeń.",
     "tempoNote": "≈ 100 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4dwrL3Z5U2RZ6MZiKE2PgL",
+    "referenceSource": "https://www.youtube.com/watch?v=egqv1mtos6A",
+    "referenceSection": "Kołyszące szesnastki"
   },
   {
     "id": "01-5",
@@ -117,7 +144,10 @@
     "tempoSource": "https://songbpm.com/%40james-brown/cold-sweat-iL7iTfLxBU",
     "note": "Funkowy ostinato i synkopy; uproszczenie partii Clyde’a Stubblefielda, nie transkrypcja breaku.",
     "tempoNote": "≈ 112 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5RO9ikslEwiHcME5QxG7nH",
+    "referenceSource": "https://www.youtube.com/watch?v=lSh-QQuW3lU",
+    "referenceSection": "Funkowy ostinato i synkopy; uproszczenie partii Clyde’a Stubblefielda, nie transkrypcja breaku"
   },
   {
     "id": "02-1",
@@ -129,7 +159,10 @@
     "tempoSource": "https://songbpm.com/%40kendrick-lamar/humble-ca73137f-4006-4661-a051-74d64fea7db7",
     "note": "Trap w siatce half-time: werbel na 3, krótkie hi-haty, przestrzeń w stopie. Akustyczny odpowiednik automatu.",
     "tempoNote": "≈ 150 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7KXjTSCq5nL1LoYtL7XAwS",
+    "referenceSource": "https://www.youtube.com/watch?v=H4RELGc9su8",
+    "referenceSection": "Trap w siatce half-time"
   },
   {
     "id": "02-2",
@@ -141,7 +174,10 @@
     "tempoSource": "https://getsongbpm.com/song/mask-off/XQEjo8",
     "note": "Half-time w 150 BPM; akustyczna stopa zastępuje 808. Pominięte szybkie elektroniczne rolle.",
     "tempoNote": "≈ 150 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/2oyW3vC0nVCbMOSF0ifGtE",
+    "referenceSource": "https://www.youtube.com/watch?v=xvZqHgFz51I",
+    "referenceSection": "Half-time w 150 BPM; akustyczna stopa zastępuje 808"
   },
   {
     "id": "02-3",
@@ -153,7 +189,10 @@
     "tempoSource": "https://getsongbpm.com/song/god-s-plan/99k1mZ",
     "note": "Źródło podaje również 77 BPM; 154 BPM z werblem na 3 daje ten sam odstęp backbeatu. Stopa akustyczna zamiast 808.",
     "tempoNote": "≈ 154 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/6DCZcSspjsKoFjzjrWoCdn",
+    "referenceSource": "https://www.youtube.com/watch?v=xpVfcZ0ZcFM",
+    "referenceSection": "Źródło podaje również 77 BPM; 154 BPM z werblem na 3 daje ten sam odstęp backbeatu"
   },
   {
     "id": "02-4",
@@ -165,7 +204,10 @@
     "tempoSource": "https://songbpm.com/%40travis-scott/sicko-mode",
     "note": "Ćwicz fragment trapowy w 155 BPM; utwór ma zmiany sekcji i tempa, ta pętla ich nie odtwarza.",
     "tempoNote": "≈ 155 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/2xLMifQCjDGFmkHkpNLD9h",
+    "referenceSource": "https://www.youtube.com/watch?v=6ONRf7h3Mdk",
+    "referenceSection": "Ćwicz fragment trapowy w 155 BPM; utwór ma zmiany sekcji i tempa, ta pętla ich nie odtwarza"
   },
   {
     "id": "02-5",
@@ -177,7 +219,10 @@
     "tempoSource": "https://songbpm.com/%40post-malone/rockstar",
     "note": "160 BPM z werblem na 3; źródła podają również puls half-time 80. Akustyczna adaptacja, bez subbasu 808.",
     "tempoNote": "≈ 160 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0pFR9QNWbe741iS5YjDCY4",
+    "referenceSource": "https://www.youtube.com/watch?v=UceaB4D0jpo",
+    "referenceSection": "160 BPM z werblem na 3; źródła podają również puls half-time 80"
   },
   {
     "id": "03-1",
@@ -189,7 +234,10 @@
     "tempoSource": "https://songbpm.com/%40stevie-ray-vaughan/pride-and-joy",
     "note": "Bluesowy shuffle: długa–krótka, stopa i werbel 2/4. Pętla pomija gitarowe rubato i przejścia.",
     "tempoNote": "≈ 127 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/1a2iF9XymafjRk56q7oCxo",
+    "referenceSource": "https://www.youtube.com/watch?v=hDlSI_-z8Tc",
+    "referenceSection": "Bluesowy shuffle"
   },
   {
     "id": "03-2",
@@ -201,7 +249,10 @@
     "tempoSource": "https://songbpm.com/%40zz-top/la-grange-d6jse",
     "note": "Boogie shuffle z ride’em; krótka mapa rozwija akcenty i stopę, bez całej aranżacji.",
     "tempoNote": "≈ 162 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0gQic5Bzrm8aPfOUSeEhbR",
+    "referenceSource": "https://www.youtube.com/watch?v=rG6b8gjMEkw",
+    "referenceSection": "Boogie shuffle z ride’em; krótka mapa rozwija akcenty i stopę, bez całej aranżacji"
   },
   {
     "id": "03-3",
@@ -213,7 +264,10 @@
     "tempoSource": "https://songbpm.com/%40the-doors/roadhouse-blues",
     "note": "Rockowy shuffle o stosunkowo lekkim kołysaniu. Ćwicz ciągłość prawej ręki.",
     "tempoNote": "≈ 121 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/1Q5kgpp4pmyGqPwNBzkSrw",
+    "referenceSource": "https://www.youtube.com/watch?v=kszS7vjA808",
+    "referenceSection": "Rockowy shuffle o stosunkowo lekkim kołysaniu"
   },
   {
     "id": "03-4",
@@ -225,7 +279,10 @@
     "tempoSource": "https://drumeoblog.s3.amazonaws.com/beat/wp-content/uploads/2021/07/05131433/Led-Zeppelin-Fool-In-The-Rain-Score.pdf",
     "note": "Half-time shuffle: werbel na 3 i ciche odpowiedzi. Siatka dwóch nut nie oddaje wszystkich wewnętrznych ghostów trioli Bonhama.",
     "tempoNote": "≈ 130 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/6baUv2xlMfh1lC6ucWgvAD",
+    "referenceSource": "https://www.youtube.com/watch?v=I57nIP0vc44",
+    "referenceSection": "Half-time shuffle"
   },
   {
     "id": "03-5",
@@ -237,7 +294,10 @@
     "tempoSource": "https://www.drumstheword.com/pdf/Toto_Rosanna_Fill.pdf",
     "note": "Half-time shuffle w około 164 BPM (82 w innym liczeniu). Uproszczenie Porcaro; bez pełnej partii wewnętrznych trioli.",
     "tempoNote": "≈ 164 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/37BTh5g05cxBIRYMbw8g2T",
+    "referenceSource": "https://www.youtube.com/watch?v=qmOLtTGvsbM",
+    "referenceSection": "Half-time shuffle w około 164 BPM (82 w innym liczeniu)"
   },
   {
     "id": "04-1",
@@ -249,7 +309,10 @@
     "tempoSource": "https://songbpm.com/%40duke-ellington-orchestra/take-the-a-train",
     "note": "Standard swingowy: ride, noga hi-hatu 2/4, cichy comping. Tempo startowe z analizy; wykonania Ellingtona różnią się.",
     "tempoNote": "≈ 172 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/1QmX9drO6XJGSYf6Os3IYN",
+    "referenceSource": "https://www.youtube.com/watch?v=RhuzhkPpKz0",
+    "referenceSection": "Standard swingowy"
   },
   {
     "id": "04-2",
@@ -261,7 +324,10 @@
     "tempoSource": "https://www.musicnotes.com/sheetmusic/duke-ellington/c-jam-blues/MN0204361",
     "note": "Ride w szybkim medium swing i krótkie odpowiedzi werbla. Tempo 194 według wydania nutowego, nagrania mogą odbiegać.",
     "tempoNote": "≈ 194 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/65npA3wOPPlaoK3LNceYUe",
+    "referenceSource": "https://www.youtube.com/watch?v=kq2zDGRgTz4",
+    "referenceSection": "Ride w szybkim medium swing i krótkie odpowiedzi werbla"
   },
   {
     "id": "04-3",
@@ -273,7 +339,10 @@
     "tempoSource": "https://songbpm.com/%40duke-ellington/satin-doll",
     "note": "Oszczędny swing i cicha stopa. Tempo startowe 89 według analizy; różne nagrania mają inne tempa.",
     "tempoNote": "≈ 89 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4vIyASYNw5jM3YwrfupTTp",
+    "referenceSource": "https://www.youtube.com/watch?v=W_WD4OKn_T0",
+    "referenceSection": "Oszczędny swing i cicha stopa"
   },
   {
     "id": "04-4",
@@ -285,7 +354,10 @@
     "tempoSource": "https://songbpm.com/%40miles-davis/autumn-leaves-n4bb4",
     "note": "Ride i przestrzeń w compingu. Tempo startowe 111 pochodzi z innej wersji niż linkowane wykonanie koncertowe; do grania z nim użyj Tap tempo.",
     "tempoNote": "≈ 111 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/31LG9NFbq5Fc40awNJQqLb",
+    "referenceSource": "https://www.youtube.com/watch?v=VceamQwj8bo",
+    "referenceSection": "Ride i przestrzeń w compingu"
   },
   {
     "id": "04-5",
@@ -297,7 +369,10 @@
     "tempoSource": "https://bpm-database.tokyo/album/Nwk2HULw",
     "note": "Swingowy puls live Côte d’Azur 1966. Tempo około 206; uproszczenie akcentów zespołu, bez zmiennego compingu całego koncertu.",
     "tempoNote": "≈ 206 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7fXPpVgyDhepm8aMOnA9re",
+    "referenceSource": "https://www.youtube.com/watch?v=0ScOUncmWOE",
+    "referenceSection": "Swingowy puls live Côte d’Azur 1966"
   },
   {
     "id": "05-1",
@@ -309,7 +384,10 @@
     "tempoSource": "https://songbpm.com/searches/82258aad-97ea-494f-b5d0-a019df8cbf9b",
     "note": "Lekki one-drop i offbeatowe hi-haty. 74 BPM to spokojny puls; część analiz podaje podwojone 148–149.",
     "tempoNote": "≈ 74 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7G50pcN2iGxpJGVY34otOK",
+    "referenceSource": "https://www.youtube.com/watch?v=od2dKdDTTrY",
+    "referenceSection": "Lekki one-drop i offbeatowe hi-haty"
   },
   {
     "id": "05-2",
@@ -321,7 +399,10 @@
     "tempoSource": "https://songbpm.com/%40bob-marley-the-wailers/one-love-people-get-ready",
     "note": "One-drop i krótka odpowiedź obręczy. Ćwicz pustą jedynkę oraz lekki offbeat.",
     "tempoNote": "≈ 77 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5NtGTV1xXEdqTQihuvntpj",
+    "referenceSource": "https://www.youtube.com/watch?v=zCgu_GSex0k",
+    "referenceSection": "One-drop i krótka odpowiedź obręczy"
   },
   {
     "id": "05-3",
@@ -333,7 +414,10 @@
     "tempoSource": "https://songbpm.com/%40bob-marley-the-wailers/stir-it-up",
     "note": "One-drop z hi-hatem w ósemkach. Źródło 150 przeliczone na spokojny puls 75; pomija dodatkową perkusję.",
     "tempoNote": "150 ÷ 2 = 75 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4FNm4ZJaUVLDCMXcqwS6zY",
+    "referenceSource": "https://www.youtube.com/watch?v=xsT0bIyaSWo",
+    "referenceSection": "One-drop z hi-hatem w ósemkach"
   },
   {
     "id": "05-4",
@@ -345,7 +429,10 @@
     "tempoSource": "https://songbpm.com/%40bob-marley-the-wailers/waiting-in-vain-g-oF9PA7b-",
     "note": "Luźny one-drop, otwarcie końca frazy i ciche odpowiedzi. Stopa pozostaje oszczędna.",
     "tempoNote": "≈ 79 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/58Zt987fK6gWxtO0MwEzPn",
+    "referenceSource": "https://www.youtube.com/watch?v=IWxbhC44p2w",
+    "referenceSection": "Luźny one-drop, otwarcie końca frazy i ciche odpowiedzi"
   },
   {
     "id": "05-5",
@@ -357,7 +444,10 @@
     "tempoSource": "https://songbpm.com/%40bob-marley/no-woman-no-cry-1975-audio-version-djogb",
     "note": "Pętla inspirowana wykonaniem Lyceum 1975; około 78 BPM. Oryginał żyje i zmienia tempo, użyj Tap tempo przy graniu z nagraniem.",
     "tempoNote": "≈ 78 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/6GN9GcQB0VRgC5jPUNGRkA",
+    "referenceSource": "https://www.youtube.com/watch?v=r8RoUOW8ma0",
+    "referenceSection": "Pętla inspirowana wykonaniem Lyceum 1975; około 78 BPM"
   },
   {
     "id": "06-1",
@@ -369,7 +459,10 @@
     "tempoSource": "https://getsongbpm.com/song/the-girl-from-ipanema/kZYoQE",
     "note": "Cicha stopa, brazylijski cross-stick i ósemki przez dwa takty. Redukcja akompaniamentu do zestawu.",
     "tempoNote": "≈ 130 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/72NlgH2kuVJ6fNorALf3Dq",
+    "referenceSource": "https://www.youtube.com/watch?v=v5DZ5clg-bg",
+    "referenceSection": "Cicha stopa, brazylijski cross-stick i ósemki przez dwa takty"
   },
   {
     "id": "06-2",
@@ -381,7 +474,10 @@
     "tempoSource": "https://songbpm.com/%40joao-y-astrud-gilberto-with-antonio-carlos-jobim-and-stan-getz/corcovado",
     "note": "Delikatna dwutaktowa fraza obręczy. Ćwicz niezależność stopy i melodii cross-sticku.",
     "tempoNote": "≈ 115 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/2GjfPQXk8yyXCLSI0CRnaV",
+    "referenceSource": "https://www.youtube.com/watch?v=kjilv-saThE",
+    "referenceSection": "Delikatna dwutaktowa fraza obręczy"
   },
   {
     "id": "06-3",
@@ -393,7 +489,10 @@
     "tempoSource": "https://songbpm.com/%40stan-getz-joao-gilberto/desafinado",
     "note": "Bossa w ruchliwym pulsie 140; analiza 70 przeliczona ×2. Pominięte mikroprzesunięcia żywego wykonania.",
     "tempoNote": "70 × 2 = 140 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4G22jOCC5oDeaay65EV9cQ",
+    "referenceSource": "https://www.youtube.com/watch?v=oqHONL-LZ58",
+    "referenceSection": "Bossa w ruchliwym pulsie 140; analiza 70 przeliczona ×2"
   },
   {
     "id": "06-4",
@@ -405,7 +504,10 @@
     "tempoSource": "https://getsongbpm.com/album/wave/QQWZ",
     "note": "Instrumentalna bossa z 1967: 72 w wolnym liczeniu → 144 ćwierćnuty. Redukcja szczotek i dodatkowej perkusji do pałek.",
     "tempoNote": "72 × 2 = 144 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4jqyntjU1TmHpmU4uRFp5U",
+    "referenceSource": "https://www.youtube.com/watch?v=3d8y4HxW8Eg",
+    "referenceSection": "Instrumentalna bossa z 1967"
   },
   {
     "id": "06-5",
@@ -417,7 +519,10 @@
     "tempoSource": "https://getsongbpm.com/song/agua-de-beber/gJ50z9",
     "note": "Lekka bossa w około 148 BPM; krótkie otwarcia hi-hatu i miękkie akcenty obręczy.",
     "tempoNote": "≈ 148 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/3GHRmXRGEJL8eJmtz927Zg",
+    "referenceSource": "https://www.youtube.com/watch?v=iteDBk6k3N8",
+    "referenceSection": "Lekka bossa w około 148 BPM; krótkie otwarcia hi-hatu i miękkie akcenty obręczy"
   },
   {
     "id": "07-1",
@@ -429,7 +534,10 @@
     "tempoSource": "https://getsongbpm.com/song/mas-que-nada/jqJ4OW",
     "note": "Samba-pop Brasil ’66, około 107 BPM według analizy albumu. Redukcja wieloosobowej perkusji na tom i floor tom.",
     "tempoNote": "≈ 107 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/1Fl8t0P3riNTCGZrZBnNHh",
+    "referenceSource": "https://www.youtube.com/watch?v=-ofd5X0S0rs",
+    "referenceSection": "Samba-pop Brasil ’66, około 107 BPM według analizy albumu"
   },
   {
     "id": "07-2",
@@ -441,7 +549,10 @@
     "tempoSource": "https://getsongbpm.com/song/chove-chuva/mZpJqG",
     "note": "Samba-rock z albumu Samba Esquema Novo: synkopowane ręce nad stałym ostinatem stopy.",
     "tempoNote": "≈ 134 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4lXympILiXw2GOEopMNpl5",
+    "referenceSource": "https://www.youtube.com/watch?v=QNBO7wIU3yI",
+    "referenceSection": "Samba-rock z albumu Samba Esquema Novo"
   },
   {
     "id": "07-3",
@@ -453,7 +564,10 @@
     "tempoSource": "https://songbpm.com/%40joao-gilberto/aquarela-do-brasil",
     "note": "Brazylijska fraza, łagodna stopa i odpowiedzi tomów. Adaptacja gitarowo-wokalnego wykonania na pełny zestaw.",
     "tempoNote": "≈ 100 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7rDBNhFrZtKNpROLf0UbPW",
+    "referenceSource": "https://www.youtube.com/watch?v=pQ_Zd1oKroU",
+    "referenceSection": "Brazylijska fraza, łagodna stopa i odpowiedzi tomów"
   },
   {
     "id": "07-4",
@@ -465,7 +579,10 @@
     "tempoSource": "https://songbpm.com/%40jorge-ben-jor/pais-tropical-zGmdK3Qhdd",
     "note": "Samba-rock: zaznacz synkopy obręczą i tomem. To interpretacja do ćwiczeń, nie osobna partia każdego perkusjonisty.",
     "tempoNote": "≈ 137 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/3KlCqO4HsWNQ15ASuK9iMT",
+    "referenceSource": "https://www.youtube.com/watch?v=efVH5sMcO1A",
+    "referenceSection": "Samba-rock"
   },
   {
     "id": "07-5",
@@ -477,7 +594,10 @@
     "tempoSource": "https://songbpm.com/%40bellini/samba-de-janeiro-mY3zz4dbF3",
     "note": "Dance w 133 BPM z akustycznym ostinatem samba. Oryginał jest elektroniczny i nie jest tradycyjną sambą baterii.",
     "tempoNote": "≈ 133 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5aIfLbdgkbH7NbQryd1poB",
+    "referenceSource": "https://www.youtube.com/watch?v=oKx1NuRqpeM",
+    "referenceSection": "Dance w 133 BPM z akustycznym ostinatem samba"
   },
   {
     "id": "08-1",
@@ -489,7 +609,10 @@
     "tempoSource": "https://getsongbpm.com/song/oye-como-va/kZBp3r",
     "note": "Cha-cha/latin rock Santany. Bell ride’u zastępuje cowbell, tomy dodatkową perkusję; ćwiczeniowa oś 3–2, nie transkrypcja wszystkich akcentów.",
     "tempoNote": "≈ 129 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4Jqubm2gop4wYdXjJzUvwy",
+    "referenceSource": "https://www.youtube.com/watch?v=LVFm8wu1NFQ",
+    "referenceSection": "Cha-cha/latin rock Santany"
   },
   {
     "id": "08-2",
@@ -501,7 +624,10 @@
     "tempoSource": "https://songbpm.com/%40tito-puente/ran-kan-kan",
     "note": "Mambo z dzwonkiem i dwutaktową osią 3–2. Zestaw zastępuje timbales i congi; pozostaw przestrzeń clave.",
     "tempoNote": "≈ 105 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5QjSm5fJ9AH9odpEPfPIsY",
+    "referenceSource": "https://www.youtube.com/watch?v=NZG5S6ahzKY",
+    "referenceSection": "Mambo z dzwonkiem i dwutaktową osią 3–2"
   },
   {
     "id": "08-3",
@@ -513,7 +639,10 @@
     "tempoSource": "https://songbpm.com/%40celia-cruz/la-vida-es-un-carnaval-acu15",
     "note": "Salsa: dwutaktowa oś i krótkie odpowiedzi tomów. Akustyczna redukcja zespołu perkusyjnego.",
     "tempoNote": "≈ 104 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7rWOuBzhjHdiR7RPz9YH7L",
+    "referenceSource": "https://www.youtube.com/watch?v=iedsm9OAclM",
+    "referenceSection": "Salsa"
   },
   {
     "id": "08-4",
@@ -525,7 +654,10 @@
     "tempoSource": "https://songbpm.com/%40buena-vista-social-club/chan-chan",
     "note": "Spokojny son. Obręcz utrzymuje oś 3–2, stopa gra antycypacje; tom zastępuje congę.",
     "tempoNote": "≈ 83 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7DqTaelFf846rl1CHmyfOW",
+    "referenceSource": "https://www.youtube.com/watch?v=o5cELP06Mik",
+    "referenceSection": "Spokojny son"
   },
   {
     "id": "08-5",
@@ -537,7 +669,10 @@
     "tempoSource": "https://songbpm.com/%40gloria-estefan/conga",
     "note": "Latin pop w prostym 4/4. Zestawowa interpretacja riffu, congi na tomach i ćwiczeniowa oś 3–2.",
     "tempoNote": "≈ 123 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/1KbiPAoC1q6Xw87imxmC5r",
+    "referenceSource": "https://www.youtube.com/watch?v=54ItEmCnP80",
+    "referenceSection": "Latin pop w prostym 4/4"
   },
   {
     "id": "09-1",
@@ -549,7 +684,10 @@
     "tempoSource": "https://songbpm.com/%40mongo-santamaria/afro-blue",
     "note": "Afro-Cuban 6/8: dialog 3:2, bell zamiast dzwonka, congi na tomach. Dwutaktowa interpretacja bembé; nie dokładna partia nagrania.",
     "tempoNote": "≈ 94 ♩.",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7L92MWLFM6m3Ry1vCdthmj",
+    "referenceSource": "https://www.youtube.com/watch?v=YbE7jf_Hp5w",
+    "referenceSection": "Afro-Cuban 6/8"
   },
   {
     "id": "09-2",
@@ -561,7 +699,10 @@
     "tempoSource": "https://jazzomat.hfm-weimar.de/dbformat/synopsis/solo431.html",
     "note": "Jazzowy walc z Adam’s Apple, średnio ♩136.1: ten sam takt zapisany w 6/8 daje ♩.90.7. Adaptacja jazzowej partii na compound puls.",
     "tempoNote": "136.1 × 2/3 ≈ 90.7 ♩.",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/7L92MWLFM6m3Ry1vCdthmj",
+    "referenceSource": "https://www.youtube.com/watch?v=LgaIUqH0w6c",
+    "referenceSection": "Jazzowy walc z Adam’s Apple, średnio ♩136"
   },
   {
     "id": "09-3",
@@ -573,7 +714,10 @@
     "tempoSource": "https://songbpm.com/%40miles-davis/all-blues",
     "note": "Jazz-waltz w 6/8: analiza ♩140 → ♩.93.3. Ride i oszczędny werbel; zastępuje afrykańską frazę bell jazzowym pulsem.",
     "tempoNote": "140 × 2/3 ≈ 93.3 ♩.",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0TUa7gBg7LJH6B8dkNVioU",
+    "referenceSource": "https://www.youtube.com/watch?v=hmPbCmW615I",
+    "referenceSection": "Jazz-waltz w 6/8"
   },
   {
     "id": "09-4",
@@ -585,7 +729,10 @@
     "tempoSource": "https://songbpm.com/%40r-e-m/everybody-hurts",
     "note": "Ballada 6/8: ♩94 → ♩.62.7. Prosty puls i werbel na drugim dużym uderzeniu; bez bembé, bo nagranie nie ma afrykańskiej osi.",
     "tempoNote": "94 × 2/3 ≈ 62.7 ♩.",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/15Abjl1DToLzh0fHap6gPK",
+    "referenceSource": "https://www.youtube.com/watch?v=mhIay4-PbCY",
+    "referenceSection": "Ballada 6/8"
   },
   {
     "id": "09-5",
@@ -597,7 +744,10 @@
     "tempoSource": "https://songbpm.com/%40the-animals/house-of-the-rising-sun-uo86r",
     "note": "Rockowe 6/8: ♩119 → ♩.79.3. Ride i drugi duży akcent; compound metrum, bez dodanej afrykańskiej osi.",
     "tempoNote": "119 × 2/3 ≈ 79.3 ♩.",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/6h3AR0a9OTnBea0ajUTBIg",
+    "referenceSource": "https://www.youtube.com/watch?v=MJkr0DWbhTk",
+    "referenceSection": "Rockowe 6/8"
   },
   {
     "id": "10-1",
@@ -609,7 +759,10 @@
     "tempoSource": "https://songbpm.com/%40billy-joel/piano-man",
     "note": "Walc: trzy ćwierćnuty i łagodny backbeat. Tempo około 178, swobodne intro pominięte.",
     "tempoNote": "≈ 178 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/70C4NyhjD5OZUMzvWZ3njJ",
+    "referenceSource": "https://www.youtube.com/watch?v=gxEPV4kolz0",
+    "referenceSection": "Walc"
   },
   {
     "id": "10-2",
@@ -621,7 +774,10 @@
     "tempoSource": "https://songbpm.com/%40eagles/take-it-to-the-limit",
     "note": "Ballada w 3/4: stopa na 1, werbel na 3, miękkie ósemki. Pętla zwrotki, bez pełnej aranżacji.",
     "tempoNote": "≈ 91 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/2cWHN0WK52RGAWHgaDamUA",
+    "referenceSource": "https://www.youtube.com/watch?v=SloVvZdNuXA",
+    "referenceSection": "Ballada w 3/4"
   },
   {
     "id": "10-3",
@@ -633,7 +789,10 @@
     "tempoSource": "https://songbpm.com/%40jimi-hendrix/manic-depression",
     "note": "Rockowy 3/4: mocny werbel, triole i jazda po ride. Uproszczenie energii Mitcha Mitchella.",
     "tempoNote": "≈ 150 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/3f5JtAsGRIXN8pSAeTi6vA",
+    "referenceSource": "https://www.youtube.com/watch?v=_OmzEQzaaU4",
+    "referenceSection": "Rockowy 3/4"
   },
   {
     "id": "10-4",
@@ -645,7 +804,10 @@
     "tempoSource": "https://songbpm.com/%40the-beatles/lucy-in-the-sky-with-diamonds",
     "note": "Tylko zwrotka w 3/4, około 138 BPM. Refren przechodzi w 4/4 i nie jest częścią tej pętli.",
     "tempoNote": "≈ 138 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5wLkhxwU7B9DNglfZAIrQ8",
+    "referenceSource": "https://www.youtube.com/watch?v=l7x-0c9jl4Y",
+    "referenceSection": "Tylko zwrotka w 3/4, około 138 BPM"
   },
   {
     "id": "10-5",
@@ -657,7 +819,10 @@
     "tempoSource": "https://songbpm.com/%40doris-day/que-sera-sera-whatever-will-be-will-be",
     "note": "Walc z mocniejszą jedynką i cichym cross-stickiem. Zestawowa adaptacja orkiestrowego akompaniamentu.",
     "tempoNote": "≈ 147 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/2W2hcqqxQ6QXj9oObJxRbW",
+    "referenceSource": "https://www.youtube.com/watch?v=hEEbNljeUUo",
+    "referenceSection": "Walc z mocniejszą jedynką i cichym cross-stickiem"
   },
   {
     "id": "11-1",
@@ -669,7 +834,10 @@
     "tempoSource": "https://songbpm.com/%40alice-in-chains/them-bones",
     "note": "Riff/zwrotka w 7/8. Ćwicz nierówną frazę; refren 4/4 pominięty. Rockowa interpretacja, nie rytm folklorystyczny.",
     "tempoNote": "≈ 165 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/64ZqHmBufTSmDRd0it0oEf",
+    "referenceSource": "https://www.youtube.com/watch?v=zTuD8k3JvxQ",
+    "referenceSection": "Riff/zwrotka w 7/8"
   },
   {
     "id": "11-2",
@@ -681,7 +849,10 @@
     "tempoSource": "https://www.musicnotes.com/sheetmusic/hdpiano/solsbury-hill/MN0208176",
     "note": "Pierwotne 7/4 w ♩102 zapisane proporcjonalnie jako 7/8 w ♩51. Ósemka mapy odpowiada ćwierćnucie nagrania; grupy 2+2+3 to ćwiczeniowa interpretacja.",
     "tempoNote": "102 ÷ 2 = 51 ♩ (7/4 → 7/8)",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/2SvrrecQQX8FHC6AcOzCGU",
+    "referenceSource": "https://www.youtube.com/watch?v=_OO2PuGz-H8",
+    "referenceSection": "Pierwotne 7/4 w ♩102 zapisane proporcjonalnie jako 7/8 w ♩51"
   },
   {
     "id": "11-3",
@@ -693,7 +864,10 @@
     "tempoSource": "https://songbpm.com/%40pink-floyd/money",
     "note": "Pierwotne 7/4 w około ♩126 → 7/8 w ♩63. Ósemka mapy odpowiada ćwierćnucie nagrania; to prosta wersja ćwiczeniowa riffu bez solówki 4/4.",
     "tempoNote": "126 ÷ 2 = 63 ♩ (7/4 → 7/8)",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0vFOzaXqZHahrZp6enQwQb",
+    "referenceSource": "https://www.youtube.com/watch?v=-0kcet4aPpQ",
+    "referenceSection": "Pierwotne 7/4 w około ♩126 → 7/8 w ♩63"
   },
   {
     "id": "11-4",
@@ -705,7 +879,10 @@
     "tempoSource": "https://www.bpmdatabase.com/music/by/soundgarden/",
     "note": "Główny riff 7/4, około ♩91 → 7/8 w ♩45.5. Pomija sekcje 4/4 i solo na łyżkach; floor tom przejmuje odpowiedzi.",
     "tempoNote": "91 ÷ 2 = 45.5 ♩ (7/4 → 7/8)",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5oowXVNXkPcfZHWy8fh1Nc",
+    "referenceSource": "https://www.youtube.com/watch?v=T0_zzCLLRvE",
+    "referenceSection": "Główny riff 7/4, około ♩91 → 7/8 w ♩45"
   },
   {
     "id": "11-5",
@@ -717,6 +894,234 @@
     "tempoSource": "https://songbpm.com/%40genesis/dance-on-a-volcano",
     "note": "Fragment 7/8 z około 114 BPM. Dwutaktowy charakter skondensowany do jednej pętli; pomija zmiany metrum całej kompozycji.",
     "tempoNote": "≈ 114 ♩",
-    "researchedAt": "2026-10-04"
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/2Pgp5Ur1A30HlbxJySseEM",
+    "referenceSource": "https://www.youtube.com/watch?v=sjRQgTbbfwA",
+    "referenceSection": "Fragment 7/8 z około 114 BPM"
+  },
+  {
+    "id": "12-1",
+    "grooveId": "12",
+    "artist": "The Dave Brubeck Quartet",
+    "title": "Take Five",
+    "bpm": 176,
+    "youtube": "https://www.youtube.com/watch?v=buVpqwraap0",
+    "tempoSource": "https://www.musicnotes.com/sheetmusic/dave-brubeck/take-five/MN0042852",
+    "note": "Swingowa część tematu, 5/4 w grupach 3+2: ride i lekki comping. Mapa rozwija groove tematu, nie improwizowane solo Morella.",
+    "tempoNote": "≈ 176 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5p6me2mwQrGfH30eExHn6v",
+    "referenceSource": "https://www.youtube.com/watch?v=buVpqwraap0",
+    "referenceSection": "Swingowa część tematu, 5/4 w grupach 3+2"
+  },
+  {
+    "id": "12-2",
+    "grooveId": "12",
+    "artist": "Sting",
+    "title": "Seven Days",
+    "bpm": 184,
+    "youtube": "https://www.youtube.com/watch?v=pG7_gceIFL4",
+    "tempoSource": "https://songbpm.com/%40sting/seven-days",
+    "note": "Zwrotka w 5/4, lekki cross-stick i hi-hat z akcentami przechodzącymi przez puls. Skrócona fraza Vinniego: nie odtwarza wszystkich wariantów i polirytmii z nagrania.",
+    "tempoNote": "92 × 2 ≈ 184 ♩ · puls 5/4",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0DZkk6jRkexRCRYrkvC1D8",
+    "referenceSource": "https://www.youtube.com/watch?v=pG7_gceIFL4",
+    "referenceSection": "Zwrotka w 5/4, lekki cross-stick i hi-hat z akcentami przechodzącymi przez puls"
+  },
+  {
+    "id": "12-3",
+    "grooveId": "12",
+    "artist": "Radiohead",
+    "title": "15 Step",
+    "bpm": 188,
+    "youtube": "https://www.youtube.com/watch?v=9bahTUVLXZw",
+    "tempoSource": "https://www.musicnotes.com/sheetmusic/radiohead/15-step/MN0061996",
+    "note": "Pętla 5/4: synkopowany elektroniczny beat przełożony na zestaw. Handclapy gra werbel, bez wokalnych warstw i zmian struktury.",
+    "tempoNote": "≈ 188 ♩ · katalog 94 × 2; zapis nutowy ≈184",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4oXg7xT4ksBxHTx8PcmSXw",
+    "referenceSource": "https://www.youtube.com/watch?v=9bahTUVLXZw",
+    "referenceSection": "Pętla 5/4"
+  },
+  {
+    "id": "12-4",
+    "grooveId": "12",
+    "artist": "Jethro Tull",
+    "title": "Living in the Past",
+    "bpm": 144,
+    "youtube": "https://www.youtube.com/watch?v=Tn9IyFLDtjk",
+    "tempoSource": "https://geerdes.media/apps/midifile/en/living-in-the-past-jethro-tull-2360.00.html",
+    "note": "Główna fraza 5/4 z synkopowaną stopą i zwięzłym werblem. Obejmuje pięciomiarowy fragment; zmiany metrum między sekcjami pominięte.",
+    "tempoNote": "≈ 144 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4gT03ljMtJBaVBTmVUbbat",
+    "referenceSource": "https://www.youtube.com/watch?v=Tn9IyFLDtjk",
+    "referenceSection": "Główna fraza 5/4 z synkopowaną stopą i zwięzłym werblem"
+  },
+  {
+    "id": "12-5",
+    "grooveId": "12",
+    "artist": "Lalo Schifrin",
+    "title": "Mission: Impossible Theme",
+    "bpm": 182,
+    "youtube": "https://www.youtube.com/watch?v=cSpGbYTZbpk",
+    "tempoSource": "https://songbpm.com/%40lalo-schifrin/mission-impossible-588735ab-5305-4efc-96b6-b9904a3a5b4b",
+    "note": "Riff 5/4 w grupach 3+2. Akcenty orkiestrowej perkusji przełożone na bell, werbel i stopę; bez kopiowania całej aranżacji.",
+    "tempoNote": "91 × 2 ≈ 182 ♩ · oryginalny motyw 5/4",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0VlxbRzdOyA56BviBK9vkc",
+    "referenceSource": "https://www.youtube.com/watch?v=cSpGbYTZbpk",
+    "referenceSection": "Riff 5/4 w grupach 3+2"
+  },
+  {
+    "id": "13-1",
+    "grooveId": "13",
+    "artist": "Sepultura",
+    "title": "Roots Bloody Roots",
+    "bpm": 123,
+    "youtube": "https://www.youtube.com/watch?v=nUCodt4zVw4",
+    "tempoSource": "https://getsongbpm.com/album/roots/j1Q4",
+    "note": "Główny ciężki riff: stopa z gitarą, werbel 2/4, mocna prawa ręka. Wersja dla pojedynczego pedału; pomija djembe, przejścia i zmiany metrum końcówki.",
+    "tempoNote": "≈ 123 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0P23WXceavWIswqBBeH4Hc",
+    "referenceSource": "https://www.youtube.com/watch?v=nUCodt4zVw4",
+    "referenceSection": "Główny ciężki riff"
+  },
+  {
+    "id": "13-2",
+    "grooveId": "13",
+    "artist": "Sepultura",
+    "title": "Refuse/Resist",
+    "bpm": 118,
+    "youtube": "https://www.youtube.com/watch?v=6ODNxy3YOPU",
+    "tempoSource": "https://songbpm.com/%40sepultura/refuse-resist",
+    "note": "Główny riff po perkusyjnym intro, nie całe tomowe intro. Stopa ograniczona do pojedynczych synkop, charakterystyczne akcenty rąk wracają z Complexity.",
+    "tempoNote": "≈ 118 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/2OoS1aZFAFscH1cUiKlazH",
+    "referenceSource": "https://www.youtube.com/watch?v=6ODNxy3YOPU",
+    "referenceSection": "Główny riff po perkusyjnym intro, nie całe tomowe intro"
+  },
+  {
+    "id": "13-3",
+    "grooveId": "13",
+    "artist": "Metallica",
+    "title": "Sad But True",
+    "bpm": 89,
+    "youtube": "https://www.youtube.com/watch?v=A8MO7fkZc5o",
+    "tempoSource": "https://songbpm.com/%40metallica/sad-but-true",
+    "note": "Powolny główny riff: ciężki werbel i stopa pod gitarą. Pojedyncza stopa; akcenty crash/ride rozwijają frazę bez podwójnego pedału.",
+    "tempoNote": "≈ 89 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/1Ug98CRiQYu7wiSym4uLY4",
+    "referenceSource": "https://www.youtube.com/watch?v=A8MO7fkZc5o",
+    "referenceSection": "Powolny główny riff"
+  },
+  {
+    "id": "13-4",
+    "grooveId": "13",
+    "artist": "Pantera",
+    "title": "Walk",
+    "bpm": 116,
+    "youtube": "https://www.youtube.com/watch?v=AkFqg5wAuFk",
+    "tempoSource": "https://songbpm.com/%40pantera/walk---remastered",
+    "note": "Główny kołyszący riff: triołowy oddech stopy i mocny backbeat. Wersja single-pedal pomija późniejsze double-bass fragmenty.",
+    "tempoNote": "≈ 116 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0wcKfCfSBaG0vd6VpdiQyp",
+    "referenceSource": "https://www.youtube.com/watch?v=AkFqg5wAuFk",
+    "referenceSection": "Główny kołyszący riff"
+  },
+  {
+    "id": "13-5",
+    "grooveId": "13",
+    "artist": "Black Sabbath",
+    "title": "Iron Man",
+    "bpm": 77.5,
+    "youtube": "https://www.youtube.com/watch?v=F01UTYg79KY",
+    "tempoSource": "https://songbpm.com/%40black-sabbath/iron-man-2012-remaster-fmu0h",
+    "note": "Wolna zwrotka/główny riff, bez przyspieszającej końcówki. Przestrzeń między stopą i mocnym backbeatem.",
+    "tempoNote": "155 / 2 ≈ 77.5 ♩ · wolny riff",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/0vJYFKg9z1IvZiQUyX19cD",
+    "referenceSource": "https://www.youtube.com/watch?v=F01UTYg79KY",
+    "referenceSection": "Wolna zwrotka/główny riff, bez przyspieszającej końcówki"
+  },
+  {
+    "id": "14-1",
+    "grooveId": "14",
+    "artist": "Phil Collins",
+    "title": "In the Air Tonight",
+    "bpm": 95,
+    "youtube": "https://www.youtube.com/watch?v=cuHvKksNriE",
+    "tempoSource": "https://songbpm.com/%40phil-collins/in-the-air-tonight-0a102e63-ea2e-4cc3-b067-56975a480ae6",
+    "note": "Pętla ćwiczeniowa słynnego tomowego wejścia, nie groove całej zwrotki. Zachowuje opadającą melodię; skrócony zestaw zastępuje liczne tomy Collinsa.",
+    "tempoNote": "≈ 95 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/4ZS8iL4Msbl7hpxuEqfeUD",
+    "referenceSource": "https://www.youtube.com/watch?v=cuHvKksNriE",
+    "referenceSection": "Pętla ćwiczeniowa słynnego tomowego wejścia, nie groove całej zwrotki"
+  },
+  {
+    "id": "14-2",
+    "grooveId": "14",
+    "artist": "Kate Bush",
+    "title": "Running Up That Hill (A Deal with God)",
+    "bpm": 108,
+    "youtube": "https://www.youtube.com/watch?v=wp43OdtAAkM",
+    "tempoSource": "https://songbpm.com/%40kate-bush/running-up-that-hill-a-deal-with-god",
+    "note": "Stały puls drum machine z tomową figurą, przełożony na akustyczne tomy. Poziomy przywracają odpowiedzi i akcenty; brzmienie Linn nie jest kopiowane.",
+    "tempoNote": "≈ 108 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/75FEaRjZTKLhTrFGsfMUXR",
+    "referenceSource": "https://www.youtube.com/watch?v=wp43OdtAAkM",
+    "referenceSection": "Stały puls drum machine z tomową figurą, przełożony na akustyczne tomy"
+  },
+  {
+    "id": "14-3",
+    "grooveId": "14",
+    "artist": "Fleetwood Mac",
+    "title": "Tusk",
+    "bpm": 90.5,
+    "youtube": "https://www.youtube.com/watch?v=ATMR5ettHz8",
+    "tempoSource": "https://songbpm.com/%40fleetwood-mac/tusk",
+    "note": "Tomowy ostinato Micka Fleetwooda. Mapa jednej partii zestawu, bez nakładek orkiestry marszowej.",
+    "tempoNote": "181 / 2 ≈ 90.5 ♩ · szeroki puls",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/1iKVDnBTqmZErf96ldGrZe",
+    "referenceSource": "https://www.youtube.com/watch?v=ATMR5ettHz8",
+    "referenceSection": "Tomowy ostinato Micka Fleetwooda"
+  },
+  {
+    "id": "14-4",
+    "grooveId": "14",
+    "artist": "Adam & The Ants",
+    "title": "Antmusic",
+    "bpm": 164,
+    "youtube": "https://www.youtube.com/watch?v=Rm9drIwmmU4",
+    "tempoSource": "https://www.hooktheory.com/theorytab/view/adam-and-the-ants/antmusic",
+    "note": "Tomowy dialog dwóch perkusistów zredukowany do jednej pary rąk. Akcenty i melodia powracają etapami; to adaptacja do jednego zestawu.",
+    "tempoNote": "≈ 164 ♩",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5TEaJim7AQWTrTfQDUnVw1",
+    "referenceSource": "https://www.youtube.com/watch?v=Rm9drIwmmU4",
+    "referenceSection": "Tomowy dialog dwóch perkusistów zredukowany do jednej pary rąk"
+  },
+  {
+    "id": "14-5",
+    "grooveId": "14",
+    "artist": "Benny Goodman",
+    "title": "Sing, Sing, Sing",
+    "bpm": 226,
+    "youtube": "https://www.youtube.com/watch?v=r2S1I_ien6A",
+    "tempoSource": "https://songbpm.com/%40benny-goodman/sing-sing-sing-4461e3db-5b7a-46f0-898d-1c7188629617",
+    "note": "Tomowe ostinato Gene’a Krupy: swingujące ósemki i akcenty. Ćwiczymy powtarzalną frazę, nie improwizowane solo; stare nagranie zmienia tempo.",
+    "tempoNote": "113 × 2 ≈ 226 ♩ · szybki swing",
+    "researchedAt": "2026-10-04",
+    "spotify": "https://open.spotify.com/track/5L8ta4ECl5zeA6bGqY7G38",
+    "referenceSource": "https://www.youtube.com/watch?v=r2S1I_ien6A",
+    "referenceSection": "Tomowe ostinato Gene’a Krupy"
   }
 ]

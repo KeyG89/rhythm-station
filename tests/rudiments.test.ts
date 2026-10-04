@@ -15,7 +15,7 @@ describe('Playable ornament notation and playback',()=>{
       const states: string[] = [];
       for(let i=0;i<5;i++) {
         const edit = cycleCell(cell,hit);
-        const style = composeGroove('00',{}, {edits:[edit]});
+        const style = composeGroove('00',{}, {secondTom:true,edits:[edit]});
         hit = style.sections.mainA.steps[1].find(h=>h.instrument === instrument);
         states.push(!hit ? 'rest' : hit.rudiment ?? hit.role!);
       }
@@ -39,7 +39,7 @@ describe('Playable ornament notation and playback',()=>{
     expect(drag[0].offset).toBeLessThan(drag[1].offset); expect(drag[1].offset).toBeLessThan(0);
     expect(drag[2]).toMatchObject({offset:0,velocity:.9,kind:'principal'});
     expect(flam[1]).toEqual(drag[2]);
-    expect(drag.slice(0,2).every(h=>h.velocity < .35)).toBe(true);
+    expect(drag.slice(0,2).every(h=>h.velocity < hit.velocity*.5)).toBe(true);
   });
   it('plays three equal subdivisions of the chosen span, including swing and phrase-edge clamping',()=>{
     const s=composeGroove('03'),p=s.sections.mainA;
