@@ -1,7 +1,9 @@
+import { SampleKit } from './SampleKit';
 import { DrumInstrument } from '../types/rhythm';
 import { DrumMixerState, DrumSoundParams, DrumKitPreset, DrumSoundModel } from '../types/audio';
 
 export const DEFAULT_SOUND_PARAMS: Record<DrumInstrument, DrumSoundParams> = {
+  clave: { pitchMultiplier: 1, decayMultiplier: 1, toneFrequency: 2500, snappy: 0.5, drive: 0 },
   kick: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 100, snappy: 0.5, drive: 0.4 },
   snare: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 1000, snappy: 0.8, drive: 0.3 },
   rimshot: { pitchMultiplier: 1.0, decayMultiplier: 1.0, toneFrequency: 2200, snappy: 0.5, drive: 0.2 },
@@ -25,17 +27,31 @@ export const DEFAULT_SOUND_PARAMS: Record<DrumInstrument, DrumSoundParams> = {
 export class DrumSynthesizer {
   private ctx: AudioContext;
   private masterGain: GainNode;
+  private limiter: DynamicsCompressorNode;
   private channelGains: Map<DrumInstrument, GainNode> = new Map();
   private channelPanners: Map<DrumInstrument, StereoPannerNode> = new Map();
   private isInitialized = false;
   private soundParams: Record<DrumInstrument, DrumSoundParams> = { ...DEFAULT_SOUND_PARAMS };
+  private sampleKit: SampleKit;
+  private useSamples = true;
+  public loadSamples() { return this.sampleKit.load(); }
+  public setSampleMode(enabled: boolean) { this.useSamples = enabled; }
+  public stopVoices() { this.sampleKit.stop(); }
   private currentModel: DrumSoundModel = 'acoustic_custom';
 
   constructor(audioContext: AudioContext) {
     this.ctx = audioContext;
+    this.sampleKit = new SampleKit(audioContext);
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
-    this.masterGain.connect(this.ctx.destination);
+    this.limiter = this.ctx.createDynamicsCompressor();
+    this.limiter.threshold.value = -4;
+    this.limiter.knee.value = 4;
+    this.limiter.ratio.value = 12;
+    this.limiter.attack.value = 0.003;
+    this.limiter.release.value = 0.12;
+    this.masterGain.connect(this.limiter);
+    this.limiter.connect(this.ctx.destination);
     this.setupChannels();
   }
 
@@ -77,8 +93,8 @@ export class DrumSynthesizer {
     return this.ctx;
   }
 
-  public getMasterNode(): GainNode {
-    return this.masterGain;
+  public getMasterNode(): AudioNode {
+    return this.limiter;
   }
 
   public async initAudio(): Promise<void> {
@@ -90,7 +106,7 @@ export class DrumSynthesizer {
 
   private setupChannels() {
     const instruments: DrumInstrument[] = [
-      'kick', 'snare', 'rimshot', 'clap',
+      'clave', 'kick', 'snare', 'rimshot', 'clap',
       'hihat_closed', 'hihat_open', 'hihat_pedal',
       'tom_high', 'tom_mid', 'tom_low',
       'crash', 'ride', 'ride_bell',
@@ -161,7 +177,12 @@ export class DrumSynthesizer {
     const channelNode = this.channelGains.get(instrument) || this.masterGain;
     const vel = Math.max(0.01, Math.min(1.0, velocity));
 
+    if (this.useSamples && this.sampleKit.trigger(instrument, time, vel, channelNode)) return;
+
     switch (instrument) {
+      case 'clave':
+        this.playRimshot(time, vel, channelNode);
+        break;
       case 'kick':
         this.playKick(time, vel, channelNode);
         break;

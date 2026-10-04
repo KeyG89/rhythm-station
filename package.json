@@ -1,15 +1,22 @@
 {
   "name": "yamaha-psr-drum-simulator",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "build:standalone": "npm run build && node scripts/build-standalone.js",
+    "build:standalone": "npm run build && node scripts/build-standalone.js && node Diagnostics/check_standalone.mjs",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:adapters": "node scripts/build-adapters.mjs",
+    "precli": "npm run build:adapters",
+    "cli": "node scripts/groove-cli.mjs",
+    "premcp": "npm run build:adapters",
+    "mcp": "node scripts/groove-mcp.mjs",
+    "diagnostics": "python3 Diagnostics/check_feature_parity.py && python3 Diagnostics/check_samples.py",
+    "test:adapters": "npm run build:adapters && node scripts/check-adapters.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",
@@ -17,6 +24,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

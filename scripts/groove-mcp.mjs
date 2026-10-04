@@ -1,0 +1,10 @@
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
+import { listGrooves, inspectGroove } from '../.runtime/groove-api.mjs';
+const server = new McpServer({ name: 'groove-lab', version: '2.0.0' });
+const response = result => ({ content: [{ type: 'text', text: JSON.stringify(result) }] });
+server.registerTool('list_grooves', { description: 'List the twelve essential practice grooves.', inputSchema: {}, annotations: { readOnlyHint: true } }, async () => response(listGrooves()));
+const controls = z.object({ complexity: z.number().optional(), ghostNotes: z.number().optional(), kickDensity: z.number().optional(), hihatDensity: z.number().optional(), swing: z.number().optional(), humanize: z.number().optional() });
+server.registerTool('inspect_groove', { description: 'Return an authored arrangement, learning instructions, capabilities, local sample files and timed events. Incompatible settings are clamped to the selected groove.', inputSchema: { id: z.string().regex(/^0[0-9]$|^1[01]$/), controls: controls.optional(), bpm: z.number().positive().optional() }, annotations: { readOnlyHint: true } }, async ({ id, controls: settings, bpm }) => response(inspectGroove(id, settings, bpm)));
+await server.connect(new StdioServerTransport());

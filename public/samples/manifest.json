@@ -1,0 +1,330 @@
+[
+  {
+    "instrument": "kick",
+    "layer": 0,
+    "file": "kick-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/KickSamples.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "0d4c0f8d262761ce584d5cfb0d729ea5ff9a55ec6574567d91820a109b22b120"
+  },
+  {
+    "instrument": "kick",
+    "layer": 1,
+    "file": "kick-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/KickSamples%234.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "45f95fa3138cf4b61c847e74c49d3442f8589db888d6ce69f84fe9b0436b75e9"
+  },
+  {
+    "instrument": "kick",
+    "layer": 2,
+    "file": "kick-2.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/KickSamples%237.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "9e0e01b3ebf8375950524d6a81a9eb4b106ee34a8458fe705a6f85f2f8df7497"
+  },
+  {
+    "instrument": "snare",
+    "layer": 0,
+    "file": "snare-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/SnareLeftHand.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "58db48ea9c6e4ad1cc737fb229a4cf0b8c3e415c85126882c1f257e84ba8afd3"
+  },
+  {
+    "instrument": "snare",
+    "layer": 1,
+    "file": "snare-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/SnareRightHand.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "c3c627dcdf2807269d5eed364bc2ffc12eb4828e7f61aed06955af4529b90f2b"
+  },
+  {
+    "instrument": "snare",
+    "layer": 2,
+    "file": "snare-2.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/SnareLeftHand%234.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "7cce2e2cb465c767aaa6ae7c829d031a3f6980fa2891c18c9b37849c5914c102"
+  },
+  {
+    "instrument": "snare",
+    "layer": 3,
+    "file": "snare-3.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/SnareRightHand%234.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "898e045c8e748e6de0e04bd03d5b201f45d138d26d7da7e133ef7decb19046a7"
+  },
+  {
+    "instrument": "snare",
+    "layer": 4,
+    "file": "snare-4.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/SnareLeftHand%239.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "b50c77a8a351ceb88b22506d276e4d2caa3e0cd9c9ee7055522a8babc45ac197"
+  },
+  {
+    "instrument": "snare",
+    "layer": 5,
+    "file": "snare-5.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/SnareRightHand%239.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "642c0d54fc79ffec59e4396b3a1440b6c13568b8c39aaa4dcd72f4c8c39bc699"
+  },
+  {
+    "instrument": "rimshot",
+    "layer": 0,
+    "file": "rimshot-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/SnareSamples%239.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "5411a151951356f84df750cf8b7c59c05896bc0ec710360a0754b8224dd5ef42"
+  },
+  {
+    "instrument": "hihat_closed",
+    "layer": 0,
+    "file": "hihat_closed-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/HHClosed%231.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "3d0b08c72cb86a47b4683ce9c06ad865ef4ec7a1a0717b0924d74e8a6aaceb15"
+  },
+  {
+    "instrument": "hihat_closed",
+    "layer": 1,
+    "file": "hihat_closed-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/HHClosed%233.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "3b4f15f13cf4049c1e83eba3323effb18137e85e37426b2cf750f96043325d0a"
+  },
+  {
+    "instrument": "hihat_closed",
+    "layer": 2,
+    "file": "hihat_closed-2.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/HHClosed%234.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "fd49bf30b3bbe4381beffc0814b5dd19e030a6e0774d3cfc1b65281cbf65f1b0"
+  },
+  {
+    "instrument": "hihat_open",
+    "layer": 0,
+    "file": "hihat_open-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/HHOpenTip.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "e27488a05146f4f52813840b321969b0a98674d3874d98150133b32961b5e906"
+  },
+  {
+    "instrument": "hihat_open",
+    "layer": 1,
+    "file": "hihat_open-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/HHOpenTip%233.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "69bd01cf03f6c4f31cd3837030c3aadf3337a0ec87b28781e34b541e40d4f4dc"
+  },
+  {
+    "instrument": "hihat_pedal",
+    "layer": 0,
+    "file": "hihat_pedal-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/HHPedal.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "8782fbf6c9f69d97d3eeefed8d92de9f27b030a3760df6f351a1b6b9dee4e9e0"
+  },
+  {
+    "instrument": "hihat_pedal",
+    "layer": 1,
+    "file": "hihat_pedal-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/HHPedal%233.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "5f3ce906cf442be2285dacffcf33a3a8588176a8000d2fc7f5554693fc679a46"
+  },
+  {
+    "instrument": "tom_high",
+    "layer": 0,
+    "file": "tom_high-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomHigh.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "767ca0c94323567cfc57147ed6833b0766b6b588348da6f821fc4e24aceb87ed"
+  },
+  {
+    "instrument": "tom_high",
+    "layer": 1,
+    "file": "tom_high-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomHigh%234.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "ab4d2d5162c4f4ce7791d4ae49a231c4be12422c50ac6609a4c14b6663f569e0"
+  },
+  {
+    "instrument": "tom_mid",
+    "layer": 0,
+    "file": "tom_mid-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomClicks.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "a56f7626f8ce928bb611d4c1c6bb6d240c37f481e425a592ab19b7f536a4f62f"
+  },
+  {
+    "instrument": "tom_mid",
+    "layer": 1,
+    "file": "tom_mid-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomClicks%234.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "7bd26fddfb4430e7f4cdf149256c1d8c7006926ee87dcf14938765d0539eb106"
+  },
+  {
+    "instrument": "tom_low",
+    "layer": 0,
+    "file": "tom_low-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomLow.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "405f6b6a9816e3f871edc9949f01e8fdb446b2f0ae7f4d3585078ca43a9c973c"
+  },
+  {
+    "instrument": "tom_low",
+    "layer": 1,
+    "file": "tom_low-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/TomLow%236.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "ca1dd7e49e993b22e2323db6625675a96fbd526c533372dc9ba5d1f4878c6911"
+  },
+  {
+    "instrument": "crash",
+    "layer": 0,
+    "file": "crash-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/CrashTip.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "ae84426f9554c296b7b78658f0b0c216b765bea2e3a0556a3e0d172cedc0fb4d"
+  },
+  {
+    "instrument": "crash",
+    "layer": 1,
+    "file": "crash-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/CrashTip%233.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "4679dadf3cf3e7c538384f3bd234e8572b29ba611e4d601187d35ca370c46654"
+  },
+  {
+    "instrument": "ride",
+    "layer": 0,
+    "file": "ride-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/Ride.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "7ee6080992124bea39201c943da22b23d328e9b2485acb68e2277f815a3d4447"
+  },
+  {
+    "instrument": "ride",
+    "layer": 1,
+    "file": "ride-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/Ride%234.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "d7d3bbeea3b2ffef88e6451cf69ab60a4ebdd4eb163c63751aa20628fd0f6881"
+  },
+  {
+    "instrument": "ride_bell",
+    "layer": 0,
+    "file": "ride_bell-0.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/RideBell.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "20db0c2f76fab494dc0ffe1665d153d0a1e730615dbd0b45cf2e2232478cf128"
+  },
+  {
+    "instrument": "ride_bell",
+    "layer": 1,
+    "file": "ride_bell-1.wav",
+    "source": "https://raw.githubusercontent.com/sfzinstruments/SamsSonor/ef3e32058924ed1c3335e86d03094d3f310a9104/Samples/RideBell%233.flac",
+    "license": "CC-BY-SA-4.0",
+    "sha256": "bd0b24dd23928cec47952d055cf219a6cb39597b6c3d14d5cd556fc4daf14727"
+  },
+  {
+    "instrument": "clave",
+    "layer": 0,
+    "file": "clave-0.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Claves1_Hit_v2_rr1_Sum.wav",
+    "license": "CC0-1.0",
+    "sha256": "4b8f2557c7fa2864213ceb4df662c7dc9b47473690a5aa92e440c95376c6f64d"
+  },
+  {
+    "instrument": "clave",
+    "layer": 1,
+    "file": "clave-1.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Claves1_Hit_v3_rr2_Sum.wav",
+    "license": "CC0-1.0",
+    "sha256": "8b3a09f3336ab5f9b62efd7e7e768c0b88c56bf9b426b92fa4b6ffc0cccd5dcb"
+  },
+  {
+    "instrument": "cowbell",
+    "layer": 0,
+    "file": "cowbell-0.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Cowbell1_Hit_v2_rr1_Sum.wav",
+    "license": "CC0-1.0",
+    "sha256": "dc886627c0c484e051537ced8f4cc332bfc98a382d6288a5b11acc986f8a82f0"
+  },
+  {
+    "instrument": "cowbell",
+    "layer": 1,
+    "file": "cowbell-1.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Cowbell1_Hit_v4_rr2_Sum.wav",
+    "license": "CC0-1.0",
+    "sha256": "e86a2e62ac1b093691ad2ed5f7063e75f5aa874cd8b1f1b6690718d00ff9565a"
+  },
+  {
+    "instrument": "conga_high",
+    "layer": 0,
+    "file": "conga_high-0.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Conga-HitN_v1_rr2_Sum.wav",
+    "license": "CC0-1.0",
+    "sha256": "bd091b9bc2fe88e2e50943714ba3ab2253c2220fc914a5e0838f5b897fe8581d"
+  },
+  {
+    "instrument": "conga_high",
+    "layer": 1,
+    "file": "conga_high-1.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Conga-HitN_v3_rr1_Sum.wav",
+    "license": "CC0-1.0",
+    "sha256": "3d8eefcb7fb404e0b750827e0e9e548a52236a6da4507c1cb5a18d2de0b66db7"
+  },
+  {
+    "instrument": "conga_low",
+    "layer": 0,
+    "file": "conga_low-0.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Conga-HitN_v1_rr1_Sum.wav",
+    "license": "CC0-1.0",
+    "sha256": "2c5f5f763aeb0c6f6588e4114bb06d717b023af216eeb29e914ebdb2a9c22ca4"
+  },
+  {
+    "instrument": "conga_low",
+    "layer": 1,
+    "file": "conga_low-1.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Conga-HitN_v2_rr2_Sum.wav",
+    "license": "CC0-1.0",
+    "sha256": "f7c864175b40b1a19583fe005b4fe2c4e4c8a86c8a9a06eebf0703bd020c4cfc"
+  },
+  {
+    "instrument": "tambourine",
+    "layer": 0,
+    "file": "tambourine-0.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/VSCO%201%20Percussion/varWood/tambourine_Down.wav",
+    "license": "CC0-1.0",
+    "sha256": "a84692a593ff1cdcc4993f85babc0f6c801f88766a067194638de1e23b86a704"
+  },
+  {
+    "instrument": "tambourine",
+    "layer": 1,
+    "file": "tambourine-1.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/VSCO%201%20Percussion/varWood/tambourine_up.wav",
+    "license": "CC0-1.0",
+    "sha256": "15f2ee1f3b103ae0a5175f82a274ea82f195fa4a3f87e510066450fafb78dd85"
+  },
+  {
+    "instrument": "shaker",
+    "layer": 0,
+    "file": "shaker-0.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/VSCO%201%20Percussion/varWood/Camo%27s%20Shaker/shake1.wav",
+    "license": "CC0-1.0",
+    "sha256": "68ebf5728bfad39fd542c524faef25bf70222c8a291eb310891f8925b06cb294"
+  },
+  {
+    "instrument": "shaker",
+    "layer": 1,
+    "file": "shaker-1.wav",
+    "source": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/VSCO%201%20Percussion/varWood/Camo%27s%20Shaker/shake2.wav",
+    "license": "CC0-1.0",
+    "sha256": "1b03b22198acdfbc4425a9be4fb737591ccda1a178cda80038d99562a32ececc"
+  }
+]

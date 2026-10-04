@@ -1,33 +1,7 @@
 import { RhythmStyle, RhythmCategory } from '../types/rhythm';
-import { STYLES_8BEAT } from './styles/cat0_8beat';
-import { STYLES_16BEAT } from './styles/cat1_16beat';
-import { STYLES_ROCK_BLUES } from './styles/cat2_rock';
-import { STYLES_DISCO_DANCE } from './styles/cat3_dance';
-import { STYLES_FUNK_SOUL } from './styles/cat4_funk';
-import { STYLES_JAZZ_SWING } from './styles/cat5_jazz';
-import { STYLES_LATIN } from './styles/cat6_latin';
-import { STYLES_COUNTRY_FOLK } from './styles/cat7_country';
-import { STYLES_BALLAD } from './styles/cat8_ballad';
-import { STYLES_TRADITIONAL } from './styles/cat9_traditional';
-import { SIMILAR_SONGS_MAP } from './similarSongsData';
+import { GROOVES, arrangeGroove } from '../domain/grooves';
 
-const RAW_STYLES: RhythmStyle[] = [
-  ...STYLES_8BEAT,
-  ...STYLES_16BEAT,
-  ...STYLES_ROCK_BLUES,
-  ...STYLES_DISCO_DANCE,
-  ...STYLES_FUNK_SOUL,
-  ...STYLES_JAZZ_SWING,
-  ...STYLES_LATIN,
-  ...STYLES_COUNTRY_FOLK,
-  ...STYLES_BALLAD,
-  ...STYLES_TRADITIONAL
-];
-
-export const ALL_STYLES: RhythmStyle[] = RAW_STYLES.map((style) => ({
-  ...style,
-  similarSongs: SIMILAR_SONGS_MAP[style.id] || []
-}));
+export const ALL_STYLES: RhythmStyle[] = GROOVES.map(g => arrangeGroove(g.style.id));
 
 export const STYLES_MAP: Map<string, RhythmStyle> = new Map(
   ALL_STYLES.map((style) => [style.id, style])

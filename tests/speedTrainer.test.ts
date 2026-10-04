@@ -1,40 +1,21 @@
 import { describe, it, expect } from 'vitest';
+import { normalizeTrainer, trainerTempo } from '../src/domain/practice';
 import { SpeedTrainerConfig } from '../src/types/audio';
-
-describe('Speed Trainer Acceleration Calculations', () => {
-  it('correctly increments BPM every N bars up to target', () => {
-    const config: SpeedTrainerConfig = {
-      enabled: true,
-      startBpm: 100,
-      targetBpm: 120,
-      bpmStep: 5,
-      barsPerStep: 4,
-      currentCycleBars: 0
-    };
-
-    let currentBpm = config.startBpm;
-
-    // Simulate 20 bars
-    for (let bar = 1; bar <= 20; bar++) {
-      if (bar % config.barsPerStep === 0 && currentBpm < config.targetBpm) {
-        currentBpm = Math.min(config.targetBpm, currentBpm + config.bpmStep);
-      }
-    }
-
-    // After 4 bars: 105, 8 bars: 110, 12 bars: 115, 16 bars: 120, 20 bars: 120 (capped)
-    expect(currentBpm).toBe(120);
+const config: SpeedTrainerConfig = { enabled: true, startBpm: 100, targetBpm: 120, bpmStep: 5, barsPerStep: 4, currentCycleBars: 0 };
+describe('Production speed trainer', () => {
+  it('increments only once at a new completed training interval', () => {
+    expect(trainerTempo(100, 3, 2, config, 200)).toBe(100);
+    expect(trainerTempo(100, 4, 3, config, 200)).toBe(105);
+    expect(trainerTempo(105, 4, 4, config, 200)).toBe(105);
+    expect(trainerTempo(105, 0, 4, config, 200)).toBe(105);
   });
-
-  it('calculates accurate progress percentage', () => {
-    const startBpm = 80;
-    const targetBpm = 160;
-
-    const calcProgress = (current: number) =>
-      Math.min(100, Math.max(0, ((current - startBpm) / (targetBpm - startBpm)) * 100));
-
-    expect(calcProgress(80)).toBe(0);
-    expect(calcProgress(120)).toBe(50);
-    expect(calcProgress(160)).toBe(100);
-    expect(calcProgress(180)).toBe(100);
+  it('normalizes training goals to the selected groove', () => {
+    expect(normalizeTrainer({ ...config, startBpm: 200, targetBpm: 240, barsPerStep: 0 }, [40, 130])).toMatchObject({ startBpm: 130, targetBpm: 130, barsPerStep: 1 });
+  });
+  it('caps at target and groove limits, and never lowers the current tempo', () => {
+    expect(trainerTempo(118, 4, 3, config, 200)).toBe(120);
+    expect(trainerTempo(108, 4, 3, config, 110)).toBe(110);
+    expect(trainerTempo(130, 4, 3, config, 200)).toBe(130);
+    expect(trainerTempo(100, 4, 3, { ...config, enabled: false }, 200)).toBe(100);
   });
 });
