@@ -1,33 +1,19 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const distDir = path.resolve(__dirname, '../dist');
-
-const htmlPath = path.join(distDir, 'index.html');
-let html = fs.readFileSync(htmlPath, 'utf8');
-
-// Find CSS file in assets
-const assetsDir = path.join(distDir, 'assets');
-const files = fs.readdirSync(assetsDir);
-const cssFile = files.find(f => f.endsWith('.css'));
-const jsFile = files.find(f => f.endsWith('.js'));
-
-if (cssFile && jsFile) {
-  const cssContent = fs.readFileSync(path.join(assetsDir, cssFile), 'utf8');
-  const jsContent = fs.readFileSync(path.join(assetsDir, jsFile), 'utf8');
-
-  // Replace <link rel="stylesheet" ...> with <style>...</style>
-  html = html.replace(/<link rel="stylesheet"[^>]*>/i, `<style>\n${cssContent}\n</style>`);
-
-  // Replace <script type="module"[^>]*><\/script> with <script>...</script>
-  html = html.replace(/<script type="module"[^>]*><\/script>/i, `<script>\n${jsContent}\n</script>`);
-
-  const standalonePath = path.join(distDir, 'standalone_yamaha.html');
-  fs.writeFileSync(standalonePath, html, 'utf8');
-  console.log(`Created standalone single-file HTML at: ${standalonePath} (${(html.length / 1024).toFixed(1)} KB)`);
-} else {
-  console.error('Could not find CSS or JS bundle in assets folder.');
-}
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const dist = path.join(root, 'dist');
+let html = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
+const files = fs.readdirSync(path.join(dist, 'assets'));
+const css = files.find(file => file.endsWith('.css'));
+const js = files.find(file => file.endsWith('.js'));
+if (!css || !js) throw new Error('Missing production bundles. Run npm run build first.');
+const samples = Object.fromEntries(fs.readdirSync(path.join(dist, 'samples')).filter(file => file.endsWith('.wav')).map(file => [file, `data:audio/wav;base64,${fs.readFileSync(path.join(dist, 'samples', file)).toString('base64')}`]));
+if (Object.keys(samples).length !== 41) throw new Error('Standalone requires all 41 recorded samples.');
+const credits = ['CREDITS.md', 'LICENSE-SamsSonor.txt', 'LICENSE-VSCO.txt'].map(file => fs.readFileSync(path.join(dist, 'samples', file), 'utf8')).join('\n\n');
+const embedded = `window.__GROOVE_SAMPLES__=${JSON.stringify(samples)};window.__GROOVE_CREDITS__=${JSON.stringify('data:text/plain;base64,' + Buffer.from(credits).toString('base64'))};`;
+html = html.replace(/<link rel="stylesheet"[^>]*>/i, () => `<style>${fs.readFileSync(path.join(dist, 'assets', css), 'utf8')}</style>`);
+html = html.replace(/<script type="module"[^>]*><\/script>/i, () => `<script>${embedded}${fs.readFileSync(path.join(dist, 'assets', js), 'utf8').replace(/<\/script/gi, '<\\/script')}</script>`);
+const output = path.join(dist, 'standalone_yamaha.html');
+fs.writeFileSync(output, html);
+console.log(`Created ${output} with ${Object.keys(samples).length} embedded recordings (${(Buffer.byteLength(html)/1024/1024).toFixed(1)} MiB).`);

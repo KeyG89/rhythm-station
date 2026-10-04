@@ -1,3 +1,9 @@
+// @refresh reset
+import { normalizeTrainer, trainerTempo, normalizeLaboratory, LaboratoryConfig } from '../domain/practice';
+import { getGroove } from '../domain/grooves';
+import { getSongMap } from '../domain/songMaps';
+import { composeGroove, defaultStudioControls, normalizeStudioControls, normalizeOptions, setCell, studioCapabilities, StudioControls, StudioControlKey, StudioOptions, CellEdit, KIT } from '../domain/studio';
+import { KitMix, normalizeDraft, normalizeMix, PracticeDraft, sampleTuning, serializeDraft, VoiceMix } from '../domain/session';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { DrumInstrument, RhythmSection, RhythmStyle, DrumHit } from '../types/rhythm';
 import { DrumMixerState, SpeedTrainerConfig, DrumSoundParams, DrumKitPreset, FillType } from '../types/audio';
@@ -7,6 +13,7 @@ import { AudioRecorder } from '../audio/AudioRecorder';
 import { ALL_STYLES, getStyleById } from '../data';
 
 const DEFAULT_MIXER_STATE: DrumMixerState = {
+  clave: { volume: 0.7, pan: 0.15, isMuted: false, isSolo: false },
   kick: { volume: 0.9, pan: 0, isMuted: false, isSolo: false },
   snare: { volume: 0.85, pan: 0, isMuted: false, isSolo: false },
   rimshot: { volume: 0.8, pan: -0.1, isMuted: false, isSolo: false },
@@ -28,8 +35,15 @@ const DEFAULT_MIXER_STATE: DrumMixerState = {
 };
 
 export function useDrumEngine() {
+  const [grooveControls, setGrooveControls] = useState<StudioControls>(defaultStudioControls('00'));
+  const [studioOptions, setStudioOptions] = useState<Required<StudioOptions>>(() => normalizeOptions());
+  const [kitMix, setKitMix] = useState<KitMix>(() => normalizeMix());
+  const [draftMessage, setDraftMessage] = useState('');
+  const [sampleStatus, setSampleStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
+  const [soundMode, setSoundMode] = useState<'samples' | 'synth'>('samples');
+  const playRequest = useRef(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [currentStyle, setCurrentStyle] = useState<RhythmStyle>(ALL_STYLES[0]);
+  const [currentStyle, setCurrentStyle] = useState<RhythmStyle>(() => composeGroove('00'));
   const [currentSection, setCurrentSection] = useState<RhythmSection>('mainA');
   const [nextSection, setNextSection] = useState<RhythmSection | null>(null);
   const [activeFillType, setActiveFillType] = useState<FillType | null>(null);
@@ -49,7 +63,7 @@ export function useDrumEngine() {
   const [metronomeVolume, setMetronomeVolume] = useState<number>(0.6);
 
   // Mixer state
-  const [mixerState, setMixerState] = useState<DrumMixerState>(DEFAULT_MIXER_STATE);
+  const [mixerState, setMixerState] = useState<DrumMixerState>(() => ({ ...DEFAULT_MIXER_STATE, ...Object.fromEntries(KIT.map(i => [i, { ...DEFAULT_MIXER_STATE[i], volume: normalizeMix()[i].volume, pan: normalizeMix()[i].pan }])) }));
   const [masterVolume, setMasterVolumeState] = useState<number>(0.85);
 
   // Speed Trainer state
@@ -63,7 +77,7 @@ export function useDrumEngine() {
   });
 
   // Drum Kit Studio / Sound Params state
-  const [soundParams, setSoundParamsState] = useState<Record<DrumInstrument, DrumSoundParams>>({ ...DEFAULT_SOUND_PARAMS });
+  const [soundParams, setSoundParamsState] = useState<Record<DrumInstrument, DrumSoundParams>>(() => ({ ...Object.fromEntries(Object.entries(DEFAULT_SOUND_PARAMS).map(([i, params]) => [i, { ...params, toneFrequency: 20000 }])), ...Object.fromEntries(KIT.map(i => [i, sampleTuning(normalizeMix()[i])])) }) as Record<DrumInstrument, DrumSoundParams>);
   const [currentKitPreset, setCurrentKitPreset] = useState<DrumKitPreset | null>(null);
   const [customKitPresets, setCustomKitPresets] = useState<DrumKitPreset[]>(() => {
     try {
@@ -73,6 +87,8 @@ export function useDrumEngine() {
   });
 
   // Recording
+  const [recordedAudioType, setRecordedAudioType] = useState('audio/webm');
+  const [recordingError, setRecordingError] = useState(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState<string | null>(null);
 
@@ -81,6 +97,17 @@ export function useDrumEngine() {
   const synthRef = useRef<DrumSynthesizer | null>(null);
   const schedulerRef = useRef<AudioScheduler | null>(null);
   const recorderRef = useRef<AudioRecorder | null>(null);
+
+  const [comparisonSlots,setComparisonSlots]=useState<{a:PracticeDraft|null;b:PracticeDraft|null}>({a:null,b:null});
+  const [practiceSilent,setPracticeSilent]=useState(false);
+  const [laboratory,setLaboratoryState]=useState(()=>normalizeLaboratory());
+  const liveArrangement=useRef({id:currentStyle.id,controls:grooveControls,options:studioOptions});
+  liveArrangement.current={id:currentStyle.id,controls:grooveControls,options:studioOptions};
+  const resolveComplexity=(level:number)=>{ const live=liveArrangement.current; return composeGroove(live.id,{...live.controls,complexity:level},live.options); };
+  const updateLaboratory=(update:Partial<LaboratoryConfig>)=>setLaboratoryState(prev=>normalizeLaboratory({...prev,...update}));
+  useEffect(()=>{
+    schedulerRef.current?.setLaboratory(laboratory,grooveControls.complexity,studioCapabilities(currentStyle.id,studioOptions).complexity.max,resolveComplexity);
+  },[laboratory,currentStyle.id]);
 
   // Tap Tempo state
   const tapTimesRef = useRef<number[]>([]);
@@ -94,15 +121,24 @@ export function useDrumEngine() {
 
       const synth = new DrumSynthesizer(ctx);
       synthRef.current = synth;
+      synth.updateMixer(mixerState);
+      synth.setMasterVolume(masterVolume);
+      synth.setAllSoundParams(soundParams);
+      synth.setSampleMode(soundMode === 'samples');
 
       const scheduler = new AudioScheduler(synth, currentStyle);
       schedulerRef.current = scheduler;
+      scheduler.setHumanize(grooveControls.humanize);
+      scheduler.setLaboratory(laboratory,grooveControls.complexity,studioCapabilities(currentStyle.id,studioOptions).complexity.max,resolveComplexity);
 
       const recorder = new AudioRecorder(ctx, synth.getMasterNode());
       recorderRef.current = recorder;
 
       scheduler.setCallbacks({
+        onPracticePhase:setPracticeSilent,
+        onComplexityChange:(level,style)=>{setGrooveControls(prev=>({...prev,complexity:level}));setCurrentStyle(style);},
         onStepChange: (step, bar, section, hits) => {
+          setCountInActive(false); setCountInBeat(null);
           setCurrentStep(step);
           setCurrentBar(bar);
           setCurrentSection(section);
@@ -123,7 +159,7 @@ export function useDrumEngine() {
           setTotalBars(barCount);
         },
         onPlaybackEnd: () => {
-          setIsPlaying(false);
+          setPracticeSilent(false); setIsPlaying(false);
           setCountInActive(false);
           setCountInBeat(null);
           setActiveHits([]);
@@ -136,23 +172,17 @@ export function useDrumEngine() {
         }
       });
     }
-  }, [currentStyle]);
+  }, [currentStyle, mixerState, masterVolume, soundParams, soundMode, grooveControls.humanize, laboratory]);
 
+  const trainerBarRef = useRef(0);
   // Handle Speed Trainer logic when bar completes
   useEffect(() => {
-    if (speedTrainer.enabled && isPlaying && totalBars > 0 && totalBars % speedTrainer.barsPerStep === 0) {
-      setBpmState((prevBpm) => {
-        if (prevBpm < speedTrainer.targetBpm) {
-          const newBpm = Math.min(speedTrainer.targetBpm, prevBpm + speedTrainer.bpmStep);
-          if (schedulerRef.current) {
-            schedulerRef.current.setBpm(newBpm);
-          }
-          return newBpm;
-        }
-        return prevBpm;
-      });
-    }
-  }, [totalBars, isPlaying, speedTrainer]);
+    const previousBars = trainerBarRef.current;
+    trainerBarRef.current = totalBars;
+    if (!isPlaying) return;
+    const next = trainerTempo(bpm, totalBars, previousBars, speedTrainer, getGroove(currentStyle.id).tempo[1]);
+    if (next !== bpm) { setBpmState(next); schedulerRef.current?.setBpm(next); }
+  }, [totalBars, isPlaying, speedTrainer, currentStyle.id, bpm]);
 
   // Sync mixer updates to synth
   useEffect(() => {
@@ -171,12 +201,13 @@ export function useDrumEngine() {
 
   // Sync BPM changes to scheduler
   const setBpm = useCallback((newBpm: number) => {
-    const clamped = Math.max(30, Math.min(300, Math.round(newBpm)));
+    const [min, max] = getGroove(currentStyle.id).tempo;
+    const clamped = Math.max(min, Math.min(max, Math.round(newBpm * 10) / 10));
     setBpmState(clamped);
     if (schedulerRef.current) {
       schedulerRef.current.setBpm(clamped);
     }
-  }, []);
+  }, [currentStyle.id]);
 
   // Metronome controls
   const toggleMetronome = useCallback(() => {
@@ -197,20 +228,35 @@ export function useDrumEngine() {
   }, [metronomeEnabled]);
 
   // Play / Stop Controls
-  const start = useCallback((countInBars = 0) => {
+  const prepareAudio = useCallback(async () => {
     initEngine();
-    if (schedulerRef.current) {
-      schedulerRef.current.setBpm(bpm);
-      schedulerRef.current.setMetronome(metronomeEnabled, metronomeVolume);
-      schedulerRef.current.start(countInBars);
-      setIsPlaying(true);
-      if (countInBars > 0) {
-        setCountInActive(true);
-      }
+    const synth = synthRef.current!;
+    await synth.initAudio();
+    synth.setSampleMode(soundMode === 'samples');
+    if (soundMode === 'samples') {
+      if (sampleStatus !== 'ready') setSampleStatus('loading');
+      try { await synth.loadSamples(); setSampleStatus('ready'); }
+      catch (error) { console.error('Recorded kit failed:', error); setSampleStatus('error'); return false; }
     }
-  }, [initEngine, bpm, metronomeEnabled, metronomeVolume]);
+    return true;
+  }, [initEngine, soundMode, sampleStatus]);
+
+  const start = useCallback(async (countInBars = 0) => {
+    const request = ++playRequest.current;
+    initEngine();
+    const scheduler = schedulerRef.current!;
+    scheduler.setBpm(bpm);
+    scheduler.setMetronome(metronomeEnabled, metronomeVolume);
+    if (!await prepareAudio() || request !== playRequest.current) return;
+    scheduler.start(countInBars);
+    trainerBarRef.current = 0;
+    setTotalBars(0);
+    setIsPlaying(true);
+    setCountInActive(countInBars > 0);
+  }, [initEngine, prepareAudio, bpm, metronomeEnabled, metronomeVolume]);
 
   const stop = useCallback(() => {
+    ++playRequest.current;
     if (schedulerRef.current) {
       schedulerRef.current.stop();
     }
@@ -218,7 +264,7 @@ export function useDrumEngine() {
     setCountInActive(false);
     setCountInBeat(null);
     setActiveHits([]);
-    setNextSection(null);
+    setNextSection(null); setActiveFillType(null);
   }, []);
 
   const togglePlay = useCallback(() => {
@@ -230,14 +276,88 @@ export function useDrumEngine() {
   }, [isPlaying, start, stop]);
 
   // Style change
-  const selectStyle = useCallback((styleOrId: string | RhythmStyle) => {
-    const style = typeof styleOrId === 'string' ? getStyleById(styleOrId) : styleOrId;
+  const selectStyle = useCallback((styleOrId: string | RhythmStyle, songPresetId = '') => {
+    setLaboratoryState(prev=>normalizeLaboratory({...prev,gap:false,ladder:false}));
+    const id = typeof styleOrId === 'string' ? getStyleById(styleOrId).id : styleOrId.id;
+    setSpeedTrainer(prev => normalizeTrainer({ ...prev, enabled: false, startBpm: songPresetId ? getSongMap(songPresetId,id).bpm : getGroove(id).style.defaultBpm, targetBpm: (songPresetId ? getSongMap(songPresetId,id).bpm : getGroove(id).style.defaultBpm) + 30 }, getGroove(id).tempo));
+    setMixerState(prev => Object.fromEntries(Object.entries(prev).map(([inst, channel]) => [inst, { ...channel, isSolo: false }])));
+    const controls = defaultStudioControls(id,{songPresetId});
+    const options = normalizeOptions({ ...studioOptions, secondTom: id === '14', songPresetId, reggaeVariant: 'one-drop', edits: [] });
+    setStudioOptions(options);
+    const style = composeGroove(id, controls, options);
+    setGrooveControls(controls);
     setCurrentStyle(style);
+    setCurrentSection('mainA'); setNextSection(null); setActiveFillType(null);
+    setCurrentStep(0); setCurrentBar(1); setCountInActive(false); setCountInBeat(null);
     setBpmState(style.defaultBpm);
-    if (schedulerRef.current) {
-      schedulerRef.current.setStyle(style, true);
-    }
-  }, []);
+    ++playRequest.current;
+    const scheduler = schedulerRef.current;
+    const wasPlaying = scheduler?.getIsRunning() ?? false;
+    if (wasPlaying) scheduler?.stop();
+    scheduler?.setStyle(style, true);
+    scheduler?.triggerSection('mainA', true);
+    scheduler?.setHumanize(controls.humanize);
+    if (wasPlaying) { scheduler?.start(); setIsPlaying(true); trainerBarRef.current = 0; setTotalBars(0); }
+  }, [studioOptions]);
+
+  const setGrooveControl = useCallback((key: StudioControlKey, value: number) => {
+    if(key==='complexity') setLaboratoryState(prev=>normalizeLaboratory({...prev,ladder:false}));
+    const next = normalizeStudioControls(currentStyle.id, { ...grooveControls, [key]: value }, studioOptions);
+    setGrooveControls(next);
+    const style = composeGroove(currentStyle.id, next, studioOptions);
+    setCurrentStyle(style);
+    schedulerRef.current?.setStyle(style, false);
+    schedulerRef.current?.setHumanize(next.humanize);
+  }, [currentStyle.id, grooveControls, studioOptions]);
+
+
+  const updateStudioOptions = useCallback((update: StudioOptions) => {
+    const options = normalizeOptions({ ...studioOptions, ...update },currentStyle.id);
+    const controls=normalizeStudioControls(currentStyle.id,grooveControls,options);
+    setStudioOptions(options); setGrooveControls(controls);
+    const style = composeGroove(currentStyle.id, controls, options);
+    setCurrentStyle(style); schedulerRef.current?.setStyle(style, false);
+  }, [studioOptions, currentStyle.id, grooveControls]);
+  const editCell = useCallback((edit: CellEdit) => updateStudioOptions({ edits: setCell(studioOptions.edits, edit) }), [studioOptions.edits, updateStudioOptions]);
+  const updateVoiceMix = useCallback((inst: typeof KIT[number], key: keyof VoiceMix, value: number) => {
+    const mix = normalizeMix({ ...kitMix, [inst]: { ...kitMix[inst], [key]: value } });
+    setKitMix(mix);
+    const params = { ...soundParams, [inst]: sampleTuning(mix[inst]) };
+    setSoundParamsState(params); synthRef.current?.setAllSoundParams(params);
+    setMixerState(prev => ({ ...prev, [inst]: { ...prev[inst], volume: mix[inst].volume, pan: mix[inst].pan } }));
+  }, [kitMix, soundParams]);
+  const resetVoiceMix = (inst: typeof KIT[number]) => {
+    const mix = normalizeMix()[inst];
+    setKitMix(prev => ({ ...prev, [inst]: mix }));
+    const params = { ...soundParams, [inst]: sampleTuning(mix) };
+    setSoundParamsState(params); synthRef.current?.setAllSoundParams(params);
+    setMixerState(prev => ({ ...prev, [inst]: { ...prev[inst], volume: mix.volume, pan: mix.pan } }));
+  };
+  const draft: PracticeDraft = { laboratory, version: 1, id: currentStyle.id, bpm, controls: grooveControls, options: studioOptions, mix: kitMix };
+  const saveDraft = () => { try { localStorage.setItem('groovelab_practice_v1', serializeDraft(draft)); setDraftMessage('Zapisano w tej przeglądarce.'); } catch { setDraftMessage('Zapis lokalny niedostępny. Użyj eksportu JSON.'); } };
+  const loadDraft = (json?: string) => {
+    try {
+      const value = normalizeDraft(JSON.parse(json ?? localStorage.getItem('groovelab_practice_v1') ?? 'null'));
+      stop(); setLaboratoryState(normalizeLaboratory(value.laboratory)); setGrooveControls(value.controls); setStudioOptions(value.options); setKitMix(value.mix); setBpmState(value.bpm);
+      const style = composeGroove(value.id, value.controls, value.options);
+      setCurrentStyle(style); setCurrentSection('mainA'); setNextSection(null); setCurrentStep(0); setTotalBars(0);
+      setSpeedTrainer(prev => normalizeTrainer({ ...prev, enabled: false, startBpm: value.bpm, targetBpm: value.bpm + 30 }, getGroove(value.id).tempo));
+      schedulerRef.current?.setStyle(style, true); schedulerRef.current?.triggerSection('mainA', true); schedulerRef.current?.setBpm(value.bpm); schedulerRef.current?.setHumanize(value.controls.humanize);
+      const params = { ...soundParams, ...Object.fromEntries(KIT.map(i => [i, sampleTuning(value.mix[i])])) };
+      setSoundParamsState(params); synthRef.current?.setAllSoundParams(params);
+      setMixerState(prev => ({ ...prev, ...Object.fromEntries(KIT.map(i => [i, { ...prev[i], volume: value.mix[i].volume, pan: value.mix[i].pan, isMuted: false, isSolo: false }])) }));
+      setDraftMessage('Wczytano groove i brzmienie zestawu.');
+    } catch (e) { setDraftMessage(e instanceof Error ? e.message : 'Nie udało się wczytać groove’u.'); }
+  };
+
+  const updateSpeedTrainer = useCallback((config: SpeedTrainerConfig) => {
+    setSpeedTrainer(normalizeTrainer(config, getGroove(currentStyle.id).tempo));
+  }, [currentStyle.id]);
+
+  const resetEssence = useCallback(() => selectStyle(currentStyle.id), [selectStyle, currentStyle.id]);
+  const changeSoundMode = useCallback((mode: 'samples' | 'synth') => {
+    stop(); setSoundMode(mode); synthRef.current?.setSampleMode(mode === 'samples');
+  }, [stop]);
 
   // Section change (Intro, Main A/B, Fill-in, Ending)
   const triggerSection = useCallback((section: RhythmSection, immediate = false) => {
@@ -247,7 +367,6 @@ export function useDrumEngine() {
       if (schedulerRef.current) {
         schedulerRef.current.triggerSection(section, true);
       }
-      start(0);
       return;
     }
 
@@ -260,7 +379,7 @@ export function useDrumEngine() {
         setNextSection(null);
       }
     }
-  }, [initEngine, isPlaying, start]);
+  }, [initEngine, isPlaying]);
 
   // Tap Tempo
   const tapTempo = useCallback(() => {
@@ -281,12 +400,11 @@ export function useDrumEngine() {
   }, [setBpm]);
 
   // Manual Trigger instrument pad (e.g. clicking on drum grid row)
-  const triggerInstrument = useCallback((instrument: DrumInstrument, velocity = 0.85) => {
-    initEngine();
-    if (synthRef.current && audioCtxRef.current) {
+  const triggerInstrument = useCallback(async (instrument: DrumInstrument, velocity = 0.85) => {
+    if (await prepareAudio() && synthRef.current && audioCtxRef.current) {
       synthRef.current.trigger(instrument, audioCtxRef.current.currentTime, velocity);
     }
-  }, [initEngine]);
+  }, [prepareAudio]);
 
   // Channel mixer handlers
   const setChannelVolume = useCallback((instrument: DrumInstrument, volume: number) => {
@@ -350,8 +468,10 @@ export function useDrumEngine() {
   const startRecording = useCallback(() => {
     initEngine();
     if (recorderRef.current) {
+      void audioCtxRef.current?.resume();
       recorderRef.current.startRecording();
-      setIsRecording(true);
+      setIsRecording(recorderRef.current.getIsRecording());
+      setRecordingError(!recorderRef.current.getIsRecording());
     }
   }, [initEngine]);
 
@@ -362,6 +482,7 @@ export function useDrumEngine() {
       if (blob) {
         const url = URL.createObjectURL(blob);
         setRecordedAudioUrl(url);
+        setRecordedAudioType(blob.type);
       }
     }
   }, []);
@@ -415,7 +536,19 @@ export function useDrumEngine() {
     setCurrentKitPreset((prev) => prev?.id === id ? null : prev);
   }, []);
 
+  useEffect(() => () => {
+    ++playRequest.current;
+    schedulerRef.current?.stop();
+    void recorderRef.current?.stopRecording();
+    const ctx = audioCtxRef.current;
+    audioCtxRef.current = null; schedulerRef.current = null; synthRef.current = null; recorderRef.current = null;
+    if (ctx && ctx.state !== 'closed') void ctx.close().catch(() => {});
+  }, []);
+  useEffect(() => () => { if (recordedAudioUrl) URL.revokeObjectURL(recordedAudioUrl); }, [recordedAudioUrl]);
+
   return {
+    comparisonSlots, captureComparisonSlot:(key:'a'|'b')=>setComparisonSlots(prev=>({...prev,[key]:normalizeDraft(draft)})), practiceSilent, laboratory,updateLaboratory, studioOptions, updateStudioOptions, editCell, loadSongMap: (id: string) => selectStyle(getSongMap(id).grooveId,id), kitMix, updateVoiceMix, resetVoiceMix, draft, saveDraft, loadDraft, draftMessage, reportDraftError: setDraftMessage,
+    grooveControls, setGrooveControl, resetEssence, sampleStatus, soundMode, changeSoundMode,
     // Sequencer / Playback state
     isPlaying,
     currentStyle,
@@ -448,7 +581,7 @@ export function useDrumEngine() {
 
     // Recording
     isRecording,
-    recordedAudioUrl,
+    recordedAudioUrl, recordedAudioType, recordingError,
 
     // Actions
     start,
@@ -467,7 +600,7 @@ export function useDrumEngine() {
     toggleChannelSolo,
     applyMixerPreset,
     setMasterVolume,
-    setSpeedTrainer,
+    setSpeedTrainer: updateSpeedTrainer,
     startRecording,
     stopRecording,
     setSoundParam,
@@ -476,4 +609,3 @@ export function useDrumEngine() {
     deleteCustomPreset
   };
 }
-

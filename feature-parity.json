@@ -1,0 +1,324 @@
+{
+  "version": 1,
+  "scope": "Codex v2 shared composition, local draft validation and tuning; CLI/MCP inspect, browser performs playback, recording and local file/storage access.",
+  "features": [
+    {
+      "id": "essential-grooves",
+      "status": "complete",
+      "domain": [
+        "src/domain/grooves.ts"
+      ],
+      "gui": [
+        "src/App.tsx"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/rhythms.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md",
+        "README.md"
+      ]
+    },
+    {
+      "id": "authored-controls",
+      "status": "complete",
+      "domain": [
+        "src/domain/grooves.ts",
+        "src/domain/studio.ts"
+      ],
+      "gui": [
+        "src/hooks/useDrumEngine.ts",
+        "src/App.tsx"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/rhythms.test.ts",
+        "scripts/check-adapters.mjs",
+        "tests/studio.test.ts"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md"
+      ]
+    },
+    {
+      "id": "meter-swing-humanize",
+      "status": "complete",
+      "domain": [
+        "src/domain/timing.ts"
+      ],
+      "gui": [
+        "src/audio/AudioScheduler.ts",
+        "src/App.tsx"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/scheduler.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md"
+      ]
+    },
+    {
+      "id": "recorded-instrument-selection",
+      "status": "complete",
+      "domain": [
+        "src/domain/samples.ts"
+      ],
+      "gui": [
+        "src/audio/SampleKit.ts",
+        "src/App.tsx"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/samples.test.ts",
+        "Diagnostics/check_samples.py",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "public/samples/CREDITS.md",
+        "Docs/GrooveDesign.md"
+      ]
+    },
+    {
+      "id": "personal-kit-orchestration",
+      "status": "complete",
+      "domain": [
+        "src/domain/studio.ts"
+      ],
+      "gui": [
+        "src/App.tsx",
+        "src/components/PersonalKit.tsx"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/studio.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md",
+        "README.md"
+      ]
+    },
+    {
+      "id": "editable-local-grooves",
+      "status": "complete",
+      "domain": [
+        "src/domain/studio.ts",
+        "src/domain/session.ts"
+      ],
+      "gui": [
+        "src/App.tsx",
+        "src/hooks/useDrumEngine.ts"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/studio.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md",
+        "README.md"
+      ]
+    },
+    {
+      "id": "recorded-kit-tuning",
+      "status": "complete",
+      "domain": [
+        "src/domain/session.ts"
+      ],
+      "gui": [
+        "src/components/PersonalKit.tsx",
+        "src/audio/SampleKit.ts"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/samplePlayback.test.ts",
+        "tests/studio.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/GrooveDesign.md",
+        "README.md"
+      ]
+    },
+    {
+      "id": "rudiment-editor-playback",
+      "status": "complete",
+      "domain": [
+        "src/domain/rudiments.ts",
+        "src/domain/studio.ts"
+      ],
+      "gui": [
+        "src/App.tsx",
+        "src/audio/AudioScheduler.ts"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/rudiments.test.ts",
+        "tests/scheduler.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "README.md",
+        "Docs/GrooveDesign.md"
+      ]
+    },
+    {
+      "id": "song-practice-maps",
+      "status": "complete",
+      "domain": [
+        "src/domain/songMaps.ts",
+        "src/domain/songMetadata.json",
+        "src/domain/session.ts"
+      ],
+      "gui": [
+        "src/components/SongMaps.tsx",
+        "src/hooks/useDrumEngine.ts"
+      ],
+      "cli": [
+        "scripts/groove-cli.mjs",
+        "src/adapters/grooveApi.ts"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/songMaps.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "README.md",
+        "Docs/GrooveDesign.md",
+        "Docs/SongMaps.md"
+      ]
+    },
+    {
+      "id": "song-learning-progression",
+      "status": "complete",
+      "domain": [
+        "src/domain/songMaps.ts",
+        "src/domain/songMetadata.json",
+        "src/domain/grooves.ts"
+      ],
+      "gui": [
+        "src/App.tsx",
+        "src/components/SongMaps.tsx"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/progression.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/SongMaps.md"
+      ]
+    },
+    {
+      "id": "whole-phrase-gap-and-ladder",
+      "status": "complete",
+      "domain": [
+        "src/domain/practice.ts"
+      ],
+      "gui": [
+        "src/components/PracticeLaboratory.tsx",
+        "src/audio/AudioScheduler.ts"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/laboratory.test.ts",
+        "tests/scheduler.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/PracticeLaboratory.md"
+      ]
+    },
+    {
+      "id": "snapshot-comparison",
+      "status": "complete",
+      "domain": [
+        "src/domain/comparison.ts",
+        "src/domain/session.ts"
+      ],
+      "gui": [
+        "src/components/PracticeLaboratory.tsx",
+        "src/hooks/useDrumEngine.ts"
+      ],
+      "cli": [
+        "src/adapters/grooveApi.ts",
+        "scripts/groove-cli.mjs"
+      ],
+      "mcp": [
+        "scripts/groove-mcp.mjs"
+      ],
+      "tests": [
+        "tests/laboratory.test.ts",
+        "scripts/check-adapters.mjs"
+      ],
+      "documentation": [
+        "Docs/PracticeLaboratory.md"
+      ]
+    }
+  ]
+}

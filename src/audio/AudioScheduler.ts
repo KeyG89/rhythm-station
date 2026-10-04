@@ -1,436 +1,198 @@
-import { RhythmStyle, RhythmSection, DrumHit, RhythmPattern } from '../types/rhythm';
+import { LaboratoryConfig, normalizeLaboratory, silentPracticePhrase, ladderLevel } from '../domain/practice';
+import { pulses, stepDuration, unitDuration } from '../domain/timing';
+import { expandHit, graceAnticipation, playbackLeadIn, quarterDuration } from '../domain/rudiments';
+import { RhythmStyle, RhythmSection, DrumHit } from '../types/rhythm';
 import { FillType } from '../types/audio';
 import { DrumSynthesizer } from './DrumSynthesizer';
 
 export interface SchedulerCallbacks {
-  onStepChange?: (stepIndex: number, barNumber: number, section: RhythmSection, hits: DrumHit[]) => void;
+  onPracticePhase?: (silent:boolean)=>void;
+  onComplexityChange?: (level:number,style:RhythmStyle) => void;
+  onStepChange?: (step: number, bar: number, section: RhythmSection, hits: DrumHit[]) => void;
   onSectionChange?: (section: RhythmSection) => void;
-  onFillTriggered?: (fillType: FillType | null, targetSection: RhythmSection) => void;
-  onBarComplete?: (totalBars: number) => void;
+  onFillTriggered?: (fill: FillType | null, target: RhythmSection) => void;
+  onBarComplete?: (bars: number) => void;
   onPlaybackEnd?: () => void;
-  onCountInBeat?: (beatNumber: number, totalBeats: number) => void;
+  onCountInBeat?: (beat: number, total: number) => void;
 }
-
+interface VisualEvent {
+  time: number;
+  action: () => void;
+}
+/** Lookahead audio clock; transitions happen at the end of a complete authored phrase. */
 export class AudioScheduler {
-  private synth: DrumSynthesizer;
-  private isRunning: boolean = false;
+  private isRunning = false;
+  private laboratory = normalizeLaboratory();
+  private laboratoryRevision=0;
+  private completedPhrases = 0;
+  private ladderBase = 0;
+  private gapBase = 0;
+  private ladderStart = 0;
+  private ladderCurrent = 0;
+  private ladderMax = 7;
+  private resolveComplexity?: (level:number) => RhythmStyle;
   private timerId: number | null = null;
   private animationFrameId: number | null = null;
-
-  // Timing constants
-  private readonly lookaheadMs = 25; // Check every 25ms
-  private readonly scheduleAheadTime = 0.12; // Schedule audio 120ms ahead
-
-  // State
-  private currentStyle!: RhythmStyle;
   private currentSection: RhythmSection = 'mainA';
   private nextSection: RhythmSection | null = null;
-  private returnToSectionAfterFill: RhythmSection = 'mainA';
-
-  // Smart Fill state
+  private returnSection: RhythmSection = 'mainA';
   private activeFillType: FillType | null = null;
-  private fillStartStep: number = -1;
-  private fillLengthSteps: number = 4;
-  private fillTargetSection: RhythmSection = 'mainA';
-  private fillPatternSource: 'fillA' | 'fillB' = 'fillA';
-
-  private bpm: number = 120;
-  private nextStepTime: number = 0;
-  private currentStep: number = 0;
-  private currentBar: number = 1;
-  private totalBarsPlayed: number = 0;
-
-  // Count-in
-  private countInBarsTotal: number = 0; // 0 for off, 1 or 2 for count-in
-  private countInBeatsRemaining: number = 0;
-  private isCountInActive: boolean = false;
-
-  // Metronome
-  private metronomeEnabled: boolean = false;
-  private metronomeVolume: number = 0.6;
-
-  // Visual event queue to sync UI with audio currentTime
-  private eventQueue: Array<{
-    time: number;
-    step: number;
-    bar: number;
-    section: RhythmSection;
-    hits: DrumHit[];
-  }> = [];
-
+  private bpm: number;
+  private humanize = 0;
+  private nextStepTime = 0;
+  private currentStep = 0;
+  private totalBars = 0;
+  private countInTotal = 0;
+  private countInIndex = 0;
+  private endingScheduled = false;
+  private metronomeEnabled = false;
+  private metronomeVolume = 0.6;
+  private events: VisualEvent[] = [];
+  private pendingStrokes: { instrument: DrumHit['instrument']; time: number; velocity: number }[] = [];
   private callbacks: SchedulerCallbacks = {};
+  private readonly ahead = 0.12;
 
-  constructor(synth: DrumSynthesizer, initialStyle: RhythmStyle) {
-    this.synth = synth;
-    this.currentStyle = initialStyle;
-    this.bpm = initialStyle.defaultBpm;
+  constructor(private synth: DrumSynthesizer, private currentStyle: RhythmStyle) {
+    this.bpm = currentStyle.defaultBpm;
   }
-
-  public setCallbacks(callbacks: SchedulerCallbacks) {
-    this.callbacks = callbacks;
+  setLaboratory(config:Partial<LaboratoryConfig>, start=0, max=7, resolve?: (level:number)=>RhythmStyle) {
+    const next=normalizeLaboratory(config);
+    if(next.gap!==this.laboratory.gap || next.audiblePhrases!==this.laboratory.audiblePhrases || next.silentPhrases!==this.laboratory.silentPhrases) this.gapBase=this.completedPhrases;
+    this.laboratoryRevision++; this.laboratory=next; this.ladderStart=start; this.ladderCurrent=start;
+    this.ladderMax=max; this.ladderBase=this.completedPhrases; this.resolveComplexity=resolve;
   }
-
-  public setStyle(style: RhythmStyle, resetBpm = true) {
+  setCallbacks(callbacks: SchedulerCallbacks) { this.callbacks = callbacks; }
+  setStyle(style: RhythmStyle, resetBpm = true) {
+    if (style.id !== this.currentStyle.id) {
+      this.currentSection = 'mainA'; this.currentStep = 0; this.nextSection = null;
+      this.activeFillType = null; this.countInTotal = 0;
+    }
     this.currentStyle = style;
-    if (resetBpm) {
-      this.bpm = style.defaultBpm;
-    }
-    const pattern = this.currentStyle.sections[this.currentSection] || this.currentStyle.sections.mainA;
-    if (this.currentStep >= pattern.steps.length) {
-      this.currentStep = 0;
-    }
+    if (resetBpm) this.bpm = style.defaultBpm;
   }
+  setBpm(value: number) { if (Number.isFinite(value)) this.bpm = Math.max(30, Math.min(300, value)); }
+  getBpm() { return this.bpm; }
+  setHumanize(value: number) { this.humanize = Math.max(0, Math.min(12, value)); }
+  setMetronome(enabled: boolean, volume = 0.6) { this.metronomeEnabled = enabled; this.metronomeVolume = volume; }
+  getIsRunning() { return this.isRunning; }
+  getCurrentSection() { return this.currentSection; }
+  getNextSection() { return this.nextSection; }
+  getActiveFillType() { return this.activeFillType; }
 
-  public setBpm(bpm: number) {
-    this.bpm = Math.max(30, Math.min(300, bpm));
+  triggerSmartTransition(type: 'same' | 'switch' | 'full', target?: RhythmSection) {
+    this.triggerSection(type === 'same' ? 'fillA' : type === 'switch' ? target ?? (this.currentSection === 'mainA' ? 'mainB' : 'mainA') : target ?? 'fillA');
   }
-
-  public getBpm(): number {
-    return this.bpm;
-  }
-
-  public setMetronome(enabled: boolean, volume = 0.6) {
-    this.metronomeEnabled = enabled;
-    this.metronomeVolume = volume;
-  }
-
-  /**
-   * Smart Contextual Transition Handler
-   * - Clicking same Main (e.g. Main A -> Main A): 1-beat micro fill (1/4 in 4/4, 1/3 in 3/4)
-   * - Clicking switch (Main A -> Main B): 2-beat medium fill (1/2 in 4/4)
-   * - Clicking Fill A / Fill B: Full 1-bar fill
-   */
-  public triggerSmartTransition(type: 'same' | 'switch' | 'full', targetSection?: RhythmSection) {
-    if (!this.isRunning) {
-      const target = targetSection || (this.currentSection === 'mainA' ? 'mainB' : 'mainA');
-      this.currentSection = target;
-      this.callbacks.onSectionChange?.(target);
-      return;
-    }
-
-    const pattern = this.currentStyle.sections[this.currentSection] || this.currentStyle.sections.mainA;
-    const stepsPerBeat = pattern.stepsPerBeat || 4;
-    const beatsInBar = this.currentStyle.timeSignature[0];
-    const stepsPerBar = beatsInBar * stepsPerBeat;
-    const stepInBar = this.currentStep % stepsPerBar;
-    const remainingInBar = stepsPerBar - stepInBar;
-
-    if (type === 'same') {
-      // 1-beat Micro Fill: 1/4 in 4/4, 1/3 in 3/4, or exactly 1 beat length
-      const fillDuration = stepsPerBeat;
-      this.activeFillType = 'micro';
-      this.fillLengthSteps = fillDuration;
-      this.fillPatternSource = this.currentSection === 'mainB' ? 'fillB' : 'fillA';
-      this.fillTargetSection = this.currentSection;
-
-      if (remainingInBar >= fillDuration) {
-        // Space available in CURRENT bar! Start at the beginning of the last beat of this bar
-        this.fillStartStep = this.currentStep + (remainingInBar - fillDuration);
-      } else {
-        // Space not available in current bar: schedule for the last beat of the next bar
-        this.fillStartStep = this.currentStep + remainingInBar + (stepsPerBar - fillDuration);
-      }
-      this.callbacks.onFillTriggered?.('micro', this.fillTargetSection);
-
-    } else if (type === 'switch') {
-      // 2-beat Medium Fill: 2x longer, half of 4/4 bar
-      const fillBeats = Math.max(1, Math.floor(beatsInBar / 2));
-      const fillDuration = fillBeats * stepsPerBeat;
-      const target = targetSection || (this.currentSection === 'mainA' ? 'mainB' : 'mainA');
-
-      this.activeFillType = 'medium';
-      this.fillLengthSteps = fillDuration;
-      this.fillPatternSource = target === 'mainB' ? 'fillA' : 'fillB';
-      this.fillTargetSection = target;
-
-      if (remainingInBar >= fillDuration) {
-        // Space available in CURRENT bar! Start at the halfway point of this bar
-        this.fillStartStep = this.currentStep + (remainingInBar - fillDuration);
-      } else {
-        // Space not available in current bar: schedule for the halfway point of the next bar
-        this.fillStartStep = this.currentStep + remainingInBar + (stepsPerBar - fillDuration);
-      }
-      this.callbacks.onFillTriggered?.('medium', target);
-
-    } else {
-      // Full 1-bar Fill
-      const fillSec = targetSection === 'fillB' ? 'fillB' : 'fillA';
-      this.activeFillType = 'full';
-      this.fillPatternSource = fillSec;
-      this.fillLengthSteps = stepsPerBar;
-      this.fillTargetSection = fillSec === 'fillB' ? 'mainB' : 'mainA';
-
-      if (stepInBar <= 2) {
-        // At very beginning of bar: play full fill now
-        this.currentSection = fillSec;
-        this.currentStep = 0;
-        this.callbacks.onSectionChange?.(fillSec);
-      } else {
-        // Queue for next bar
-        this.nextSection = fillSec;
-      }
-      this.callbacks.onFillTriggered?.('full', this.fillTargetSection);
-    }
-  }
-
-  public triggerSection(section: RhythmSection, immediate = false) {
-    if (!this.isRunning) {
-      this.currentSection = section;
-      this.callbacks.onSectionChange?.(section);
-      return;
-    }
-
+  triggerSection(section: RhythmSection, immediate = false) {
     if (section === 'fillA' || section === 'fillB') {
-      this.triggerSmartTransition('full', section);
-      return;
+      this.returnSection = this.currentSection === 'mainB' ? 'mainB' : 'mainA';
+      this.activeFillType = 'full';
+      this.callbacks.onFillTriggered?.('full', this.returnSection);
     }
-
-    if (immediate) {
-      this.currentSection = section;
-      this.currentStep = 0;
-      this.activeFillType = null;
-      this.fillStartStep = -1;
+    if (!this.isRunning || immediate) {
+      this.currentSection = section; this.currentStep = 0; this.nextSection = null;
       this.callbacks.onSectionChange?.(section);
-    } else {
-      if (section === this.currentSection) {
-        this.triggerSmartTransition('same', section);
-      } else if (
-        (this.currentSection === 'mainA' && section === 'mainB') ||
-        (this.currentSection === 'mainB' && section === 'mainA')
-      ) {
-        this.triggerSmartTransition('switch', section);
-      } else {
-        this.nextSection = section;
-      }
-    }
+    } else this.nextSection = section;
   }
-
-  public start(countInBars = 0) {
+  start(countInBars = 0) {
     if (this.isRunning) return;
-
-    this.synth.initAudio();
-    const ctx = this.synth.getContext();
-
+    void this.synth.initAudio();
     this.isRunning = true;
-    this.currentStep = 0;
-    this.currentBar = 1;
-    this.totalBarsPlayed = 0;
-    this.activeFillType = null;
-    this.fillStartStep = -1;
-    this.eventQueue = [];
-
-    const beatsPerBar = this.currentStyle.timeSignature[0];
-    this.countInBarsTotal = countInBars;
-    this.countInBeatsRemaining = countInBars * beatsPerBar;
-    this.isCountInActive = countInBars > 0;
-
-    this.nextStepTime = ctx.currentTime + 0.05;
-
-    this.timerId = window.setInterval(() => this.schedulerLoop(), this.lookaheadMs);
-    this.startVisualSyncLoop();
+    this.currentStep = 0; this.totalBars = 0; this.completedPhrases=0; this.ladderBase=0; this.gapBase=0; this.ladderStart=this.ladderCurrent; this.countInIndex = 0;
+    this.countInTotal = Math.max(0, Math.floor(countInBars)) * pulses(this.currentStyle).length;
+    this.nextSection = null; this.events = []; this.pendingStrokes = []; this.endingScheduled = false;
+    this.nextStepTime = this.synth.getContext().currentTime + playbackLeadIn(this.currentStyle,this.bpm,this.humanize);
+    this.timerId = window.setInterval(() => this.schedule(), 25);
+    this.animationFrameId = requestAnimationFrame(() => this.visualSync());
+    this.schedule(); // First grace may precede the first 25 ms timer tick.
   }
-
-  public stop() {
-    this.isRunning = false;
-    this.isCountInActive = false;
-    this.nextSection = null;
-    this.activeFillType = null;
-    this.fillStartStep = -1;
-
-    if (this.timerId !== null) {
-      clearInterval(this.timerId);
-      this.timerId = null;
-    }
-
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
-    }
-
-    this.eventQueue = [];
+  stop() {
+    this.isRunning = false; this.countInTotal = 0; this.nextSection = null;
+    this.activeFillType = null; this.events = []; this.pendingStrokes = [];
+    this.synth.stopVoices();
+    if (this.timerId !== null) clearInterval(this.timerId);
+    if (this.animationFrameId !== null) cancelAnimationFrame(this.animationFrameId);
+    this.timerId = null; this.animationFrameId = null;
     this.callbacks.onPlaybackEnd?.();
   }
-
-  public getIsRunning(): boolean {
-    return this.isRunning;
-  }
-
-  public getCurrentSection(): RhythmSection {
-    return this.currentSection;
-  }
-
-  public getNextSection(): RhythmSection | null {
-    return this.nextSection;
-  }
-
-  public getActiveFillType(): FillType | null {
-    return this.activeFillType;
-  }
-
-  // --- Scheduler Core ---
-
-  private schedulerLoop() {
-    if (!this.isRunning) return;
+  private schedule() {
     const ctx = this.synth.getContext();
-
-    while (this.nextStepTime < ctx.currentTime + this.scheduleAheadTime) {
-      if (this.isCountInActive) {
-        this.scheduleCountInBeat(this.nextStepTime);
-      } else {
-        this.schedulePatternStep(this.nextStepTime);
-      }
+    // Recover from a background-tab clock stall without a burst of missed bars.
+    if (this.nextStepTime < ctx.currentTime - this.ahead) this.nextStepTime = ctx.currentTime + playbackLeadIn(this.currentStyle,this.bpm,this.humanize);
+    // Generate far enough ahead for two tempo-based 32nds before any boundary.
+    while (this.isRunning && !this.endingScheduled && this.nextStepTime < ctx.currentTime + this.ahead + Math.max(graceAnticipation(this.currentStyle,this.bpm,this.humanize),this.laboratory.ladder ? quarterDuration(this.currentStyle,this.bpm)/4 + this.humanize/1000 : 0)) {
+      if (this.countInIndex < this.countInTotal) this.scheduleCountIn();
+      else this.scheduleStep();
+    }
+    // Chronological dispatch matters for hi-hat choking: a long triplet may
+    // overlap a later edited cell. Never schedule its future stroke first.
+    this.pendingStrokes.sort((a,b)=>a.time-b.time);
+    while (this.pendingStrokes.length && this.pendingStrokes[0].time < ctx.currentTime + this.ahead) {
+      const hit = this.pendingStrokes.shift()!;
+      this.synth.trigger(hit.instrument,Math.max(ctx.currentTime,hit.time),hit.velocity);
     }
   }
-
-  private scheduleCountInBeat(time: number) {
-    const beatsPerBar = this.currentStyle.timeSignature[0];
-    const totalBeats = this.countInBarsTotal * beatsPerBar;
-    const currentCountBeat = totalBeats - this.countInBeatsRemaining + 1;
-    const beatInBar = ((currentCountBeat - 1) % beatsPerBar) + 1;
-
-    const isAccent = beatInBar === 1;
-    this.synth.triggerMetronome(time, isAccent, this.metronomeVolume * 1.2);
-
-    this.callbacks.onCountInBeat?.(currentCountBeat, totalBeats);
-
-    const secondsPerBeat = 60.0 / this.bpm;
-    this.nextStepTime += secondsPerBeat;
-    this.countInBeatsRemaining--;
-
-    if (this.countInBeatsRemaining <= 0) {
-      this.isCountInActive = false;
-      this.currentStep = 0;
-      this.currentBar = 1;
-    }
+  private scheduleCountIn() {
+    const pulseList = pulses(this.currentStyle);
+    const pulse = pulseList[this.countInIndex % pulseList.length];
+    const count = ++this.countInIndex;
+    const time = this.nextStepTime;
+    this.synth.triggerMetronome(time, pulse.unit === 0, this.metronomeVolume);
+    this.events.push({ time, action: () => this.callbacks.onCountInBeat?.(count, this.countInTotal) });
+    this.nextStepTime += unitDuration(this.currentStyle, this.bpm) * pulse.durationUnits;
   }
-
-  private schedulePatternStep(time: number) {
-    const pattern = this.currentStyle.sections[this.currentSection] || this.currentStyle.sections.mainA;
-    const totalSteps = pattern.steps.length;
-    const stepsPerBeat = pattern.stepsPerBeat || 4;
-    const timeSigNumerator = pattern.timeSignature[0];
-    const stepsPerBar = stepsPerBeat * timeSigNumerator;
-
-    const stepIndex = this.currentStep;
-    let hits = pattern.steps[stepIndex] || [];
-    let sectionForDisplay = this.currentSection;
-
-    // Check if we are currently executing a micro or medium fill slice
-    if (this.activeFillType && this.fillStartStep >= 0 && stepIndex >= this.fillStartStep) {
-      const fillPattern: RhythmPattern = this.currentStyle.sections[this.fillPatternSource] || this.currentStyle.sections.fillA;
-      const fillStepsCount = fillPattern.steps.length;
-      const fillDuration = this.fillLengthSteps || stepsPerBeat;
-      const offsetInFill = stepIndex - this.fillStartStep;
-
-      // Map to the climactic end portion of the fill pattern
-      const sourceStepIdx = (fillStepsCount - fillDuration) + offsetInFill;
-      if (sourceStepIdx >= 0 && sourceStepIdx < fillStepsCount) {
-        hits = fillPattern.steps[sourceStepIdx] || [];
-        sectionForDisplay = this.fillPatternSource;
+  private scheduleStep() {
+    const section = this.currentSection;
+    const p = this.currentStyle.sections[section];
+    const step = this.currentStep;
+    const stepsPerBar = p.stepsPerBeat * p.timeSignature[0];
+    const bar = Math.floor(step / stepsPerBar) + 1;
+    const time = this.nextStepTime;
+    const hits = p.steps[step];
+    const pulse = pulses(this.currentStyle).findIndex(item => item.unit * p.stepsPerBeat === step % stepsPerBar);
+    const audible=!silentPracticePhrase(this.completedPhrases-this.gapBase,this.laboratory);
+    if (audible && this.metronomeEnabled && pulse >= 0) this.synth.triggerMetronome(time, pulse === 0, this.metronomeVolume);
+    for (const hit of audible ? hits : []) {
+      for (const played of expandHit(hit, this.currentStyle, p, this.bpm, step, this.totalBars, this.humanize)) {
+        const returnsFromSilence=step===0 && this.completedPhrases>0 && silentPracticePhrase(this.completedPhrases-1-this.gapBase,this.laboratory);
+        if(returnsFromSilence && played.kind==='grace' && played.offset<0) continue;
+        this.pendingStrokes.push({instrument:hit.instrument,time:time + (returnsFromSilence ? Math.max(0,played.offset) : played.offset),velocity:played.velocity});
       }
     }
-
-    // Metronome click on beat starts
-    if (this.metronomeEnabled && stepIndex % stepsPerBeat === 0) {
-      const beatInBar = Math.floor(stepIndex / stepsPerBeat) % timeSigNumerator;
-      const isAccent = beatInBar === 0;
-      this.synth.triggerMetronome(time, isAccent, this.metronomeVolume);
-    }
-
-    // Schedule drum hits for this step
-    hits.forEach((hit) => {
-      const prob = hit.probability !== undefined ? hit.probability : 1.0;
-      if (prob >= 1.0 || Math.random() <= prob) {
-        this.synth.trigger(hit.instrument, time, hit.velocity);
-      }
-    });
-
-    // Add to visual sync queue
-    this.eventQueue.push({
-      time,
-      step: stepIndex,
-      bar: this.currentBar,
-      section: sectionForDisplay,
-      hits
-    });
-
-    // Calculate step duration + swing
-    let stepDuration = (60.0 / this.bpm) / stepsPerBeat;
-    const swing = pattern.swing || 0;
-    if (swing > 0 && stepsPerBeat === 4) {
-      if (stepIndex % 2 === 0) {
-        stepDuration += (stepDuration * swing * 0.4);
-      } else {
-        stepDuration -= (stepDuration * swing * 0.4);
-      }
-    }
-
-    this.nextStepTime += stepDuration;
+    this.events.push({ time, action: () => { this.callbacks.onPracticePhase?.(!audible); this.callbacks.onStepChange?.(step, bar, section, hits); } });
+    this.nextStepTime += stepDuration(this.currentStyle, p, this.bpm, step);
     this.currentStep++;
-
-    // Check if we finished a bar
     if (this.currentStep % stepsPerBar === 0) {
-      this.currentBar++;
-      this.totalBarsPlayed++;
-      this.callbacks.onBarComplete?.(this.totalBarsPlayed);
-
-      // If a micro or medium fill just finished at the end of this bar, transition to destination section immediately!
-      if (this.activeFillType && this.activeFillType !== 'full' && this.fillStartStep >= 0 && this.currentStep > this.fillStartStep) {
-        this.currentSection = this.fillTargetSection;
-        this.activeFillType = null;
-        this.fillStartStep = -1;
-        this.callbacks.onSectionChange?.(this.currentSection);
-        this.callbacks.onFillTriggered?.(null, this.currentSection);
-      }
+      const bars = ++this.totalBars;
+      this.events.push({ time: this.nextStepTime, action: () => this.callbacks.onBarComplete?.(bars) });
     }
-
-    // Section transition logic at end of pattern
-    if (this.currentStep >= totalSteps) {
-      this.currentStep = 0;
-      this.currentBar = 1;
-
-      if (this.currentSection === 'ending') {
-        this.stop();
+    if (this.currentStep === p.steps.length) {
+      this.currentStep = 0; this.completedPhrases++;
+      if (section === 'ending') {
+        this.endingScheduled = true;
+        this.events.push({ time: this.nextStepTime, action: () => this.stop() });
         return;
       }
-
-      if (this.activeFillType) {
-        // Fill finished! Transition to target section
-        this.currentSection = this.fillTargetSection;
-        this.activeFillType = null;
-        this.fillStartStep = -1;
-        this.callbacks.onSectionChange?.(this.currentSection);
-        this.callbacks.onFillTriggered?.(null, this.currentSection);
-      } else if (this.currentSection === 'intro') {
-        this.currentSection = 'mainA';
-        this.callbacks.onSectionChange?.('mainA');
-      } else if (this.currentSection === 'fillA' || this.currentSection === 'fillB') {
-        this.currentSection = this.returnToSectionAfterFill;
-        this.callbacks.onSectionChange?.(this.returnToSectionAfterFill);
-      } else if (this.nextSection) {
-        this.currentSection = this.nextSection;
-        this.nextSection = null;
-        this.callbacks.onSectionChange?.(this.currentSection);
+      const next = this.nextSection ?? (section === 'fillA' || section === 'fillB' ? this.returnSection : section === 'intro' ? 'mainA' : section);
+      this.nextSection = null;
+      this.currentSection = next;
+      if (['mainA','mainB'].includes(next) && this.resolveComplexity) {
+        const level=ladderLevel(this.ladderStart,this.completedPhrases-this.ladderBase,this.laboratory,this.ladderMax);
+        if(level!==this.ladderCurrent) {
+          this.ladderCurrent=level; this.currentStyle=this.resolveComplexity(level);
+          const style=this.currentStyle,revision=this.laboratoryRevision;
+          this.events.push({time:this.nextStepTime,action:()=>{if(revision===this.laboratoryRevision) this.callbacks.onComplexityChange?.(level,style);}});
+        }
       }
+      if (next !== section) this.events.push({ time: this.nextStepTime, action: () => {
+        this.callbacks.onSectionChange?.(next);
+        if (section === 'fillA' || section === 'fillB') { this.activeFillType = null; this.callbacks.onFillTriggered?.(null, next); }
+      } });
     }
   }
-
-  // --- Visual Sync Loop with RequestAnimationFrame ---
-
-  private startVisualSyncLoop() {
-    const checkSync = () => {
-      if (!this.isRunning) return;
-      const ctx = this.synth.getContext();
-      const now = ctx.currentTime;
-
-      while (this.eventQueue.length > 0 && this.eventQueue[0].time <= now) {
-        const ev = this.eventQueue.shift()!;
-        this.callbacks.onStepChange?.(ev.step, ev.bar, ev.section, ev.hits);
-      }
-
-      this.animationFrameId = requestAnimationFrame(checkSync);
-    };
-
-    this.animationFrameId = requestAnimationFrame(checkSync);
+  private visualSync() {
+    if (!this.isRunning) return;
+    const now = this.synth.getContext().currentTime;
+    while (this.isRunning && this.events.length && this.events[0].time <= now) this.events.shift()!.action();
+    if (this.isRunning) this.animationFrameId = requestAnimationFrame(() => this.visualSync());
   }
 }

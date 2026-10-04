@@ -30,7 +30,8 @@ export function useKeyboardShortcuts({
       if (
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement ||
-        e.target instanceof HTMLSelectElement
+        e.target instanceof HTMLSelectElement ||
+        (e.target instanceof HTMLButtonElement && [' ', 'enter'].includes(e.key.toLowerCase()))
       ) {
         return;
       }

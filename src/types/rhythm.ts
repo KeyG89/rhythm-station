@@ -1,4 +1,5 @@
 export type DrumInstrument =
+  | 'clave'
   | 'kick'
   | 'snare'
   | 'rimshot'
@@ -28,6 +29,7 @@ export interface DrumInstrumentMeta {
 }
 
 export const DRUM_INSTRUMENTS_META: Record<DrumInstrument, DrumInstrumentMeta> = {
+  clave: { id: 'clave', name: 'Claves', shortName: 'CLV', category: 'percussion', midiNote: 75, color: '#d97706' },
   kick: { id: 'kick', name: 'Bass Drum (Stopa)', shortName: 'BD', category: 'core', midiNote: 36, color: '#ef4444' },
   snare: { id: 'snare', name: 'Snare Drum (Werbel)', shortName: 'SD', category: 'core', midiNote: 38, color: '#f97316' },
   rimshot: { id: 'rimshot', name: 'Side Stick (Obręcz)', shortName: 'SS', category: 'core', midiNote: 37, color: '#f59e0b' },
@@ -79,6 +81,9 @@ export interface DrumHit {
   instrument: DrumInstrument;
   velocity: number; // 0.0 - 1.0
   probability?: number; // 0.0 - 1.0 (default 1.0)
+  role?: 'essential' | 'variation' | 'ghost';
+  rudiment?: 'drag' | 'flam' | 'triplet';
+  tripletSpan?: number; // Three equally spaced strokes across 1–4 grid cells.
 }
 
 export type PatternStep = DrumHit[];
@@ -89,6 +94,8 @@ export interface RhythmPattern {
   timeSignature: [number, number]; // [4,4], [3,4], [6,8], [12,8]
   bars: number;
   swing?: number; // 0.0 to 1.0 (triplet feel delay on even 16ths/8ths)
+  swingStepGroup?: number; // 1: paired grid steps; 2: swing eighths on a sixteenth grid
+  swingRatio?: number; // 50 = straight; 66.67 = triplet long-short pairs
 }
 
 export interface SimilarSong {
@@ -99,6 +106,8 @@ export interface SimilarSong {
 }
 
 export interface RhythmStyle {
+  bpmUnit?: 'quarter' | 'dotted-quarter';
+  pulseGroups?: number[]; // groups of denominator units, e.g. 3+3 or 2+2+3
   id: string; // e.g. "00", "01" ... "99"
   name: string;
   category: RhythmCategory;
